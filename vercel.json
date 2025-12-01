@@ -1,23 +1,10 @@
 {
   "version": 2,
-  "builds": [
+  "framework": "create-react-app",
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["**/*"]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "check": true
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ]
 }

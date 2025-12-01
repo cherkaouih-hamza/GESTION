@@ -3,7 +3,6 @@
   text-align: right;
   min-height: 100vh;
   background-color: #f8fafc; /* secondary-50 */
-  transition: all 0.3s ease;
 }
 
 .rtl-container {
@@ -36,11 +35,6 @@
   max-height: 60px;
   object-fit: contain;
   margin: 0 auto;
-  transition: opacity 0.2s ease;
-}
-
-.logo-image:hover {
-  opacity: 0.9;
 }
 
 .sidebar-desktop .nav-link {
@@ -54,19 +48,6 @@
   transition: all 0.2s ease;
   font-size: 0.875rem;
   font-weight: 500;
-  position: relative;
-  overflow: hidden;
-}
-
-.sidebar-desktop .nav-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 3px;
-  background-color: transparent;
-  transition: all 0.2s ease;
 }
 
 .sidebar-desktop .nav-link:hover {
@@ -80,14 +61,9 @@
   color: #083130; /* primary-900 */
 }
 
-.sidebar-desktop .nav-link.active::before {
-  background-color: #083130; /* primary-900 */
-}
-
 .sidebar-desktop .user-section {
   padding: 1rem;
   border-top: 1px solid #2dd4bf; /* primary-400 */
-  background-color: rgba(45, 212, 191, 0.1); /* primary-400 with opacity */
   transition: all 0.2s ease;
 }
 
@@ -131,14 +107,6 @@
   width: 100%;
   z-index: 40;
   display: flex;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.mobile-sidebar-container.show {
-  opacity: 1;
-  visibility: visible;
 }
 
 .mobile-overlay {
@@ -149,8 +117,6 @@
   left: 0;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 39;
-  transition: background-color 0.3s ease;
-  backdrop-filter: blur(2px);
 }
 
 .mobile-sidebar {
@@ -164,10 +130,9 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
   height: 100vh;
-  overflow-y: auto;
 }
 
-.mobile-sidebar-container.show .mobile-sidebar {
+.mobile-sidebar {
   transform: translateX(0);
 }
 
@@ -177,30 +142,8 @@
   text-align: center;
 }
 
-.mobile-sidebar .logo-text {
-  color: white;
-  font-size: 1.125rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.sidebar-logo {
-  max-width: 120px;
-  max-height: 40px;
-  object-fit: contain;
-  margin: 0 auto;
-}
-
-.mobile-logo-image {
-  max-width: 120px;
-  max-height: 40px;
-  object-fit: contain;
-  margin: 0 auto;
-  display: block;
-}
-
 .mobile-sidebar .mobile-nav {
-  padding: 1rem 0.5rem;
+  padding: 1rem;
   margin-top: 1rem;
   overflow-y: auto;
   flex: 1;
@@ -217,19 +160,6 @@
   transition: all 0.2s ease;
   font-size: 0.95rem;
   font-weight: 500;
-  position: relative;
-  overflow: hidden;
-}
-
-.mobile-sidebar .nav-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 3px;
-  background-color: transparent;
-  transition: all 0.2s ease;
 }
 
 .mobile-sidebar .nav-link:hover {
@@ -241,10 +171,6 @@
 .mobile-sidebar .nav-link.active {
   background-color: #2dd4bf; /* primary-400 */
   color: #083130; /* primary-900 */
-}
-
-.mobile-sidebar .nav-link.active::before {
-  background-color: #083130; /* primary-900 */
 }
 
 .mobile-sidebar .mobile-close-btn {
@@ -282,7 +208,6 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
 }
 
 .mobile-menu-toggle {
@@ -338,7 +263,6 @@
 .main-content {
   margin-right: 256px; /* Account for desktop sidebar width */
   padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: calc(100vh - 3rem);
 }
 
@@ -439,183 +363,5 @@
   [dir="rtl"] .mobile-overlay {
     right: 0;
     left: auto;
-  }
-}
-
-/* Animation for smoother transitions */
-.sidebar-animated {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Enhanced hover animations for navigation links */
-.nav-link {
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: right 0.5s ease;
-}
-
-.nav-link:hover::after {
-  right: 100%;
-}
-
-/* Focus styles for accessibility */
-.nav-link:focus,
-.mobile-menu-toggle:focus,
-.mobile-close-btn:focus,
-.logout-btn:focus,
-.mobile-logout:focus {
-  outline: 2px solid #f59e0b; /* accent-500 */
-  outline-offset: 2px;
-}
-
-/* Improved scrollbar styling with custom design */
-.sidebar-desktop::-webkit-scrollbar,
-.mobile-sidebar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.sidebar-desktop::-webkit-scrollbar-track,
-.mobile-sidebar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.sidebar-desktop::-webkit-scrollbar-thumb,
-.mobile-sidebar::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #2dd4bf, #0d5e5a);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-.sidebar-desktop::-webkit-scrollbar-thumb:hover,
-.mobile-sidebar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #0d5e5a, #0f766e);
-}
-
-/* Loading animations for sidebar */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* Pulse animation for notification bell */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.7);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(45, 212, 191, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(45, 212, 191, 0);
-  }
-}
-
-.notification-bell.pulse {
-  animation: pulse 2s infinite;
-}
-
-/* Bounce animation for mobile menu toggle */
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-5px);
-  }
-  60% {
-    transform: translateY(-3px);
-  }
-}
-
-.mobile-menu-toggle.bounce {
-  animation: bounce 2s infinite;
-}
-
-/* Reduced motion support for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .sidebar-desktop,
-  .mobile-sidebar,
-  .main-content,
-  .nav-link,
-  .logout-btn,
-  .mobile-menu-toggle,
-  .mobile-close-btn,
-  .mobile-logout,
-  .logo-image,
-  .nav-link::after {
-    transition: none;
-    animation: none;
-  }
-
-  .nav-link:hover {
-    transform: none;
-  }
-
-  .mobile-sidebar .nav-link:hover {
-    transform: none;
-  }
-
-  .logout-btn:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .mobile-menu-toggle:hover,
-  .mobile-close-btn:hover {
-    transform: none;
-  }
-
-  .mobile-logout:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .nav-link::after {
-    display: none;
   }
 }

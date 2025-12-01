@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import TasksPage from './pages/TasksPage';
 import ValidationPage from './pages/ValidationPage';
@@ -41,14 +42,15 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route 
-                path="/validation" 
+              <Route
+                path="/validation"
                 element={
                   <ProtectedRoute allowedRoles={['responsable', 'admin']}>
                     <ValidationPage />
                   </ProtectedRoute>
-                } 
+                }
               />
+              <Route path="/register" element={<RegisterPage />} />
             </Routes>
             <WhatsAppFloatingButton />
           </div>

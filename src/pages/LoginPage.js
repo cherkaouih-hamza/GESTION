@@ -105,6 +105,21 @@ const LoginPage = () => {
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>للاختبار: يمكنك استخدام البريد admin@example.com وكلمة المرور admin123</p>
         </div>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          <p>
+            <a
+              href="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/register');
+              }}
+            >
+              لا تملك حساب؟ اشترك الآن
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

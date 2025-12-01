@@ -31,6 +31,9 @@ const mockUsers = [
   }
 ];
 
+// Mock data for registration requests
+const mockRegistrationRequests = [];
+
 // Mock data for tasks
 const mockTasks = [
   {
@@ -164,6 +167,62 @@ export const AuthProvider = ({ children }) => {
     setTasks(tasks.filter(task => task.id !== taskId));
   };
 
+  const registerUser = async (userData) => {
+    // Check if email or phone already exists
+    const existingUser = mockUsers.find(
+      u => u.email === userData.email || u.phone === userData.phone
+    );
+
+    if (existingUser) {
+      return { success: false, message: 'هذا البريد الإلكتروني أو رقم الهاتف مستخدم من قبل' };
+    }
+
+    // Create registration request
+    const registrationRequest = {
+      id: mockRegistrationRequests.length + 1,
+      ...userData,
+      status: 'pending', // pending, approved, rejected
+      createdAt: new Date().toISOString(),
+      validatedBy: null,
+      validatedAt: null
+    };
+
+    mockRegistrationRequests.push(registrationRequest);
+
+    // Simulate email notification to responsible/admin
+    console.log(`Notification: New registration request from ${userData.name} (${userData.email})`);
+
+    return { success: true, message: 'تم إرسال طلب التسجيل بنجاح. في انتظار المصادقة.' };
+  };
+
+  const getRegistrationRequests = () => {
+    return mockRegistrationRequests;
+  };
+
+  const updateRegistrationRequestStatus = (requestId, status, validatedBy = null) => {
+    const requestIndex = mockRegistrationRequests.findIndex(req => req.id === requestId);
+    if (requestIndex !== -1) {
+      mockRegistrationRequests[requestIndex].status = status;
+      mockRegistrationRequests[requestIndex].validatedBy = validatedBy;
+      mockRegistrationRequests[requestIndex].validatedAt = new Date().toISOString();
+
+      // If approved, add user to mockUsers
+      if (status === 'approved') {
+        const request = mockRegistrationRequests[requestIndex];
+        const newUser = {
+          id: mockUsers.length + 1,
+          email: request.email,
+          phone: request.phone,
+          password: request.password,
+          name: request.name,
+          role: 'utilisateur', // Default role for new users
+          isActive: true
+        };
+        mockUsers.push(newUser);
+      }
+    }
+  };
+
   const value = {
     currentUser,
     login,
@@ -176,7 +235,10 @@ export const AuthProvider = ({ children }) => {
     createTask,
     updateTask,
     updateTaskStatus,
-    deleteTask
+    deleteTask,
+    registerUser,
+    getRegistrationRequests,
+    updateRegistrationRequestStatus
   };
 
   return (

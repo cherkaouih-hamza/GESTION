@@ -6,7 +6,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import '../styles/ReportsPage.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);

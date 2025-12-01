@@ -20,9 +20,8 @@ initializeDatabase()
     console.error('Erreur lors de l\'initialisation de la base de données:', error);
   });
 
-// Routes
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/users', require('./routes/users'));
+// API Routes are handled by Vercel automatically
+// No need to define these routes in server.js for Vercel deployment
 
 // Gestion des erreurs
 app.use((err, req, res, next) => {

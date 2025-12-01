@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import TasksPage from './pages/TasksPage';
 import ValidationPage from './pages/ValidationPage';
 import UsersPage from './pages/UsersPage';
+import ProfilePage from './pages/ProfilePage';
 import WhatsAppFloatingButton from './components/WhatsAppFloatingButton';
 import './styles/App.css';
 
@@ -59,6 +60,11 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>
             <WhatsAppFloatingButton />

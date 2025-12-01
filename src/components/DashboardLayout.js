@@ -53,37 +53,35 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="dashboard-layout min-h-screen flex flex-col">
       {/* Mobile sidebar - only show on mobile when open */}
-      {sidebarOpen && (
-        <div className="mobile-sidebar-container block md:hidden">
-          <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
-          <div className="mobile-sidebar">
-            <button
-              className="mobile-close-btn"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <span>×</span>
-            </button>
-            <div className="logo-section">
-              <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
-            </div>
-            <nav className="mobile-nav">
-              {filteredNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span>{item.icon} {item.name}</span>
-                </Link>
-              ))}
-            </nav>
+      <div className={`mobile-sidebar-container ${sidebarOpen ? 'show' : ''}`}>
+        <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
+        <div className={`mobile-sidebar ${sidebarOpen ? 'show' : ''}`}>
+          <button
+            className="mobile-close-btn"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <span>×</span>
+          </button>
+          <div className="logo-section">
+            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
+          <nav className="mobile-nav">
+            {filteredNavigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <span>{item.icon} {item.name}</span>
+              </Link>
+            ))}
+          </nav>
         </div>
-      )}
+      </div>
 
       {/* Desktop sidebar */}
-      <div className="sidebar-desktop hidden md:flex md:flex-col">
+      <div className="sidebar-desktop">
         <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
           <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
             <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
@@ -127,7 +125,7 @@ const DashboardLayout = ({ children }) => {
       {/* Main content */}
       <div className="flex flex-col flex-1">
         {/* Mobile header */}
-        <div className="mobile-header md:hidden">
+        <div className="mobile-header">
           <button
             className="mobile-menu-toggle"
             onClick={() => setSidebarOpen(true)}
@@ -146,7 +144,7 @@ const DashboardLayout = ({ children }) => {
           </div>
         </div>
 
-        <main className="main-content flex-1 md:mr-64">
+        <main className="main-content">
           {children}
         </main>
       </div>

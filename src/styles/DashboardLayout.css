@@ -106,7 +106,11 @@
   height: 100%;
   width: 100%;
   z-index: 40;
-  display: flex;
+  display: none; /* Hidden by default */
+}
+
+.mobile-sidebar-container.show {
+  display: flex; /* Show when .show class is added */
 }
 
 .mobile-overlay {
@@ -132,8 +136,8 @@
   height: 100vh;
 }
 
-.mobile-sidebar {
-  transform: translateX(0);
+.mobile-sidebar.show {
+  transform: translateX(0); /* Show sidebar when .show class is added */
 }
 
 .mobile-sidebar .logo-section {
@@ -261,13 +265,17 @@
 
 /* Main content styles */
 .main-content {
-  margin-right: 256px; /* Account for desktop sidebar width */
+  margin-right: 0; /* Default margin */
   padding: 1.5rem;
   min-height: calc(100vh - 3rem);
 }
 
 /* Responsive adjustments */
 @media (min-width: 768px) {
+  .mobile-sidebar-container {
+    display: none;
+  }
+  
   .sidebar-desktop {
     display: flex !important;
   }

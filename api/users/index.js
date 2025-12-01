@@ -36,15 +36,15 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { username, email, password, role, pole } = req.body;
+      const { username, email, password, role, pole, phone } = req.body;
 
       if (!username || !email || !password) {
         return res.status(400).json({ error: 'Les champs username, email et password sont obligatoires' });
       }
 
       const result = await pool.query(
-        'INSERT INTO users (username, email, password, role, pole, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *',
-        [username, email, password, role, pole, false]  // is_active = false par défaut
+        'INSERT INTO users (username, email, password, role, pole, phone, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW()) RETURNING *',
+        [username, email, password, role || 'utilisateur', pole || null, phone || null, false]  // is_active = false par défaut
       );
 
       // Simuler l'envoi d'un email de confirmation

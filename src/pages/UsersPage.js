@@ -13,7 +13,6 @@ const UsersPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    phone: '',
     password: '',
     role: 'utilisateur',
     pole: ''
@@ -54,7 +53,6 @@ const UsersPage = () => {
     setFormData({
       username: user.username || user.name,
       email: user.email,
-      phone: user.phone || '',
       password: '', // Don't show password in edit form
       role: user.role,
       pole: user.pole || ''
@@ -97,10 +95,10 @@ const UsersPage = () => {
   };
 
   // Filter users based on search term
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredUsers = users.filter(user =>
+    (user.username || user.name).toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone.includes(searchTerm) ||
+    (user.pole || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -155,7 +153,7 @@ const UsersPage = () => {
                     البريد الإلكتروني
                   </th>
                   <th scope="col" className="text-right">
-                    رقم الهاتف
+                    القطب
                   </th>
                   <th scope="col" className="text-right">
                     الدور
@@ -179,7 +177,7 @@ const UsersPage = () => {
                         {user.email}
                       </td>
                       <td className="text-sm text-gray-500 text-right">
-                        {user.phone}
+                        {user.pole || '-'}
                       </td>
                       <td className="text-right">
                         <span className={`role-badge ${
@@ -263,18 +261,6 @@ const UsersPage = () => {
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={handleInputChange}
-                      className="form-input"
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">رقم الهاتف</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
                       onChange={handleInputChange}
                       className="form-input"
                       required

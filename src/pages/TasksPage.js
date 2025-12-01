@@ -175,7 +175,7 @@ const TasksPage = () => {
                 setCurrentTask(null);
                 setShowForm(true);
               }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md flex items-center"
+              className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-md flex items-center"
             >
               <span className="ml-2">+ إنشاء مهمة</span>
             </button>
@@ -337,8 +337,8 @@ const TasksPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           task.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
-                          task.priority === 'Important' ? 'bg-orange-100 text-orange-800' :
-                          task.priority === 'Normal' ? 'bg-blue-100 text-blue-800' :
+                          task.priority === 'Important' ? 'bg-amber-100 text-amber-800' :
+                          task.priority === 'Normal' ? 'bg-gray-100 text-gray-800' :
                           task.priority === 'Faible' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                         }`}>
                           {task.priority === 'Urgent' ? '⚠️ عاجل' :
@@ -363,8 +363,8 @@ const TasksPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          task.status === 'جارية' ? 'bg-green-100 text-green-800' :
-                          task.status === 'مكتملة' ? 'bg-blue-100 text-blue-800' :
+                          task.status === 'جارية' ? 'bg-amber-100 text-amber-800' :
+                          task.status === 'مكتملة' ? 'bg-green-100 text-green-800' :
                           task.status === 'في انتظار الموافقة' ? 'bg-yellow-100 text-yellow-800' :
                           task.status === 'مرفوضة' ? 'bg-red-100 text-red-800' :
                           task.status === 'مسودة' ? 'bg-gray-100 text-gray-800' : 'bg-purple-100 text-purple-800'
@@ -381,7 +381,7 @@ const TasksPage = () => {
                             href={task.mediaLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-indigo-600 hover:text-indigo-900"
+                            className="text-emerald-600 hover:text-emerald-800"
                           >
                             عرض
                           </a>
@@ -394,14 +394,14 @@ const TasksPage = () => {
                           {canModifyTask(task) && (
                             <button
                               onClick={() => handleEditTask(task)}
-                              className="text-indigo-600 hover:text-indigo-900"
+                              className="text-emerald-600 hover:text-emerald-800"
                             >
                               تعديل
                             </button>
                           )}
                           <button
                             onClick={() => handleConfirmDelete(task)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-red-600 hover:text-red-800"
                           >
                             حذف
                           </button>

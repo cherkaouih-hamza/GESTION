@@ -131,6 +131,28 @@ Le système de gestion des tâches est une application web destinée à la gesti
 ## Design et Responsivité
 
 ### Design Élégant
+- Palette de couleurs moderne:
+  - Couleur primaire: #0F766E (vert émeraude)
+  - Couleur secondaire: #334155 (bleu gris foncé)
+  - Couleur d'accent: #F59E0B (jaune safran)
+  - Couleur de succès: #22C55E (vert)
+  - Couleur de danger: #EF4444 (rouge)
+- Application de la couleur primaire aux éléments principaux:
+  - Menu latéral et en-têtes
+  - Boutons principaux
+  - Cartes et composants principaux
+- Application de la couleur secondaire aux arrière-plans:
+  - Arrière-plans de pages
+  - Zones subtiles
+  - Elements de structure
+- Application de la couleur d'accent aux éléments importants:
+  - Liens et boutons secondaires
+  - Icônes de navigation
+  - Éléments de mise en évidence
+- Application des couleurs de succès et danger aux indicateurs d'état:
+  - Statuts des tâches
+  - Indicateurs de priorité
+  - Boutons d'action critiques
 - Dégradés de couleurs modernes
 - Bordures arrondies (rounded corners)
 - Animations fluides

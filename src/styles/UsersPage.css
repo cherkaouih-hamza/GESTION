@@ -3,6 +3,7 @@
 .users-page {
   direction: rtl;
   text-align: right;
+  background-color: #f8fafc; /* secondary-50 */
 }
 
 .users-container {
@@ -57,7 +58,7 @@
 }
 
 .add-user-btn {
-  background-color: #4f46e5;
+  background-color: #0F766E; /* primary-500 */
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -68,7 +69,7 @@
 }
 
 .add-user-btn:hover {
-  background-color: #4338ca;
+  background-color: #0d5e5a; /* primary-600 */
 }
 
 .users-table {
@@ -108,12 +109,12 @@
 }
 
 .edit-btn {
-  color: #4f46e5;
+  color: #0F766E; /* primary-500 */
   cursor: pointer;
 }
 
 .edit-btn:hover {
-  color: #4338ca;
+  color: #0d5e5a; /* primary-600 */
 }
 
 .delete-btn {
@@ -200,13 +201,13 @@
 }
 
 .modal-btn-confirm {
-  background-color: #4f46e5;
+  background-color: #0F766E; /* primary-500 */
   border: 1px solid transparent;
   color: white;
 }
 
 .modal-btn-confirm:hover {
-  background-color: #4338ca;
+  background-color: #0d5e5a; /* primary-600 */
 }
 
 .role-badge {

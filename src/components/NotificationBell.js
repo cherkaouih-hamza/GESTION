@@ -34,7 +34,7 @@ const NotificationBell = () => {
       {/* Notification Bell */}
       <button
         onClick={toggleNotifications}
-        className="relative p-2 rounded-full text-gray-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="relative p-2 rounded-full text-gray-700 hover:text-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
         aria-label="إشعارات"
       >
         <svg 
@@ -67,7 +67,7 @@ const NotificationBell = () => {
               {unreadUserNotifications.length > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="text-sm text-indigo-600 hover:text-indigo-900"
+                  className="text-sm text-amber-600 hover:text-amber-800"
                 >
                   تعليم الكل كمقروء
                 </button>

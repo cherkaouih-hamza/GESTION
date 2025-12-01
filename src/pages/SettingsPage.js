@@ -461,8 +461,8 @@ const SettingsPage = () => {
               onClick={() => setActiveTab('general')}
               className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
                 activeTab === 'general'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-amber-500 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
               }`}
             >
               الإعدادات العامة
@@ -472,7 +472,7 @@ const SettingsPage = () => {
               className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
                 activeTab === 'notifications'
                   ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
               }`}
             >
               الإشعارات
@@ -482,7 +482,7 @@ const SettingsPage = () => {
               className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
                 activeTab === 'security'
                   ? 'bg-red-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
               }`}
             >
               الأمان
@@ -492,7 +492,7 @@ const SettingsPage = () => {
               className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
                 activeTab === 'info'
                   ? 'bg-green-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
               }`}
             >
               معلومات النظام
@@ -505,7 +505,7 @@ const SettingsPage = () => {
       {activeTab === 'general' && renderGeneralSettings()}
       {activeTab === 'notifications' && renderNotificationSettings()}
       {activeTab === 'security' && renderSecuritySettings()}
-      {activeTab === 'system' && renderSystemInfo()}
+      {activeTab === 'info' && renderSystemInfo()}
     </div>
     </DashboardLayout>
   );

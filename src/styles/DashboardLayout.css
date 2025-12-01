@@ -2,7 +2,7 @@
   direction: rtl;
   text-align: right;
   min-height: 100vh;
-  background-color: #f3f4f6;
+  background-color: #f8fafc; /* secondary-50 */
 }
 
 .rtl-container {
@@ -18,7 +18,7 @@
   right: 0;
   bottom: 0;
   z-index: 20;
-  background-color: #4f46e5; /* indigo-600 */
+  background-color: #0F766E; /* primary-500 */
   transition: all 0.3s ease;
 }
 
@@ -35,7 +35,7 @@
   padding: 0.5rem 1rem;
   margin: 0.25rem 0.5rem;
   border-radius: 0.5rem;
-  color: #c7d2fe; /* indigo-200 */
+  color: #99f6e4; /* primary-200 */
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.875rem;
@@ -43,19 +43,19 @@
 }
 
 .sidebar-desktop .nav-link:hover {
-  background-color: #4338ca; /* indigo-700 */
+  background-color: #0d5e5a; /* primary-600 */
   color: white;
 }
 
 .sidebar-desktop .nav-link.active {
-  background-color: #6366f1; /* indigo-500 */
-  color: white;
+  background-color: #2dd4bf; /* primary-400 */
+  color: #083130; /* primary-900 */
 }
 
 .sidebar-desktop .user-section {
   padding: 1rem;
-  border-top: 1px solid #6366f1; /* indigo-500 */
-  background-color: rgba(99, 102, 241, 0.1); /* indigo-500 with opacity */
+  border-top: 1px solid #2dd4bf; /* primary-400 */
+  background-color: rgba(45, 212, 191, 0.1); /* primary-400 with opacity */
 }
 
 .sidebar-desktop .user-info {
@@ -110,7 +110,7 @@
   flex: 1;
   max-width: 280px;
   width: 80%;
-  background-color: #4f46e5; /* indigo-600 */
+  background-color: #0F766E; /* primary-500 */
   z-index: 40;
   transform: translateX(0);
   transition: transform 0.3s ease;
@@ -122,7 +122,7 @@
 
 .mobile-sidebar .logo-section {
   padding: 1.5rem 1rem;
-  border-bottom: 1px solid #6366f1; /* indigo-500 */
+  border-bottom: 1px solid #2dd4bf; /* primary-400 */
 }
 
 .mobile-sidebar .logo-text {
@@ -145,7 +145,7 @@
   padding: 0.75rem 1rem;
   margin: 0.25rem 0;
   border-radius: 0.5rem;
-  color: #c7d2fe; /* indigo-200 */
+  color: #99f6e4; /* primary-200 */
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.95rem;
@@ -153,13 +153,13 @@
 }
 
 .mobile-sidebar .nav-link:hover {
-  background-color: #4338ca; /* indigo-700 */
+  background-color: #0d5e5a; /* primary-600 */
   color: white;
 }
 
 .mobile-sidebar .nav-link.active {
-  background-color: #6366f1; /* indigo-500 */
-  color: white;
+  background-color: #2dd4bf; /* primary-400 */
+  color: #083130; /* primary-900 */
 }
 
 .mobile-sidebar .mobile-close-btn {
@@ -188,7 +188,7 @@
 .mobile-header {
   position: sticky;
   top: 0;
-  background-color: #4f46e5; /* indigo-600 */
+  background-color: #0F766E; /* primary-500 */
   z-index: 30;
   padding: 0.75rem 1rem;
   display: flex;

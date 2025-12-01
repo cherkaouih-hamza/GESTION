@@ -12,12 +12,7 @@ const DashboardLayout = ({ children }) => {
   const navigationItems = [
     { name: 'لوحة التحكم', href: '/dashboard', icon: '📊' },
     { name: 'المهام', href: '/tasks', icon: '✅' },
-    {
-      name: 'تقرير المهام',
-      href: '/reports',
-      icon: '📈',
-      roles: ['responsable', 'admin']
-    },
+    { name: 'تقرير المهام', href: '/reports', icon: '📈' },
     {
       name: 'صفحة المسؤول',
       href: '/validation',

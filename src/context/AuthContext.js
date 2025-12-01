@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { taskApi } from '../api/taskApi';
+import { userApi } from '../api/userApi';
 
 const AuthContext = createContext();
 
@@ -214,11 +215,7 @@ export const AuthProvider = ({ children }) => {
 
   const getAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/users');
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-      const users = await response.json();
+      const users = await userApi.getAllUsers();
       return users;
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
@@ -228,17 +225,8 @@ export const AuthProvider = ({ children }) => {
 
   const createUser = async (userData) => {
     try {
-      const response = await fetch('http://localhost:3001/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-      return await response.json();
+      const user = await userApi.createUser(userData);
+      return user;
     } catch (error) {
       console.error('Erreur lors de la création de l\'utilisateur:', error);
       throw error;
@@ -247,17 +235,8 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = async (userId, userData) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-      return await response.json();
+      const user = await userApi.updateUser(userId, userData);
+      return user;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       throw error;
@@ -266,16 +245,8 @@ export const AuthProvider = ({ children }) => {
 
   const deleteUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-      return await response.json();
+      const user = await userApi.deleteUser(userId);
+      return user;
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'utilisateur:', error);
       throw error;

@@ -1,12 +1,6 @@
 // api/tasks/index.js
 import { Pool } from 'pg';
 
-// Configuration du pool pour Vercel
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
 export default async function handler(req, res) {
   // Définir les en-têtes CORS manuellement aussi
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -20,6 +14,15 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Configuration du pool pour chaque requête
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 1, // Utiliser une connexion unique pour les fonctions serverless
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+  });
+
   if (req.method === 'GET') {
     try {
       const result = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
@@ -28,6 +31,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Erreur serveur lors de la récupération des tâches:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la récupération des tâches' });
+    } finally {
+      await pool.end();
     }
   } else if (req.method === 'POST') {
     try {
@@ -47,9 +52,12 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Erreur serveur lors de la création de la tâche:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la création de la tâche' });
+    } finally {
+      await pool.end();
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
+    await pool.end();
   }
 }

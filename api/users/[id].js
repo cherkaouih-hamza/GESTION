@@ -1,12 +1,6 @@
 // api/users/[id].js
 import { Pool } from 'pg';
 
-// Configuration du pool pour Vercel
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
 export default async function handler(req, res) {
   // Définir les en-têtes CORS manuellement aussi
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -20,6 +14,15 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Configuration du pool pour chaque requête
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 1, // Utiliser une connexion unique pour les fonctions serverless
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+  });
+
   const { id } = req.query;
 
   if (req.method === 'GET') {
@@ -32,6 +35,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Erreur lors de la récupération de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'utilisateur' });
+    } finally {
+      await pool.end();
     }
   } else if (req.method === 'PUT') {
     try {
@@ -50,6 +55,8 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la mise à jour de l\'utilisateur' });
+    } finally {
+      await pool.end();
     }
   } else if (req.method === 'DELETE') {
     try {
@@ -63,9 +70,12 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la suppression de l\'utilisateur' });
+    } finally {
+      await pool.end();
     }
   } else {
     res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
+    await pool.end();
   }
 }

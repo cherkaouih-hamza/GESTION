@@ -116,103 +116,99 @@ const UsersPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 text-right">إدارة المستخدمين</h1>
-          <p className="text-gray-600 text-right">قائمة بجميع المستخدمين في النظام</p>
+      <div className="py-6 px-4 sm:px-6 lg:px-8 users-page">
+        <div className="users-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">إدارة المستخدمين</h1>
+          <p className="text-right opacity-90">قائمة بجميع المستخدمين في النظام</p>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="بحث في المستخدمين..."
-              className="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-right"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="users-controls">
+          <input
+            type="text"
+            placeholder="بحث في المستخدمين..."
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <button
             onClick={handleAddUser}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-right"
+            className="add-user-btn"
           >
             + إضافة مستخدم
           </button>
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="table-container">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الاسم
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     البريد الإلكتروني
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     رقم الهاتف
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الدور
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الحالة
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الإجراءات
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 text-right">{user.name}</div>
+                    <tr key={user.id}>
+                      <td className="text-right">
+                        <div className="font-medium text-gray-900">{user.name}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {user.email}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {user.phone}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.role === 'admin' 
-                            ? 'bg-purple-100 text-purple-800' 
-                            : user.role === 'responsable' 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-green-100 text-green-800'
+                      <td className="text-right">
+                        <span className={`role-badge ${
+                          user.role === 'admin'
+                            ? 'role-admin'
+                            : user.role === 'responsable'
+                              ? 'role-responsable'
+                              : 'role-utilisateur'
                         }`}>
-                          {user.role === 'admin' ? 'مدير النظام' : 
+                          {user.role === 'admin' ? 'مدير النظام' :
                            user.role === 'responsable' ? 'المسؤول' : 'المستخدم'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.isActive 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
+                      <td className="text-right">
+                        <span className={`status-badge ${
+                          user.isActive ? 'status-active' : 'status-inactive'
                         }`}>
                           {user.isActive ? 'نشط' : 'غير نشط'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <div className="flex space-x-2 space-x-reverse">
+                      <td className="text-right">
+                        <div className="flex">
                           <button
                             onClick={() => handleEditUser(user)}
-                            className="text-indigo-600 hover:text-indigo-900"
+                            className="action-btn edit-btn"
                             disabled={user.id === currentUser.id} // Don't allow editing own account
                           >
                             تعديل
                           </button>
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="action-btn delete-btn"
                             disabled={user.id === currentUser.id} // Don't allow deleting own account
                           >
                             حذف
@@ -223,8 +219,10 @@ const UsersPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500 text-right">
-                      لا توجد مستخدمون مطابقون للبحث
+                    <td colSpan="6" className="empty-state">
+                      <div className="empty-state-icon">👥</div>
+                      <h3 className="text-lg font-medium">لا توجد مستخدمون</h3>
+                      <p className="mt-1">لا توجد مستخدمون مطابقون للبحث</p>
                     </td>
                   </tr>
                 )}
@@ -235,71 +233,72 @@ const UsersPage = () => {
 
         {/* Modal for Adding/Editing Users */}
         {showModal && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
-              <div className="mt-3 text-right">
-                <h3 className="text-lg font-bold mb-4">
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3 className="text-xl font-bold text-right">
                   {modalType === 'add' ? 'إضافة مستخدم جديد' : 'تعديل المستخدم'}
                 </h3>
-                
+              </div>
+              <div className="modal-body">
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
+                  <div className="form-group">
+                    <label className="form-label">الاسم الكامل</label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="form-input"
                       required
                     />
                   </div>
-                  
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+
+                  <div className="form-group">
+                    <label className="form-label">البريد الإلكتروني</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="form-input"
                       required
                     />
                   </div>
-                  
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+
+                  <div className="form-group">
+                    <label className="form-label">رقم الهاتف</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="form-input"
                       required
                     />
                   </div>
-                  
+
                   {modalType === 'add' && (
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
+                    <div className="form-group">
+                      <label className="form-label">كلمة المرور</label>
                       <input
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="form-input"
                         required
                       />
                     </div>
                   )}
-                  
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">الدور</label>
+
+                  <div className="form-group">
+                    <label className="form-label">الدور</label>
                     <select
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      className="form-select"
                       required
                     >
                       <option value="utilisateur">المستخدم</option>
@@ -307,18 +306,20 @@ const UsersPage = () => {
                       <option value="admin">مدير النظام</option>
                     </select>
                   </div>
-                  
-                  <div className="flex justify-end space-x-3 space-x-reverse mt-6">
+
+                  <div className="modal-footer">
                     <button
                       type="button"
                       onClick={() => setShowModal(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      className="action-btn"
+                      style={{backgroundColor: '#e2e8f0', color: '#475569'}}
                     >
                       إلغاء
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                      className="action-btn"
+                      style={{backgroundColor: '#6366f1', color: 'white'}}
                     >
                       {modalType === 'add' ? 'إضافة' : 'تحديث'}
                     </button>

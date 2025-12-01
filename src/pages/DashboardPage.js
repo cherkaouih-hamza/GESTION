@@ -14,14 +14,14 @@ const StatCard = ({ title, value, icon, color = 'blue' }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <div className="flex items-center">
-        <div className={`p-3 rounded-lg ${colorClasses[color]} text-white`}>
+    <div className="stat-card">
+      <div className="stat-card-content">
+        <div className={`stat-card-icon ${colorClasses[color]}`}>
           {icon}
         </div>
-        <div className="mr-4 text-right">
-          <p className="text-gray-500 text-sm">{title}</p>
-          <p className="text-2xl font-bold">{value}</p>
+        <div className="stat-card-info">
+          <p className="stat-card-title">{title}</p>
+          <p className="stat-card-value">{value}</p>
         </div>
       </div>
     </div>
@@ -38,23 +38,28 @@ const TaskTypeChart = ({ tasks }) => {
   const counts = Object.values(typeCounts);
 
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <h3 className="text-lg font-bold mb-4 text-right">توزيع المهام حسب النوع</h3>
+    <div className="chart-section">
+      <div className="chart-section-header">
+        <div className="chart-section-header-line"></div>
+        <h3 className="chart-section-title">توزيع المهام حسب النوع</h3>
+      </div>
       <div className="space-y-3">
         {types.map((type, index) => (
-          <div key={type} className="flex items-center justify-between">
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div 
-                className="bg-blue-600 h-2.5 rounded-full" 
+          <div key={type} className="progress-bar-container">
+            <div className="progress-bar">
+              <div
+                className="progress-bar-fill"
                 style={{ width: `${(counts[index] / tasks.length) * 100}%` }}
               ></div>
             </div>
-            <span className="mr-3 text-sm">{type}</span>
-            <span className="text-sm font-medium">{counts[index]}</span>
+            <span className="progress-bar-label">{type}</span>
+            <span className="progress-bar-count">{counts[index]}</span>
           </div>
         ))}
         {types.length === 0 && (
-          <p className="text-gray-500 text-center py-4">لا توجد مهام</p>
+          <div className="empty-state">
+            <p className="text-gray-500">لا توجد مهام</p>
+          </div>
         )}
       </div>
     </div>
@@ -95,101 +100,109 @@ const DashboardPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-right">
+      <div className="py-6 px-4 sm:px-6 lg:px-8 dashboard-page">
+        <div className="dashboard-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">
             مرحبًا، {currentUser?.name}
           </h1>
-          <p className="text-gray-600 text-right mt-1">
-            {currentUser?.role === 'admin' 
-              ? 'أنت تستخدم حساب المدير' 
+          <p className="text-right opacity-90">
+            {currentUser?.role === 'admin'
+              ? 'أنت تستخدم حساب المدير'
               : currentUser?.role === 'responsable'
               ? 'أنت تستخدم حساب المسؤول'
               : 'أنت تستخدم حساب المستخدم'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          <StatCard 
-            title="عدد المهام الجارية" 
-            value={stats.activeTasks} 
-            icon="🔄" 
+        <div className="stats-cards">
+          <StatCard
+            title="عدد المهام الجارية"
+            value={stats.activeTasks}
+            icon="🔄"
             color="blue"
           />
-          <StatCard 
-            title="عدد المهام المكتملة" 
-            value={stats.completedTasks} 
-            icon="✅" 
+          <StatCard
+            title="عدد المهام المكتملة"
+            value={stats.completedTasks}
+            icon="✅"
             color="green"
           />
-          <StatCard 
-            title="المهام في انتظار الموافقة" 
-            value={stats.pendingTasks} 
-            icon="⏳" 
+          <StatCard
+            title="المهام في انتظار الموافقة"
+            value={stats.pendingTasks}
+            icon="⏳"
             color="yellow"
           />
-          
+
           {currentUser?.role === 'admin' && (
             <>
-              <StatCard 
-                title="عدد المستخدمين" 
-                value={stats.totalUsers} 
-                icon="👥" 
+              <StatCard
+                title="عدد المستخدمين"
+                value={stats.totalUsers}
+                icon="👥"
                 color="purple"
               />
-              <StatCard 
-                title="المستخدمين غير النشطين" 
-                value={stats.inactiveUsers} 
-                icon="👤" 
+              <StatCard
+                title="المستخدمين غير النشطين"
+                value={stats.inactiveUsers}
+                icon="👤"
                 color="red"
               />
             </>
           )}
-          
-          <StatCard 
-            title="المهام غير النشطة" 
-            value={stats.inactiveTasks} 
-            icon="❌" 
+
+          <StatCard
+            title="المهام غير النشطة"
+            value={stats.inactiveTasks}
+            icon="❌"
             color="red"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TaskTypeChart tasks={allTasks} />
-          
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="text-lg font-bold mb-4 text-right">أقرب مهلة</h3>
+
+          <div className="next-deadline-section">
+            <div className="next-deadline-header">
+              <div className="next-deadline-header-line"></div>
+              <h3 className="next-deadline-title">أقرب مهلة</h3>
+            </div>
             {nextDeadline ? (
-              <div className="text-right">
-                <p className="font-medium">{nextDeadline.name}</p>
-                <p className="text-gray-600 mt-1">النوع: {nextDeadline.type}</p>
-                <p className="text-gray-600">تاريخ الانتهاء: {new Date(nextDeadline.endDate).toLocaleDateString('ar-MA')}</p>
-                <p className="mt-2 px-3 py-1 bg-blue-100 text-blue-800 rounded inline-block">
+              <div className="deadline-item">
+                <p className="deadline-name">{nextDeadline.name}</p>
+                <p className="deadline-type">النوع: {nextDeadline.type}</p>
+                <p className="deadline-date">تاريخ الانتهاء: {new Date(nextDeadline.endDate).toLocaleDateString('ar-MA')}</p>
+                <p className="deadline-status">
                   {nextDeadline.status}
                 </p>
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-4">لا توجد مهام مجدولة</p>
+              <div className="empty-state">
+                <p className="text-gray-500">لا توجد مهام مجدولة</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* User-specific dashboard for utilisateur role */}
         {currentUser?.role === 'utilisateur' && (
-          <div className="mt-6 bg-white rounded-xl shadow p-6">
-            <h3 className="text-lg font-bold mb-4 text-right">لوحة تحكم المستخدم</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <p className="text-2xl font-bold">{userTasks.filter(t => t.status === 'جارية').length}</p>
-                <p className="text-gray-600">مهامك الجارية</p>
+          <div className="user-dashboard">
+            <div className="user-dashboard-header">
+              <div className="user-dashboard-header-line"></div>
+              <h3 className="user-dashboard-title">لوحة تحكم المستخدم</h3>
+            </div>
+            <div className="user-stats-grid">
+              <div className="user-stat-item">
+                <p className="user-stat-value">{userTasks.filter(t => t.status === 'جارية').length}</p>
+                <p className="user-stat-label">مهامك الجارية</p>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-2xl font-bold">{userTasks.filter(t => t.status === 'مكتملة').length}</p>
-                <p className="text-gray-600">مهامك المكتملة</p>
+              <div className="user-stat-item">
+                <p className="user-stat-value">{userTasks.filter(t => t.status === 'مكتملة').length}</p>
+                <p className="user-stat-label">مهامك المكتملة</p>
               </div>
-              <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <p className="text-2xl font-bold">{userTasks.filter(t => t.status === 'في انتظار الموافقة').length}</p>
-                <p className="text-gray-600">في انتظار الموافقة</p>
+              <div className="user-stat-item">
+                <p className="user-stat-value">{userTasks.filter(t => t.status === 'في انتظار الموافقة').length}</p>
+                <p className="user-stat-label">في انتظار الموافقة</p>
               </div>
             </div>
           </div>

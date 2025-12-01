@@ -78,65 +78,55 @@ const ValidationPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 text-right">صفحة التحقق</h1>
-          <p className="text-gray-600 text-right">قائمة المهام وطلبات التسجيل في انتظار الموافقة</p>
+      <div className="py-6 px-4 sm:px-6 lg:px-8 validation-page">
+        <div className="validation-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">صفحة التحقق</h1>
+          <p className="text-right opacity-90">قائمة المهام وطلبات التسجيل في انتظار الموافقة</p>
         </div>
 
         {/* Tab navigation */}
-        <div className="flex justify-end mb-6 border-b border-gray-200">
-          <nav className="flex space-x-8 space-x-reverse">
-            <button
-              onClick={() => setActiveTab('tasks')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'tasks'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              المهام في الانتظار
-            </button>
-            <button
-              onClick={() => setActiveTab('registrations')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'registrations'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              طلبات التسجيل
-            </button>
-          </nav>
+        <div className="tab-navigation">
+          <button
+            onClick={() => setActiveTab('tasks')}
+            className={`tab-item ${activeTab === 'tasks' ? 'active' : ''}`}
+          >
+            المهام في الانتظار
+          </button>
+          <button
+            onClick={() => setActiveTab('registrations')}
+            className={`tab-item ${activeTab === 'registrations' ? 'active' : ''}`}
+          >
+            طلبات التسجيل
+          </button>
         </div>
 
         {/* Stats Card */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-xl shadow p-6 text-center">
-            <p className="text-2xl font-bold text-blue-600">
+        <div className="summary-cards">
+          <div className="summary-card">
+            <p className="summary-card-value pending">
               {activeTab === 'tasks' ? tasks.length : registrations.filter(r => r.status === 'pending').length}
             </p>
-            <p className="text-gray-600">
+            <p className="summary-card-title">
               {activeTab === 'tasks' ? 'المهام في الانتظار' : 'طلبات التسجيل'}
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow p-6 text-center">
-            <p className="text-2xl font-bold text-green-600">
+          <div className="summary-card">
+            <p className="summary-card-value approved">
               {activeTab === 'tasks' ?
                 getAllTasks().filter(t => t.status === 'جارية').length :
                 registrations.filter(r => r.status === 'approved').length}
             </p>
-            <p className="text-gray-600">
+            <p className="summary-card-title">
               {activeTab === 'tasks' ? 'المهام الجارية' : 'الحسابات المقبولة'}
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow p-6 text-center">
-            <p className="text-2xl font-bold text-red-600">
+          <div className="summary-card">
+            <p className="summary-card-value rejected">
               {activeTab === 'tasks' ?
                 getAllTasks().filter(t => t.status === 'مرفوضة').length :
                 registrations.filter(r => r.status === 'rejected').length}
             </p>
-            <p className="text-gray-600">
+            <p className="summary-card-title">
               {activeTab === 'tasks' ? 'المهام المرفوضة' : 'الحسابات المرفوضة'}
             </p>
           </div>
@@ -145,58 +135,58 @@ const ValidationPage = () => {
         {/* Content based on active tab */}
         {activeTab === 'tasks' ? (
           /* Tasks List */
-          <div className="bg-white rounded-xl shadow overflow-hidden">
+          <div className="table-container">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="table">
+                <thead>
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       اسم المهمة
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       نوع المهمة
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       المستخدم
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       التواريخ
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       رابط الوسائط
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       الملاحظة
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       الإجراءات
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {tasks.length > 0 ? (
                     tasks.map((task) => (
-                      <tr key={task.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <div className="text-sm font-medium text-gray-900">{task.name}</div>
+                      <tr key={task.id}>
+                        <td className="text-right">
+                          <div className="font-medium text-gray-900">{task.name}</div>
                           <div className="text-sm text-gray-500 mt-1">{task.description}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {task.type}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {task.createdBy === 3 ? 'المستخدم' : task.createdBy === 2 ? 'المسؤول' : 'المدير'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {new Date(task.startDate).toLocaleDateString('ar-MA')} - {new Date(task.endDate).toLocaleDateString('ar-MA')}
                         </td>
-                        <td className="px-6 py-4 text-sm text-right">
+                        <td className="text-right">
                           {task.mediaLink ? (
                             <a
                               href={task.mediaLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-indigo-600 hover:text-indigo-900"
+                              className="text-emerald-600 hover:text-emerald-800"
                             >
                               عرض
                             </a>
@@ -204,25 +194,25 @@ const ValidationPage = () => {
                             'لا يوجد'
                           )}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 text-right">
+                        <td className="text-right">
                           {/* Field for responsables to add comments */}
                           <textarea
                             placeholder="أضف ملاحظة إن وجدت..."
-                            className="w-full border border-gray-300 rounded-md px-3 py-1 text-sm"
+                            className="form-textarea text-sm"
                             rows="2"
                           />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                          <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-2 md:space-x-reverse">
+                        <td className="text-right">
+                          <div className="flex flex-col md:flex-row md:space-x-2 md:space-x-reverse">
                             <button
                               onClick={() => handleApprove(task.id, 'task')}
-                              className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
+                              className="action-btn approve-btn"
                             >
                               قبول المهمة
                             </button>
                             <button
                               onClick={() => openRejectModal(task, 'task')}
-                              className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
+                              className="action-btn reject-btn"
                             >
                               رفض المهمة
                             </button>
@@ -232,8 +222,10 @@ const ValidationPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
-                        لا توجد مهام في انتظار الموافقة
+                      <td colSpan="7" className="empty-state">
+                        <div className="empty-state-icon">📋</div>
+                        <h3 className="text-lg font-medium">لا توجد مهام</h3>
+                        <p className="mt-1">لا توجد مهام في انتظار الموافقة</p>
                       </td>
                     </tr>
                   )}
@@ -243,71 +235,71 @@ const ValidationPage = () => {
           </div>
         ) : (
           /* Registrations List */
-          <div className="bg-white rounded-xl shadow overflow-hidden">
+          <div className="table-container">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="table">
+                <thead>
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       الاسم
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       البريد الإلكتروني
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       رقم الهاتف
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       التسجيل في
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       الحالة
                     </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" className="text-right">
                       الإجراءات
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {registrations.length > 0 ? (
                     registrations.map((reg) => (
-                      <tr key={reg.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <div className="text-sm font-medium text-gray-900">{reg.name}</div>
+                      <tr key={reg.id}>
+                        <td className="text-right">
+                          <div className="font-medium text-gray-900">{reg.name}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {reg.email}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {reg.phone}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        <td className="text-sm text-gray-500 text-right">
                           {new Date(reg.createdAt).toLocaleDateString('ar-MA')}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        <td className="text-right">
+                          <span className={`status-badge ${
                             reg.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
+                              ? 'status-pending'
                               : reg.status === 'approved'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                                ? 'status-approved'
+                                : 'status-rejected'
                           }`}>
                             {reg.status === 'pending' ? 'في الانتظار' :
                              reg.status === 'approved' ? 'مقبول' : 'مرفوض'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                          <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:space-x-2 md:space-x-reverse">
+                        <td className="text-right">
+                          <div className="flex flex-col md:flex-row md:space-x-2 md:space-x-reverse">
                             <button
                               onClick={() => handleApprove(reg.id, 'registration')}
-                              className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm"
+                              className="action-btn approve-btn"
                               disabled={reg.status !== 'pending'}
                             >
                               قبول
                             </button>
                             <button
                               onClick={() => openRejectModal(reg, 'registration')}
-                              className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm"
+                              className="action-btn reject-btn"
                               disabled={reg.status !== 'pending'}
                             >
                               رفض
@@ -318,8 +310,10 @@ const ValidationPage = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
-                        لا توجد طلبات تسجيل في الانتظار
+                      <td colSpan="6" className="empty-state">
+                        <div className="empty-state-icon">📋</div>
+                        <h3 className="text-lg font-medium">لا توجد طلبات</h3>
+                        <p className="mt-1">لا توجد طلبات تسجيل في الانتظار</p>
                       </td>
                     </tr>
                   )}
@@ -331,12 +325,14 @@ const ValidationPage = () => {
 
         {/* Reject Confirmation Modal */}
         {showRejectModal && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
-              <div className="mt-3 text-right">
-                <h3 className="text-lg font-bold mb-2">
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3 className="text-xl font-bold">
                   {processingType === 'task' ? 'رفض المهمة' : 'رفض طلب التسجيل'}
                 </h3>
+              </div>
+              <div className="modal-body">
                 <p className="text-gray-600 mb-4">
                   هل أنت متأكد أنك تريد رفض {processingType === 'task' ? 'المهمة' : 'طلب التسجيل'}
                   "<strong>{itemToProcess?.name}</strong>"؟
@@ -348,21 +344,22 @@ const ValidationPage = () => {
                     value={rejectionComment}
                     onChange={(e) => setRejectionComment(e.target.value)}
                     placeholder="اذكر أسباب الرفض أو ملاحظاتك..."
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="form-textarea"
                     rows="3"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 space-x-reverse">
+                <div className="modal-footer">
                   <button
                     onClick={closeRejectModal}
-                    className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    className="action-btn"
+                    style={{backgroundColor: '#e2e8f0', color: '#475569'}}
                   >
                     إلغاء
                   </button>
                   <button
                     onClick={() => handleReject(itemToProcess?.id, processingType)}
-                    className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700"
+                    className="action-btn reject-btn"
                   >
                     تأكيد الرفض
                   </button>

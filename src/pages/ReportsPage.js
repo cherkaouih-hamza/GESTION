@@ -180,48 +180,40 @@ const ReportsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
-        <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">تقرير المهام</h1>
-          <p className="text-gray-600">عرض تحليلي لحالة المهام حسب التاريخ والقطب</p>
+      <div className="py-6 px-4 sm:px-6 lg:px-8 reports-page">
+        <div className="reports-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">تقرير المهام</h1>
+          <p className="text-right opacity-90">عرض تحليلي لحالة المهام حسب التاريخ والقطب</p>
         </div>
 
-      {/* Filters Section */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-10 border border-gray-200">
-        <div className="flex items-center mb-6">
-          <div className="w-2 h-8 bg-blue-600 rounded-full ml-3"></div>
-          <h2 className="text-xl font-semibold text-gray-800">مرشحات التقرير</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">من تاريخ</label>
-            <div className="relative">
+        {/* Filters Section */}
+        <div className="reports-filters-section">
+          <h2 className="text-xl font-semibold text-right mb-4">مرشحات التقرير</h2>
+          <div className="reports-filter-group">
+            <div className="reports-filter-item">
+              <label className="text-right">من تاريخ</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full"
               />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">إلى تاريخ</label>
-            <div className="relative">
+            <div className="reports-filter-item">
+              <label className="text-right">إلى تاريخ</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full"
               />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">القطب</label>
-            <div className="relative">
+            <div className="reports-filter-item">
+              <label className="text-right">القطب</label>
               <select
                 value={selectedPole}
                 onChange={(e) => setSelectedPole(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+                className="w-full"
               >
                 {poles.map((pole) => (
                   <option key={pole.value} value={pole.value}>
@@ -230,145 +222,132 @@ const ReportsPage = () => {
                 ))}
               </select>
             </div>
-          </div>
-          <div className="flex items-end space-x-3 space-x-reverse">
-            <button
-              onClick={handleFilter}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
-            >
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-              </svg>
-              تطبيق التصفية
-            </button>
-            <button
-              onClick={handleReset}
-              className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl hover:from-amber-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
-            >
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-              إعادة تعيين
-            </button>
+            <div className="action-buttons-container">
+              <button
+                onClick={handleFilter}
+                className="action-btn filter-btn"
+              >
+                تطبيق التصفية
+              </button>
+              <button
+                onClick={handleReset}
+                className="action-btn reset-btn"
+              >
+                إعادة تعيين
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-blue-100 text-sm">إجمالي المهام</p>
-              <p className="text-3xl font-bold mt-2">{totalTasks}</p>
+        {/* Summary Cards */}
+        <div className="summary-cards">
+          <div className="summary-card">
+            <div className="summary-card-content">
+              <div className="summary-card-info">
+                <p className="summary-card-title">إجمالي المهام</p>
+                <p className="summary-card-value">{totalTasks}</p>
+              </div>
+              <div className="summary-card-icon">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
             </div>
-            <div className="bg-blue-400 bg-opacity-30 p-3 rounded-xl">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
+          </div>
+          <div className="summary-card" style={{background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'}}>
+            <div className="summary-card-content">
+              <div className="summary-card-info">
+                <p className="summary-card-title">منتهية</p>
+                <p className="summary-card-value">{completedTasks}</p>
+              </div>
+              <div className="summary-card-icon">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="summary-card" style={{background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'}}>
+            <div className="summary-card-content">
+              <div className="summary-card-info">
+                <p className="summary-card-title">معلقة</p>
+                <p className="summary-card-value">{pendingTasks}</p>
+              </div>
+              <div className="summary-card-icon">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="summary-card" style={{background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'}}>
+            <div className="summary-card-content">
+              <div className="summary-card-info">
+                <p className="summary-card-title">قيد التنفيذ</p>
+                <p className="summary-card-value">{inProgressTasks}</p>
+              </div>
+              <div className="summary-card-icon">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-green-100 text-sm">منتهية</p>
-              <p className="text-3xl font-bold mt-2">{completedTasks}</p>
-            </div>
-            <div className="bg-green-400 bg-opacity-30 p-3 rounded-xl">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-orange-100 text-sm">معلقة</p>
-              <p className="text-3xl font-bold mt-2">{pendingTasks}</p>
-            </div>
-            <div className="bg-orange-400 bg-opacity-30 p-3 rounded-xl">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-indigo-100 text-sm">قيد التنفيذ</p>
-              <p className="text-3xl font-bold mt-2">{inProgressTasks}</p>
-            </div>
-            <div className="bg-indigo-400 bg-opacity-30 p-3 rounded-xl">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Charts Section */}
-      {loading && (
-        <div className="flex justify-center items-center h-80">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+        {/* Charts Section */}
+        {loading && (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
             <p className="text-gray-600">جاري تحميل التقرير...</p>
           </div>
-        </div>
-      )}
+        )}
 
-      {!loading && reportData ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Status Distribution Chart */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-2 h-6 bg-blue-500 rounded-full ml-3"></div>
-              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب الحالة</h3>
+        {!loading && reportData ? (
+          <div className="charts-container">
+            {/* Status Distribution Chart */}
+            <div className="chart-card">
+              <div className="chart-card-header">
+                <div className="chart-card-header-line"></div>
+                <h3 className="chart-card-title">توزيع المهام حسب الحالة</h3>
+              </div>
+              <div className="chart-container">
+                <Pie data={reportData.status} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+              </div>
             </div>
-            <div className="h-80 flex items-center justify-center">
-              <Pie data={reportData.status} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
-            </div>
-          </div>
 
-          {/* Type Distribution Chart */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-2 h-6 bg-purple-500 rounded-full ml-3"></div>
-              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب النوع</h3>
+            {/* Type Distribution Chart */}
+            <div className="chart-card">
+              <div className="chart-card-header">
+                <div className="chart-card-header-line"></div>
+                <h3 className="chart-card-title">توزيع المهام حسب النوع</h3>
+              </div>
+              <div className="chart-container">
+                <Pie data={reportData.type} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+              </div>
             </div>
-            <div className="h-80 flex items-center justify-center">
-              <Pie data={reportData.type} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
-            </div>
-          </div>
 
-          {/* Pole Distribution Chart */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-2 h-6 bg-pink-500 rounded-full ml-3"></div>
-              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب القطب</h3>
-            </div>
-            <div className="h-80 flex items-center justify-center">
-              <Pie data={reportData.pole} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+            {/* Pole Distribution Chart */}
+            <div className="chart-card">
+              <div className="chart-card-header">
+                <div className="chart-card-header-line"></div>
+                <h3 className="chart-card-title">توزيع المهام حسب القطب</h3>
+              </div>
+              <div className="chart-container">
+                <Pie data={reportData.pole} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        !loading && (
-          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-200">
-            <div className="flex justify-center mb-6">
-              <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
+        ) : (
+          !loading && (
+            <div className="empty-state">
+              <div className="empty-state-icon">📊</div>
+              <h3 className="empty-state-title">يرجى تطبيق المرشحات لعرض التقرير</h3>
+              <p className="empty-state-description">اختر التواريخ والقطب لبدء تحليل المهام</p>
             </div>
-            <p className="text-gray-600 text-lg">يرجى تطبيق المرشحات لعرض التقرير</p>
-            <p className="text-gray-500 mt-2">اختر التواريخ والقطب لبدء تحليل المهام</p>
-          </div>
-        )
-      )}
-    </div>
+          )
+        )}
+      </div>
     </DashboardLayout>
   );
 };

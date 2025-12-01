@@ -447,66 +447,46 @@ const SettingsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
-        <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">إعدادات النظام</h1>
-          <p className="text-gray-600">إدارة إعدادات النظام وتخصيصه</p>
+      <div className="py-6 px-4 sm:px-6 lg:px-8 settings-page">
+        <div className="settings-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">إعدادات النظام</h1>
+          <p className="text-right opacity-90">إدارة إعدادات النظام وتخصيصه</p>
         </div>
 
-      {/* Tabs Navigation */}
-      <div className="mb-10">
-        <div className="bg-white rounded-2xl shadow-xl p-2 border border-gray-200">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setActiveTab('general')}
-              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
-                activeTab === 'general'
-                  ? 'bg-amber-500 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
-              }`}
-            >
-              الإعدادات العامة
-            </button>
-            <button
-              onClick={() => setActiveTab('notifications')}
-              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
-                activeTab === 'notifications'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
-              }`}
-            >
-              الإشعارات
-            </button>
-            <button
-              onClick={() => setActiveTab('security')}
-              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
-                activeTab === 'security'
-                  ? 'bg-red-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
-              }`}
-            >
-              الأمان
-            </button>
-            <button
-              onClick={() => setActiveTab('info')}
-              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
-                activeTab === 'info'
-                  ? 'bg-green-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-amber-600'
-              }`}
-            >
-              معلومات النظام
-            </button>
-          </div>
+        {/* Tabs Navigation */}
+        <div className="tab-navigation">
+          <button
+            onClick={() => setActiveTab('general')}
+            className={`tab-item ${activeTab === 'general' ? 'active' : ''}`}
+          >
+            الإعدادات العامة
+          </button>
+          <button
+            onClick={() => setActiveTab('notifications')}
+            className={`tab-item ${activeTab === 'notifications' ? 'active' : ''}`}
+          >
+            الإشعارات
+          </button>
+          <button
+            onClick={() => setActiveTab('security')}
+            className={`tab-item ${activeTab === 'security' ? 'active' : ''}`}
+          >
+            الأمان
+          </button>
+          <button
+            onClick={() => setActiveTab('info')}
+            className={`tab-item ${activeTab === 'info' ? 'active' : ''}`}
+          >
+            معلومات النظام
+          </button>
         </div>
+
+        {/* Tab Content */}
+        {activeTab === 'general' && renderGeneralSettings()}
+        {activeTab === 'notifications' && renderNotificationSettings()}
+        {activeTab === 'security' && renderSecuritySettings()}
+        {activeTab === 'info' && renderSystemInfo()}
       </div>
-
-      {/* Tab Content */}
-      {activeTab === 'general' && renderGeneralSettings()}
-      {activeTab === 'notifications' && renderNotificationSettings()}
-      {activeTab === 'security' && renderSecuritySettings()}
-      {activeTab === 'info' && renderSystemInfo()}
-    </div>
     </DashboardLayout>
   );
 };

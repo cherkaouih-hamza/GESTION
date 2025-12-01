@@ -39,9 +39,9 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="dashboard-layout min-h-screen flex flex-col">
-      {/* Mobile sidebar */}
+      {/* Mobile sidebar - only show on mobile when open */}
       {sidebarOpen && (
-        <div className="mobile-sidebar-container">
+        <div className="mobile-sidebar-container md:hidden">
           <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
           <div className="mobile-sidebar">
             <button
@@ -125,7 +125,7 @@ const DashboardLayout = ({ children }) => {
           </button>
         </div>
 
-        <main className="main-content flex-1">
+        <main className="main-content flex-1 md:mr-64">
           {children}
         </main>
       </div>

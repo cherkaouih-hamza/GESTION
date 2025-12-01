@@ -5,6 +5,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     name: '',
     description: '',
     type: 'فيديو',
+    pole: '', // Adding the new Pôle field
     startDate: '',
     endDate: '',
     mediaLink: '',
@@ -18,6 +19,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         name: task.name || '',
         description: task.description || '',
         type: task.type || 'فيديو',
+        pole: task.pole || '', // Adding the pole field for existing tasks
         startDate: task.startDate || '',
         endDate: task.endDate || '',
         mediaLink: task.mediaLink || '',
@@ -28,6 +30,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         name: '',
         description: '',
         type: 'فيديو',
+        pole: '', // Adding the pole field for new tasks
         startDate: '',
         endDate: '',
         mediaLink: '',
@@ -129,19 +132,36 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">حالة التفعيل</label>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            />
-            <span className="mr-2 text-sm text-gray-700">
-              {formData.isActive ? 'مفعلة' : 'غير مفعلة'}
-            </span>
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">القطب (Pôle)</label>
+          <select
+            name="pole"
+            value={formData.pole}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="">اختر القطب</option>
+            <option value="التقنية">التقنية</option>
+            <option value="الإعلام">الإعلام</option>
+            <option value="ال Pedagogical">ال Pedagogical</option>
+            <option value="الإدارية">الإدارية</option>
+            <option value="ال Pedagogique">ال Pedagogique</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">حالة التفعيل</label>
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            name="isActive"
+            checked={formData.isActive}
+            onChange={handleChange}
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <span className="mr-2 text-sm text-gray-700">
+            {formData.isActive ? 'مفعلة' : 'غير مفعلة'}
+          </span>
         </div>
       </div>
 

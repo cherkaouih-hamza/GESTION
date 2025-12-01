@@ -17,6 +17,7 @@ const TasksPage = () => {
   // Filter states
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
+  const [poleFilter, setPoleFilter] = useState(''); // Adding the new Pôle filter
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -36,36 +37,41 @@ const TasksPage = () => {
 
   useEffect(() => {
     let result = tasks;
-    
+
     // Apply status filter
     if (statusFilter) {
       result = result.filter(task => task.status === statusFilter);
     }
-    
+
     // Apply type filter
     if (typeFilter) {
       result = result.filter(task => task.type === typeFilter);
     }
-    
+
+    // Apply pole filter
+    if (poleFilter) {
+      result = result.filter(task => task.pole === poleFilter);
+    }
+
     // Apply date filters
     if (dateFrom) {
       result = result.filter(task => new Date(task.startDate) >= new Date(dateFrom));
     }
-    
+
     if (dateTo) {
       result = result.filter(task => new Date(task.endDate) <= new Date(dateTo));
     }
-    
+
     // Apply search query
     if (searchQuery) {
-      result = result.filter(task => 
+      result = result.filter(task =>
         task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         task.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     setFilteredTasks(result);
-  }, [tasks, statusFilter, typeFilter, dateFrom, dateTo, searchQuery]);
+  }, [tasks, statusFilter, typeFilter, poleFilter, dateFrom, dateTo, searchQuery]);
 
   const handleCreateTask = (taskData) => {
     const newTask = createTask(taskData);
@@ -148,7 +154,7 @@ const TasksPage = () => {
                 <option value="مرفوضة">مرفوضة</option>
               </select>
             </div>
-            
+
             <div className="text-right">
               <label className="block text-sm font-medium text-gray-700 mb-1">نوع المهمة</label>
               <select
@@ -164,7 +170,23 @@ const TasksPage = () => {
                 <option value="أخرى">أخرى</option>
               </select>
             </div>
-            
+
+            <div className="text-right">
+              <label className="block text-sm font-medium text-gray-700 mb-1">القطب</label>
+              <select
+                value={poleFilter}
+                onChange={(e) => setPoleFilter(e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="">الكل</option>
+                <option value="التقنية">التقنية</option>
+                <option value="الإعلام">الإعلام</option>
+                <option value="ال Pedagogical">ال Pedagogical</option>
+                <option value="الإدارية">الإدارية</option>
+                <option value="ال Pedagogique">ال Pedagogique</option>
+              </select>
+            </div>
+
             <div className="text-right">
               <label className="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
               <input
@@ -174,7 +196,9 @@ const TasksPage = () => {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
-            
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div className="text-right">
               <label className="block text-sm font-medium text-gray-700 mb-1">إلى تاريخ</label>
               <input
@@ -184,17 +208,17 @@ const TasksPage = () => {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
-          </div>
-          
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">البحث</label>
-            <input
-              type="text"
-              placeholder="البحث في أسماء المهام ووصفها..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
+
+            <div className="text-right">
+              <label className="block text-sm font-medium text-gray-700 mb-1">البحث</label>
+              <input
+                type="text"
+                placeholder="البحث في أسماء المهام ووصفها..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
           </div>
         </div>
 
@@ -209,6 +233,9 @@ const TasksPage = () => {
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     نوع المهمة
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    القطب
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الحالة
@@ -235,6 +262,9 @@ const TasksPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                         {task.type}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        {task.pole || 'غير محدد'}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           task.status === 'جارية' ? 'bg-green-100 text-green-800' :
@@ -251,9 +281,9 @@ const TasksPage = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-right">
                         {task.mediaLink ? (
-                          <a 
-                            href={task.mediaLink} 
-                            target="_blank" 
+                          <a
+                            href={task.mediaLink}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-indigo-600 hover:text-indigo-900"
                           >
@@ -285,7 +315,7 @@ const TasksPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
                       لا توجد مهام
                     </td>
                   </tr>

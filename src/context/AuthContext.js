@@ -13,53 +13,45 @@ export const AuthProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
 
   const login = async (identifier, password) => {
-    // Dans une application réelle, vous feriez un appel API ici
-    // Pour l'instant, nous simulons la connexion avec des données fixes
-    const mockUsers = [
-      {
-        id: 1,
-        email: 'admin@example.com',
-        phone: '0612345678',
-        password: 'admin123',
-        name: 'مدير النظام',
-        role: 'admin',
-        isActive: true
-      },
-      {
-        id: 2,
-        email: 'responsable@example.com',
-        phone: '0623456789',
-        password: 'responsable123',
-        name: 'المسؤول',
-        role: 'responsable',
-        isActive: true
-      },
-      {
-        id: 3,
-        email: 'utilisateur@example.com',
-        phone: '0634567890',
-        password: 'utilisateur123',
-        name: 'المستخدم',
-        role: 'utilisateur',
-        isActive: true
+    try {
+      // Récupérer tous les utilisateurs de la base de données
+      const allUsers = await userApi.getAllUsers();
+
+      // Trouver l'utilisateur par email ou téléphone
+      let user = null;
+
+      // Chercher par email
+      const userByEmail = allUsers.find(u => u.email === identifier);
+      if (userByEmail) {
+        user = userByEmail;
+      } else {
+        // Chercher par téléphone
+        const userByPhone = allUsers.find(u => u.phone === identifier || u.phone === identifier.replace(/[^0-9]/g, ''));
+        if (userByPhone) {
+          user = userByPhone;
+        }
       }
-    ];
 
-    // Find user by email or phone
-    const user = mockUsers.find(
-      u => (u.email === identifier || u.phone === identifier) && u.password === password
-    );
+      if (!user) {
+        return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
+      }
 
-    if (!user) {
-      return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
+      // Vérifier le mot de passe (dans une application réelle, le mot de passe devrait être hashé)
+      // Pour l'instant, nous faisons une vérification simple
+      if (user.password !== password) {
+        return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
+      }
+
+      if (user.isActive === false || user.isActive === 'false') {
+        return { success: false, message: 'الحساب غير نشط' };
+      }
+
+      setCurrentUser(user);
+      return { success: true, user };
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      return { success: false, message: 'حدث خطأ أثناء تسجيل الدخول' };
     }
-
-    if (!user.isActive) {
-      return { success: false, message: 'الحساب غير نشط' };
-    }
-
-    setCurrentUser(user);
-    return { success: true, user };
   };
 
   const logout = () => {
@@ -199,9 +191,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   const registerUser = async (userData) => {
-    // Dans une application réelle, vous feriez un appel API ici
-    // Pour l'instant, nous retournons une erreur car la fonctionnalité n'est pas complètement implémentée
-    return { success: false, message: 'La fonctionnalité d\'inscription n\'est pas encore disponible dans la version connectée à la base de données' };
+    try {
+      // Vérifier si l'utilisateur existe déjà
+      const existingUsers = await userApi.getAllUsers();
+      const emailExists = existingUsers.some(u => u.email === userData.email);
+      const phoneExists = existingUsers.some(u => u.phone === userData.phone);
+
+      if (emailExists) {
+        return { success: false, message: 'البريد الإلكتروني مسجل مسبقاً' };
+      }
+
+      if (phoneExists) {
+        return { success: false, message: 'رقم الهاتف مسجل مسبقاً' };
+      }
+
+      // Hash du mot de passe (dans une application réelle, cela devrait être fait côté serveur)
+      // Pour l'instant, nous enregistrons le mot de passe tel quel (à améliorer pour la sécurité)
+      const newUser = {
+        ...userData,
+        password: userData.password, // Ce devrait être un mot de passe hashé dans une application réelle
+        role: 'utilisateur', // Par défaut, un nouvel utilisateur est un utilisateur standard
+        isActive: false, // Par défaut, les nouveaux utilisateurs doivent être approuvés
+        created_at: new Date().toISOString()
+      };
+
+      // Créer l'utilisateur dans la base de données
+      const createdUser = await userApi.createUser(newUser);
+
+      return { success: true, message: 'تم إنشاء الحساب بنجاح', user: createdUser };
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
+      return { success: false, message: 'حدث خطأ أثناء التسجيل' };
+    }
   };
 
   const getRegistrationRequests = async () => {

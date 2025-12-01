@@ -20,7 +20,7 @@ const TasksPage = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [poleFilter, setPoleFilter] = useState(''); // Adding the new Pôle filter
-  const [priorityFilter, setPriorityFilter] = useState(''); // Adding the new Priority filter
+  const [userAssignedFilter, setUserAssignedFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -56,9 +56,9 @@ const TasksPage = () => {
       result = result.filter(task => task.pole === poleFilter);
     }
 
-    // Apply priority filter
-    if (priorityFilter) {
-      result = result.filter(task => task.priority === priorityFilter);
+    // Apply user assigned filter
+    if (userAssignedFilter) {
+      result = result.filter(task => task.assignedTo === userAssignedFilter);
     }
 
     // Apply date filters
@@ -79,7 +79,19 @@ const TasksPage = () => {
     }
 
     setFilteredTasks(result);
-  }, [tasks, statusFilter, typeFilter, poleFilter, dateFrom, dateTo, searchQuery]);
+  }, [tasks, statusFilter, typeFilter, poleFilter, userAssignedFilter, dateFrom, dateTo, searchQuery]);
+
+  // Function to get user name by ID
+  const getUserNameById = (userId) => {
+    // This would typically come from the user context or API
+    const users = {
+      'user1': 'محمد أحمد',
+      'user2': 'فاطمة الزهرة',
+      'user3': 'علي حسن',
+      'user4': 'نور الهدى'
+    };
+    return users[userId] || userId;
+  };
 
   const handleCreateTask = (taskData) => {
     const newTask = createTask(taskData);
@@ -163,34 +175,34 @@ const TasksPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div className="mb-4 md:mb-0">
-            <h1 className="text-2xl font-bold text-gray-900 text-right">متابعة المهام</h1>
-            <p className="text-gray-600 text-right">قائمة المهام وحالتها الحالية</p>
-          </div>
-          <div className="flex justify-end">
-            <button
-              onClick={() => {
-                setCurrentTask(null);
-                setShowForm(true);
-              }}
-              className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-md flex items-center"
-            >
-              <span className="ml-2">+ إنشاء مهمة</span>
-            </button>
-          </div>
+      <div className="py-6 px-4 sm:px-6 lg:px-8 tasks-page">
+        <div className="tasks-header rounded-xl mb-6">
+          <h1 className="text-2xl font-bold text-right">متابعة المهام</h1>
+          <p className="text-right opacity-90">قائمة المهام وحالتها الحالية</p>
+        </div>
+
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={() => {
+              setCurrentTask(null);
+              setShowForm(true);
+            }}
+            className="create-task-btn"
+          >
+            + إنشاء مهمة
+          </button>
         </div>
 
         {/* Filters Section */}
-        <div className="bg-white rounded-xl shadow p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">حالة المهمة</label>
+        <div className="filters-section">
+          <h2 className="text-xl font-semibold text-right mb-4">تصفية المهام</h2>
+          <div className="filter-group">
+            <div className="filter-item">
+              <label className="text-right">حالة المهمة</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               >
                 <option value="">الكل</option>
                 <option value="مسودة">مسودة</option>
@@ -201,12 +213,12 @@ const TasksPage = () => {
               </select>
             </div>
 
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">نوع المهمة</label>
+            <div className="filter-item">
+              <label className="text-right">نوع المهمة</label>
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               >
                 <option value="">الكل</option>
                 <option value="فيديو">فيديو</option>
@@ -217,12 +229,12 @@ const TasksPage = () => {
               </select>
             </div>
 
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">القطب</label>
+            <div className="filter-item">
+              <label className="text-right">القطب</label>
               <select
                 value={poleFilter}
                 onChange={(e) => setPoleFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               >
                 <option value="">الكل</option>
                 <option value="التقنية">التقنية</option>
@@ -233,113 +245,111 @@ const TasksPage = () => {
               </select>
             </div>
 
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">الأولوية</label>
+            <div className="filter-item">
+              <label className="text-right">المستخدم المكلف</label>
               <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                value={userAssignedFilter}
+                onChange={(e) => setUserAssignedFilter(e.target.value)}
+                className="w-full"
               >
                 <option value="">الكل</option>
-                <option value="Faible">ضعيفة</option>
-                <option value="Normal">عادي</option>
-                <option value="Important">مهم</option>
-                <option value="Urgent">عاجل</option>
+                <option value="user1">محمد أحمد</option>
+                <option value="user2">فاطمة الزهرة</option>
+                <option value="user3">علي حسن</option>
+                <option value="user4">نور الهدى</option>
               </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
+          <div className="filter-group mt-4">
+            <div className="filter-item">
+              <label className="text-right">من تاريخ</label>
               <input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">إلى تاريخ</label>
+            <div className="filter-item">
+              <label className="text-right">إلى تاريخ</label>
               <input
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               />
             </div>
 
-            <div className="text-right">
-              <label className="block text-sm font-medium text-gray-700 mb-1">البحث</label>
+            <div className="filter-item">
+              <label className="text-right">البحث</label>
               <input
                 type="text"
                 placeholder="البحث في أسماء المهام ووصفها..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full"
               />
             </div>
           </div>
         </div>
 
         {/* Tasks List */}
-        <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="tasks-table-container">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="tasks-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     اسم المهمة
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     نوع المهمة
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     القطب
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الأولوية
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     المستخدم المكلف
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الحالة
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     التواريخ
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     رابط الوسائط
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="text-right">
                     الإجراءات
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {filteredTasks.length > 0 ? (
                   filteredTasks.map((task) => (
-                    <tr key={task.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="text-sm font-medium text-gray-900">{task.name}</div>
+                    <tr key={task.id}>
+                      <td className="text-right">
+                        <div className="font-medium text-gray-900">{task.name}</div>
                         <div className="text-sm text-gray-500 mt-1">{task.description}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {task.type}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {task.pole || 'غير محدد'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          task.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
-                          task.priority === 'Important' ? 'bg-amber-100 text-amber-800' :
-                          task.priority === 'Normal' ? 'bg-gray-100 text-gray-800' :
-                          task.priority === 'Faible' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      <td className="text-right">
+                        <span className={`priority-badge ${
+                          task.priority === 'Urgent' ? 'priority-urgent' :
+                          task.priority === 'Important' ? 'priority-important' :
+                          task.priority === 'Normal' ? 'priority-normal' :
+                          task.priority === 'Faible' ? 'priority-faible' : 'priority-normal'
                         }`}>
                           {task.priority === 'Urgent' ? '⚠️ عاجل' :
                            task.priority === 'Important' ? 'مهم' :
@@ -347,35 +357,32 @@ const TasksPage = () => {
                            task.priority === 'Faible' ? 'ضعيفة' : task.priority}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {task.assignedTo ? (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
-                            {task.assignedTo === 'user1' ? 'محمد أحمد' :
-                             task.assignedTo === 'user2' ? 'فاطمة الزهرة' :
-                             task.assignedTo === 'user3' ? 'علي حسن' :
-                             task.assignedTo === 'user4' ? 'نور الهدى' : task.assignedTo}
+                          <span className="user-badge">
+                            {getUserNameById(task.assignedTo)}
                           </span>
                         ) : (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          <span className="user-badge">
                             غير معين
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          task.status === 'جارية' ? 'bg-amber-100 text-amber-800' :
-                          task.status === 'مكتملة' ? 'bg-green-100 text-green-800' :
-                          task.status === 'في انتظار الموافقة' ? 'bg-yellow-100 text-yellow-800' :
-                          task.status === 'مرفوضة' ? 'bg-red-100 text-red-800' :
-                          task.status === 'مسودة' ? 'bg-gray-100 text-gray-800' : 'bg-purple-100 text-purple-800'
+                      <td className="text-right">
+                        <span className={`status-badge ${
+                          task.status === 'جارية' ? 'status-in-progress' :
+                          task.status === 'مكتملة' ? 'status-completed' :
+                          task.status === 'في انتظار الموافقة' ? 'status-pending' :
+                          task.status === 'مرفوضة' ? 'status-rejected' :
+                          task.status === 'مسودة' ? 'status-draft' : 'status-draft'
                         }`}>
                           {task.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 text-right">
+                      <td className="text-sm text-gray-500 text-right">
                         {new Date(task.startDate).toLocaleDateString('ar-MA')} - {new Date(task.endDate).toLocaleDateString('ar-MA')}
                       </td>
-                      <td className="px-6 py-4 text-sm text-right">
+                      <td className="text-right">
                         {task.mediaLink ? (
                           <a
                             href={task.mediaLink}
@@ -389,19 +396,19 @@ const TasksPage = () => {
                           'لا يوجد'
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      <td className="text-right">
                         <div className="flex space-x-2 space-x-reverse">
                           {canModifyTask(task) && (
                             <button
                               onClick={() => handleEditTask(task)}
-                              className="text-emerald-600 hover:text-emerald-800"
+                              className="action-btn edit-btn"
                             >
                               تعديل
                             </button>
                           )}
                           <button
                             onClick={() => handleConfirmDelete(task)}
-                            className="text-red-600 hover:text-red-800"
+                            className="action-btn delete-btn"
                           >
                             حذف
                           </button>
@@ -411,8 +418,12 @@ const TasksPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
-                      لا توجد مهام
+                    <td colSpan="9" className="text-center text-gray-500 py-12">
+                      <div className="empty-state">
+                        <div className="empty-state-icon">📋</div>
+                        <h3 className="text-lg font-medium">لا توجد مهام</h3>
+                        <p className="mt-1">لا توجد مهام تطابق المعايير المحددة</p>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -423,14 +434,16 @@ const TasksPage = () => {
 
         {/* Task Form Modal */}
         {showForm && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-              <div className="mt-3">
-                <h3 className="text-lg font-bold text-right mb-4">
+          <div className="task-form-modal">
+            <div className="task-form-modal-content">
+              <div className="task-form-header">
+                <h3 className="text-xl font-bold text-right">
                   {currentTask ? 'تعديل مهمة' : 'إنشاء مهمة جديدة'}
                 </h3>
-                <TaskForm 
-                  task={currentTask} 
+              </div>
+              <div className="task-form-body">
+                <TaskForm
+                  task={currentTask}
                   onSubmit={currentTask ? handleUpdateTask : handleCreateTask}
                   onCancel={() => {
                     setShowForm(false);

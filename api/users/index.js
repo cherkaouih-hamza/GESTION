@@ -43,9 +43,14 @@ export default async function handler(req, res) {
       }
 
       const result = await pool.query(
-        'INSERT INTO users (username, email, password, role, pole, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING *',
-        [username, email, password, role, pole]
+        'INSERT INTO users (username, email, password, role, pole, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *',
+        [username, email, password, role, pole, false]  // is_active = false par défaut
       );
+
+      // Simuler l'envoi d'un email de confirmation
+      // Dans une application réelle, vous utiliseriez un service comme SendGrid, Mailgun ou SMTP
+      console.log(`Email de confirmation envoyé à: ${email}`);
+      console.log(`Message: Merci pour votre inscription. Votre compte est en attente de validation par l'équipe média.`);
 
       console.log('POST user successful, ID:', result.rows[0].id);
       res.status(201).json(result.rows[0]);

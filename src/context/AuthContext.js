@@ -208,15 +208,31 @@ export const AuthProvider = ({ children }) => {
       // Hash du mot de passe (dans une application réelle, cela devrait être fait côté serveur)
       // Pour l'instant, nous enregistrons le mot de passe tel quel (à améliorer pour la sécurité)
       const newUser = {
-        ...userData,
+        username: userData.name, // Utiliser name comme username
+        email: userData.email,
         password: userData.password, // Ce devrait être un mot de passe hashé dans une application réelle
+        phone: userData.phone, // Ajouter le téléphone
         role: 'utilisateur', // Par défaut, un nouvel utilisateur est un utilisateur standard
-        isActive: false, // Par défaut, les nouveaux utilisateurs doivent être approuvés
+        is_active: false, // Par défaut, les nouveaux utilisateurs doivent être approuvés
         created_at: new Date().toISOString()
       };
 
       // Créer l'utilisateur dans la base de données
       const createdUser = await userApi.createUser(newUser);
+
+      // Envoyer un email de confirmation (simulé pour l'instant)
+      try {
+        await fetch('/api/send-confirmation-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: userData.email, name: userData.name })
+        });
+      } catch (emailError) {
+        console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+        // Ne pas échouer l'inscription même si l'email échoue
+      }
 
       return { success: true, message: 'تم إنشاء الحساب بنجاح', user: createdUser };
     } catch (error) {
@@ -226,12 +242,45 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getRegistrationRequests = async () => {
-    // Pour l'instant, retourner un tableau vide
-    return [];
+    try {
+      // Récupérer tous les utilisateurs avec is_active = false (en attente de validation)
+      const allUsers = await userApi.getAllUsers();
+      const pendingUsers = allUsers.filter(user => user.is_active === false || user.is_active === 'false');
+
+      // Formater les données pour qu'elles correspondent au format attendu
+      return pendingUsers.map(user => ({
+        id: user.id,
+        name: user.username || user.name,
+        email: user.email,
+        phone: user.phone || user.telephone || 'N/A',  // Supposant que le numéro de téléphone est stocké dans un champ phone ou telephone
+        status: 'pending',
+        createdAt: user.created_at || user.createdAt
+      }));
+    } catch (error) {
+      console.error('Erreur lors de la récupération des demandes d\'inscription:', error);
+      return [];
+    }
   };
 
-  const updateRegistrationRequestStatus = async (requestId, status, validatedBy = null) => {
-    // Pour l'instant, cette fonction ne fait rien
+  const updateRegistrationRequestStatus = async (requestId, status, validatedBy = null, comment = null) => {
+    try {
+      // Pour accepter ou refuser une demande d'inscription, on met à jour le champ is_active
+      if (status === 'approved') {
+        // Mettre à jour le statut du compte à actif
+        const updatedUser = await userApi.updateUser(requestId, {
+          is_active: true,
+          updated_at: new Date().toISOString()
+        });
+        return updatedUser;
+      } else if (status === 'rejected') {
+        // Supprimer l'utilisateur car son inscription a été refusée
+        const deletedUser = await userApi.deleteUser(requestId);
+        return deletedUser;
+      }
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut de la demande d\'inscription:', error);
+      throw error;
+    }
   };
 
   const getAllUsers = async () => {

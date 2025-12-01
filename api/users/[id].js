@@ -40,12 +40,52 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const { username, email, role, pole } = req.body;
+      const { username, email, role, pole, is_active } = req.body;
 
-      const result = await pool.query(
-        'UPDATE users SET username = $1, email = $2, role = $3, pole = $4, updated_at = NOW() WHERE id = $5 RETURNING *',
-        [username, email, role, pole, id]
-      );
+      // Déterminer les champs à mettre à jour
+      let updateFields = [];
+      let updateValues = [];
+      let updatePlaceholders = [];
+
+      if (username !== undefined) {
+        updateFields.push('username');
+        updateValues.push(username);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+      if (email !== undefined) {
+        updateFields.push('email');
+        updateValues.push(email);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+      if (role !== undefined) {
+        updateFields.push('role');
+        updateValues.push(role);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+      if (pole !== undefined) {
+        updateFields.push('pole');
+        updateValues.push(pole);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+      if (is_active !== undefined) {
+        updateFields.push('is_active');
+        updateValues.push(is_active);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+
+      // Toujours mettre à jour updated_at
+      updateFields.push('updated_at');
+      updateValues.push(new Date().toISOString());
+      updatePlaceholders.push(`$${updateValues.length}`);
+
+      if (updateFields.length <= 1) { // Seulement updated_at est inclus
+        return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
+      }
+
+      const updateQuery = `UPDATE users SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
+      updateValues.push(id);
+
+      const result = await pool.query(updateQuery, updateValues);
 
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });

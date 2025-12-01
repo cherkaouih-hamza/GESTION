@@ -213,49 +213,73 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getAllUsers = async () => {
-    // Dans une application réelle, vous feriez un appel API ici
-    // Pour l'instant, nous retournons des données fixes
-    return [
-      {
-        id: 1,
-        email: 'admin@example.com',
-        phone: '0612345678',
-        name: 'مدير النظام',
-        role: 'admin',
-        isActive: true
-      },
-      {
-        id: 2,
-        email: 'responsable@example.com',
-        phone: '0623456789',
-        name: 'المسؤول',
-        role: 'responsable',
-        isActive: true
-      },
-      {
-        id: 3,
-        email: 'utilisateur@example.com',
-        phone: '0634567890',
-        name: 'المستخدم',
-        role: 'utilisateur',
-        isActive: true
+    try {
+      const response = await fetch('http://localhost:3001/api/users');
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
-    ];
+      const users = await response.json();
+      return users;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+      return [];
+    }
   };
 
   const createUser = async (userData) => {
-    // Dans une application réelle, vous feriez un appel API ici
-    throw new Error('La fonctionnalité de création d\'utilisateur n\'est pas encore implémentée dans la version connectée à la base de données');
+    try {
+      const response = await fetch('http://localhost:3001/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
+      throw error;
+    }
   };
 
   const updateUser = async (userId, userData) => {
-    // Dans une application réelle, vous feriez un appel API ici
-    throw new Error('La fonctionnalité de mise à jour d\'utilisateur n\'est pas encore implémentée dans la version connectée à la base de données');
+    try {
+      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      throw error;
+    }
   };
 
   const deleteUser = async (userId) => {
-    // Dans une application réelle, vous feriez un appel API ici
-    throw new Error('La fonctionnalité de suppression d\'utilisateur n\'est pas encore implémentée dans la version connectée à la base de données');
+    try {
+      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+      throw error;
+    }
   };
 
   const value = {

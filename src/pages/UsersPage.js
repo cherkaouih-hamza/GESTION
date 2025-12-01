@@ -11,17 +11,19 @@ const UsersPage = () => {
   const [modalType, setModalType] = useState(''); // 'add' or 'edit'
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     phone: '',
     password: '',
-    role: 'utilisateur'
+    role: 'utilisateur',
+    pole: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
 
   const loadUsers = useCallback(async () => {
     try {
-      const allUsers = getAllUsers();
+      setLoading(true);
+      const allUsers = await getAllUsers();
       setUsers(allUsers);
     } catch (error) {
       console.error('Error loading users:', error);
@@ -50,11 +52,12 @@ const UsersPage = () => {
     setModalType('edit');
     setSelectedUser(user);
     setFormData({
-      name: user.name,
+      username: user.username || user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone || '',
       password: '', // Don't show password in edit form
-      role: user.role
+      role: user.role,
+      pole: user.pole || ''
     });
     setShowModal(true);
   };
@@ -246,8 +249,8 @@ const UsersPage = () => {
                     <label className="form-label">الاسم الكامل</label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
+                      name="username"
+                      value={formData.username}
                       onChange={handleInputChange}
                       className="form-input"
                       required
@@ -275,6 +278,17 @@ const UsersPage = () => {
                       onChange={handleInputChange}
                       className="form-input"
                       required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">القطب</label>
+                    <input
+                      type="text"
+                      name="pole"
+                      value={formData.pole}
+                      onChange={handleInputChange}
+                      className="form-input"
                     />
                   </div>
 

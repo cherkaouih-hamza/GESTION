@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import WebPushNotification from './components/WebPushNotification';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -18,70 +20,73 @@ function App() {
   return (
     <div className="App" dir="rtl">
       <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route 
-                path="/" 
-                element={
+        <NotificationProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50">
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/tasks"
+                  element={
+                    <ProtectedRoute>
+                      <TasksPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/validation"
+                  element={
+                    <ProtectedRoute allowedRoles={['responsable', 'admin']}>
+                      <ValidationPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/users"
+                  element={
+                    <ProtectedRoute allowedRoles={['responsable', 'admin']}>
+                      <UsersPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/profile" element={
                   <ProtectedRoute>
-                    <DashboardPage />
+                    <ProfilePage />
                   </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/tasks" 
-                element={
-                  <ProtectedRoute>
-                    <TasksPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route
-                path="/validation"
-                element={
+                } />
+                <Route path="/reports" element={
                   <ProtectedRoute allowedRoles={['responsable', 'admin']}>
-                    <ValidationPage />
+                    <ReportsPage />
                   </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/users"
-                element={
-                  <ProtectedRoute allowedRoles={['responsable', 'admin']}>
-                    <UsersPage />
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SettingsPage />
                   </ProtectedRoute>
-                }
-              />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/reports" element={
-                <ProtectedRoute allowedRoles={['responsable', 'admin']}>
-                  <ReportsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <SettingsPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/register" element={<RegisterPage />} />
-            </Routes>
-            <WhatsAppFloatingButton />
-          </div>
-        </Router>
+                } />
+                <Route path="/register" element={<RegisterPage />} />
+              </Routes>
+              <WebPushNotification />
+              <WhatsAppFloatingButton />
+            </div>
+          </Router>
+        </NotificationProvider>
       </AuthProvider>
     </div>
   );

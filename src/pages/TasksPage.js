@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import DashboardLayout from '../components/DashboardLayout';
 import TaskForm from '../components/TaskForm';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -7,13 +8,14 @@ import '../styles/TasksPage.css';
 
 const TasksPage = () => {
   const { currentUser, getAllTasks, getTasksByUser, createTask, updateTask, deleteTask } = useAuth();
+  const { addNotification } = useNotifications();
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  
+
   // Filter states
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
@@ -82,14 +84,52 @@ const TasksPage = () => {
   const handleCreateTask = (taskData) => {
     const newTask = createTask(taskData);
     setTasks([...tasks, newTask]);
+
+    // Send notification if task is urgent or assigned to another user
+    if (newTask.priority === 'Urgent') {
+      addNotification({
+        title: 'مهمة عاجلة جديدة',
+        message: `تم إنشاء مهمة عاجلة: ${newTask.name}`,
+        type: 'urgent',
+        userId: newTask.assignedTo || null
+      });
+    } else if (newTask.assignedTo && newTask.assignedTo !== currentUser?.id) {
+      addNotification({
+        title: 'مهمة جديدة تم تعيينها لك',
+        message: `تم تعيين المهمة "${newTask.name}" لك`,
+        type: 'assignment',
+        userId: newTask.assignedTo
+      });
+    }
+
     setShowForm(false);
   };
 
   const handleUpdateTask = (taskId, taskData) => {
+    const oldTask = tasks.find(task => task.id === taskId);
     updateTask(taskId, taskData);
-    setTasks(tasks.map(task => 
+    setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, ...taskData } : task
     ));
+
+    // Send notification if task becomes urgent or is reassigned
+    const updatedTask = { ...oldTask, ...taskData };
+    if (updatedTask.priority === 'Urgent' && oldTask.priority !== 'Urgent') {
+      addNotification({
+        title: 'مهمة أصبحت عاجلة',
+        message: `أصبحت المهمة "${updatedTask.name}" عاجلة`,
+        type: 'urgent',
+        userId: updatedTask.assignedTo || null
+      });
+    } else if (updatedTask.assignedTo && updatedTask.assignedTo !== oldTask.assignedTo) {
+      addNotification({
+        title: 'تم تعيينك لمهمة',
+        message: `تم تعيينك لمهمة جديدة: "${updatedTask.name}"`,
+        type: 'assignment',
+        userId: updatedTask.assignedTo
+      });
+    }
+
     setCurrentTask(null);
     setShowForm(false);
   };
@@ -264,6 +304,9 @@ const TasksPage = () => {
                     الأولوية
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    المستخدم المكلف
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الحالة
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -303,6 +346,20 @@ const TasksPage = () => {
                            task.priority === 'Normal' ? 'عادي' :
                            task.priority === 'Faible' ? 'ضعيفة' : task.priority}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                        {task.assignedTo ? (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                            {task.assignedTo === 'user1' ? 'محمد أحمد' :
+                             task.assignedTo === 'user2' ? 'فاطمة الزهرة' :
+                             task.assignedTo === 'user3' ? 'علي حسن' :
+                             task.assignedTo === 'user4' ? 'نور الهدى' : task.assignedTo}
+                          </span>
+                        ) : (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            غير معين
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 import '../styles/DashboardLayout.css';
 
 const DashboardLayout = ({ children }) => {
@@ -100,21 +101,26 @@ const DashboardLayout = ({ children }) => {
           </nav>
         </div>
         <div className="user-section">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
+              </div>
+              <div className="mr-3 flex-1">
+                <p className="user-info">{currentUser?.name}</p>
+                <p className="user-role capitalize">{currentUser?.role}</p>
+              </div>
             </div>
-            <div className="mr-3 flex-1">
-              <p className="user-info">{currentUser?.name}</p>
-              <p className="user-role capitalize">{currentUser?.role}</p>
+            <div className="flex items-center">
+              <NotificationBell />
+              <button
+                onClick={logout}
+                className="logout-btn mt-3 mr-2"
+              >
+                خروج
+              </button>
             </div>
           </div>
-          <button
-            onClick={logout}
-            className="logout-btn mt-3"
-          >
-            خروج
-          </button>
         </div>
       </div>
 
@@ -129,12 +135,15 @@ const DashboardLayout = ({ children }) => {
             <span>☰</span>
           </button>
           <h1 className="mobile-logo">نظام المتابعة</h1>
-          <button
-            onClick={logout}
-            className="mobile-logout"
-          >
-            خروج
-          </button>
+          <div className="flex items-center space-x-4">
+            <NotificationBell />
+            <button
+              onClick={logout}
+              className="mobile-logout"
+            >
+              خروج
+            </button>
+          </div>
         </div>
 
         <main className="main-content flex-1 md:mr-64">

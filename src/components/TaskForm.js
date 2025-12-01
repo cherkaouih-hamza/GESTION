@@ -7,6 +7,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     type: 'فيديو',
     pole: '', // Adding the new Pôle field
     priority: 'Normal', // Adding the new Priority field
+    assignedTo: '', // Adding the new assignment field
     startDate: '',
     endDate: '',
     mediaLink: '',
@@ -22,6 +23,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         type: task.type || 'فيديو',
         pole: task.pole || '', // Adding the pole field for existing tasks
         priority: task.priority || 'Normal', // Adding the priority field for existing tasks
+        assignedTo: task.assignedTo || '', // Adding the assignment field for existing tasks
         startDate: task.startDate || '',
         endDate: task.endDate || '',
         mediaLink: task.mediaLink || '',
@@ -34,6 +36,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         type: 'فيديو',
         pole: '', // Adding the pole field for new tasks
         priority: 'Normal', // Adding the priority field for new tasks
+        assignedTo: '', // Adding the assignment field for new tasks
         startDate: '',
         endDate: '',
         mediaLink: '',
@@ -165,6 +168,23 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
             <option value="Urgent">عاجل</option>
           </select>
         </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">المستخدم المكلف</label>
+        <select
+          name="assignedTo"
+          value={formData.assignedTo}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        >
+          <option value="">اختر المستخدم</option>
+          {/* In a real app, this would be populated with actual users */}
+          <option value="user1">محمد أحمد</option>
+          <option value="user2">فاطمة الزهرة</option>
+          <option value="user3">علي حسن</option>
+          <option value="user4">نور الهدى</option>
+        </select>
       </div>
 
       <div className="mb-4">

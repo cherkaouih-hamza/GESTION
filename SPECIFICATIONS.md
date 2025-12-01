@@ -103,6 +103,18 @@ Le système de gestion des tâches est une application web destinée à la gesti
 - Recherche textuelle dans les tâches
 - Visualisation des priorités avec indicateurs de couleur et icônes
 - Système d'alerte basé sur la priorité des tâches
+- Notifications intelligentes pour les nouvelles affectations
+- Notifications pour les tâches urgentes
+
+### Système de Notifications Intelligentes
+- Notifications internes avec icône de cloche dans l'interface
+- Notifications push web (à implémenter dans une version future)
+- Notifications par email pour tâches urgentes ou nouvelles affectations (à implémenter)
+- Paramètres de notification configurables dans la page des paramètres
+- Indicateur de nombre de notifications non lues
+- Historique des notifications
+- Possibilité de marquer les notifications comme lues/non lues
+- Notifications basées sur les priorités des tâches et les affectations
 
 ### Gestion des Utilisateurs
 - Inscription avec validation du rôle

@@ -77,11 +77,11 @@ const DashboardLayout = ({ children }) => {
 
       {/* Desktop sidebar */}
       <div className="sidebar-desktop">
-        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
-          <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
-            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
-          </div>
-          <nav className="flex-1 px-2 space-y-1">
+        <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
+          <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
+        </div>
+        <div className="nav-links-container">
+          <nav className="px-2 space-y-1">
             {filteredNavigation.map((item) => (
               <Link
                 key={item.name}
@@ -94,7 +94,7 @@ const DashboardLayout = ({ children }) => {
           </nav>
         </div>
         <div className="user-section">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
@@ -108,7 +108,7 @@ const DashboardLayout = ({ children }) => {
               <NotificationBell />
               <button
                 onClick={logout}
-                className="logout-btn mt-3 mr-2"
+                className="logout-btn"
               >
                 خروج
               </button>

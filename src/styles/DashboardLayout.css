@@ -37,17 +37,41 @@
   margin: 0 auto;
 }
 
+.sidebar-desktop {
+  width: 256px; /* 16rem */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background-color: #0F766E; /* primary-500 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-desktop .nav-links-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0;
+}
+
 .sidebar-desktop .nav-link {
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  margin: 0.25rem 0.5rem;
+  margin: 0.125rem 0.5rem;
   border-radius: 0.5rem;
   color: #99f6e4; /* primary-200 */
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.875rem;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-desktop .nav-link:hover {

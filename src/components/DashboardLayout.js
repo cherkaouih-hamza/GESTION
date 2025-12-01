@@ -40,12 +40,12 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="dashboard-layout min-h-screen bg-gray-100 flex flex-col">
       {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-40 flex ${sidebarOpen ? '' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)}></div>
-        <div className="relative flex-1 flex max-w-xs w-full bg-indigo-700">
+      <div className={`mobile-sidebar-container fixed inset-0 z-40 flex ${sidebarOpen ? '' : 'hidden'}`}>
+        <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
+        <div className="relative flex-1 flex max-w-xs w-full bg-indigo-700 mobile-sidebar mobile-sidebar-content">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
-              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="mobile-menu-close ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               onClick={() => setSidebarOpen(false)}
             >
               <span className="sr-only">إغلاق</span>
@@ -125,7 +125,7 @@ const DashboardLayout = ({ children }) => {
         <div className="md:hidden">
           <div className="flex items-center justify-between bg-indigo-700 px-4 py-3">
             <button
-              className="ml-2 flex items-center justify-center h-10 w-10 rounded-md text-indigo-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              className="mobile-menu-toggle ml-2 flex items-center justify-center h-10 w-10 rounded-md text-indigo-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
               onClick={() => setSidebarOpen(true)}
             >
               <span className="text-white text-xl">☰</span>

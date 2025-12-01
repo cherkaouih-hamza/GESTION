@@ -83,8 +83,24 @@ const DashboardLayout = ({ children }) => {
 
       {/* Desktop sidebar */}
       <div className="sidebar-desktop">
-        <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
-          <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
+        <div className="flex flex-col flex-shrink-0 px-4 py-6">
+          <div className="flex justify-center">
+            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
+          </div>
+          <div className="mt-4 flex items-center justify-between px-4 py-3">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
+              </div>
+              <div className="mr-3 flex-1">
+                <p className="user-info">{currentUser?.name}</p>
+                <p className="user-role capitalize">{currentUser?.role}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <NotificationBell />
+            </div>
+          </div>
         </div>
         <div className="nav-links-container">
           <nav className="px-2 space-y-1">
@@ -100,24 +116,18 @@ const DashboardLayout = ({ children }) => {
           </nav>
         </div>
         <div className="user-section">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
-              </div>
-              <div className="mr-3 flex-1">
-                <p className="user-info">{currentUser?.name}</p>
-                <p className="user-role capitalize">{currentUser?.role}</p>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <NotificationBell />
-              <button
-                onClick={logout}
-                className="logout-btn"
-              >
-                خروج
-              </button>
+          <div className="flex flex-col items-center px-4 py-3">
+            <button
+              onClick={logout}
+              className="logout-btn"
+            >
+              خروج
+            </button>
+            <div className="mt-3 flex items-center justify-center space-x-3">
+              <a href="https://wa.me/212706954855" target="_blank" rel="noopener noreferrer" className="whatsapp-icon">
+                💬
+              </a>
+              <span className="text-sm text-gray-300">IACSAS 2025</span>
             </div>
           </div>
         </div>

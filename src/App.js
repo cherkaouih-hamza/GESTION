@@ -13,6 +13,7 @@ import UsersPage from './pages/UsersPage';
 import ProfilePage from './pages/ProfilePage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
+import DatabaseTestPage from './pages/DatabaseTestPage';
 import WhatsAppFloatingButton from './components/WhatsAppFloatingButton';
 import './styles/App.css';
 
@@ -78,6 +79,11 @@ function App() {
                 <Route path="/settings" element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <SettingsPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/database-test" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <DatabaseTestPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/register" element={<RegisterPage />} />

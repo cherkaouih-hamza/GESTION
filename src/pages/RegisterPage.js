@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/RegisterPage.css';
-import { ArrowRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -66,7 +65,7 @@ const RegisterPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-800 text-center mt-4">تم إرسال طلبك!</h2>
+            <h2 className="text-2xl font-bold text-gray-800 text-center mt-4">تم إرسال طلبك!</h2>
             <p className="text-gray-600 text-center mt-2">
               تم إرسال طلب التسجيل بنجاح. يرجى انتظار موافقة فريق الإعلام.
             </p>
@@ -78,7 +77,6 @@ const RegisterPage = () => {
               className="btn-primary w-full flex items-center justify-center"
             >
               العودة للتسجيل
-              <ArrowRightIcon className="w-4 h-4 mr-2" />
             </Link>
           </div>
         </div>
@@ -92,10 +90,10 @@ const RegisterPage = () => {
         <div className="register-header">
           <div className="logo-section">
             <div className="logo-icon">
-              <UserIcon className="w-8 h-8 text-indigo-600" />
+              <span>.REG</span>
             </div>
           </div>
-          <h2 className="text-xl font-bold text-gray-800 text-center mt-4">انضم إلينا الآن</h2>
+          <h2 className="text-2xl font-bold text-center mt-4">انضم إلينا الآن</h2>
           <p className="text-gray-600 text-center mt-2">أنشئ حسابك لتبدأ رحلتك معنا</p>
         </div>
 
@@ -106,81 +104,76 @@ const RegisterPage = () => {
         )}
 
         <form onSubmit={handleSubmit} className="register-form">
-          <div className="input-group">
-            <label className="input-label">
-              <UserIcon className="w-4 h-4 mr-2" />
-              الاسم الكامل
+          <div className="form-group">
+            <label className="form-label">
+              <i>👤</i> الاسم الكامل
             </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="input-field"
+              className="form-input"
               placeholder="أدخل اسمك الكامل"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">
-              <EnvelopeIcon className="w-4 h-4 mr-2" />
-              البريد الإلكتروني
+          <div className="form-group">
+            <label className="form-label">
+              <i>📧</i> البريد الإلكتروني
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="input-field"
+              className="form-input"
               placeholder="example@domain.com"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">
-              <PhoneIcon className="w-4 h-4 mr-2" />
-              رقم الهاتف
+          <div className="form-group">
+            <label className="form-label">
+              <i>📞</i> رقم الهاتف
             </label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="input-field"
+              className="form-input"
               placeholder="+212 6xx xxx xxx"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">
-              <LockClosedIcon className="w-4 h-4 mr-2" />
-              كلمة المرور
+          <div className="form-group">
+            <label className="form-label">
+              <i>🔒</i> كلمة المرور
             </label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="input-field"
+              className="form-input"
               placeholder="••••••••"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label className="input-label">
-              <LockClosedIcon className="w-4 h-4 mr-2" />
-              تأكيد كلمة المرور
+          <div className="form-group">
+            <label className="form-label">
+              <i>🔒</i> تأكيد كلمة المرور
             </label>
             <input
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="input-field"
+              className="form-input"
               placeholder="••••••••"
               required
             />
@@ -207,7 +200,7 @@ const RegisterPage = () => {
           <div className="text-center mt-6">
             <p className="text-gray-600">
               لديك حساب؟{' '}
-              <Link to="/login" className="text-indigo-600 hover:text-indigo-800 font-medium">
+              <Link to="/login" className="register-link">
                 تسجيل الدخول
               </Link>
             </p>

@@ -1,6 +1,7 @@
 // api/users/[id].js
 import pool from '../../lib/db';
 import Cors from 'cors';
+import { logDatabaseError, logDatabaseSuccess } from '../../utils/dbLogger';
 
 // Initialize CORS middleware
 const cors = Cors({
@@ -21,6 +22,18 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
+  // Définir les en-têtes CORS manuellement aussi
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Remplacez avec votre domaine en production
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Gérer les requêtes OPTIONS (pré-vol)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   // Run CORS middleware
   await runMiddleware(req, res, cors);
 
@@ -34,7 +47,7 @@ export default async function handler(req, res) {
       }
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+      logDatabaseError(error, 'GET user by ID');
       res.status(500).json({ error: 'Erreur serveur lors de la récupération de l\'utilisateur' });
     }
   } else if (req.method === 'PUT') {
@@ -52,7 +65,7 @@ export default async function handler(req, res) {
 
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      logDatabaseError(error, 'PUT user by ID');
       res.status(500).json({ error: 'Erreur serveur lors de la mise à jour de l\'utilisateur' });
     }
   } else if (req.method === 'DELETE') {
@@ -65,7 +78,7 @@ export default async function handler(req, res) {
 
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+      logDatabaseError(error, 'DELETE user by ID');
       res.status(500).json({ error: 'Erreur serveur lors de la suppression de l\'utilisateur' });
     }
   } else {

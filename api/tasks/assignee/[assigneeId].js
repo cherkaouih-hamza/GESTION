@@ -1,6 +1,7 @@
 // api/tasks/assignee/[assigneeId].js
 import pool from '../../../lib/db';
 import Cors from 'cors';
+import { logDatabaseError, logDatabaseSuccess } from '../../../utils/dbLogger';
 
 // Initialize CORS middleware
 const cors = Cors({
@@ -21,6 +22,18 @@ function runMiddleware(req, res, fn) {
 }
 
 export default async function handler(req, res) {
+  // Définir les en-têtes CORS manuellement aussi
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Remplacez avec votre domaine en production
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Gérer les requêtes OPTIONS (pré-vol)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   // Run CORS middleware
   await runMiddleware(req, res, cors);
 
@@ -31,7 +44,7 @@ export default async function handler(req, res) {
       const result = await pool.query('SELECT * FROM tasks WHERE assignee = $1 ORDER BY created_at DESC', [assigneeId]);
       res.status(200).json(result.rows);
     } catch (error) {
-      console.error('Erreur lors de la récupération des tâches assignées:', error);
+      logDatabaseError(error, 'GET tasks by assignee');
       res.status(500).json({ error: 'Erreur serveur lors de la récupération des tâches assignées' });
     }
   } else {

@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import TasksPage from './pages/TasksPage';
 import ValidationPage from './pages/ValidationPage';
+import UsersPage from './pages/UsersPage';
 import WhatsAppFloatingButton from './components/WhatsAppFloatingButton';
 import './styles/App.css';
 
@@ -47,6 +48,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['responsable', 'admin']}>
                     <ValidationPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users"
+                element={
+                  <ProtectedRoute allowedRoles={['responsable', 'admin']}>
+                    <UsersPage />
                   </ProtectedRoute>
                 }
               />

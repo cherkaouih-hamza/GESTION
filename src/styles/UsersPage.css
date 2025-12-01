@@ -1,0 +1,232 @@
+/* UsersPage.css - RTL styles for the users management page */
+
+.users-page {
+  direction: rtl;
+  text-align: right;
+}
+
+.users-container {
+  padding: 1.5rem;
+}
+
+.users-header {
+  margin-bottom: 1.5rem;
+}
+
+.users-header h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: right;
+}
+
+.users-header p {
+  color: #6b7280;
+  text-align: right;
+}
+
+.users-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .users-controls {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  direction: rtl;
+  text-align: right;
+}
+
+@media (min-width: 768px) {
+  .search-input {
+    width: 20rem;
+  }
+}
+
+.add-user-btn {
+  background-color: #4f46e5;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  text-align: right;
+}
+
+.add-user-btn:hover {
+  background-color: #4338ca;
+}
+
+.users-table {
+  background-color: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.users-table th,
+.users-table td {
+  padding: 1rem;
+  text-align: right;
+}
+
+.users-table th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  background-color: #f9fafb;
+}
+
+.users-table tr {
+  transition: background-color 0.15s;
+}
+
+.users-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.edit-btn {
+  color: #4f46e5;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  color: #4338ca;
+}
+
+.delete-btn {
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #dc2626;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(107, 114, 128, 0.5);
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.modal-content {
+  position: relative;
+  top: 5rem;
+  margin: 1.25rem auto;
+  border: 1px solid #e5e7eb;
+  width: 90%;
+  max-width: 30rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 0.5rem;
+}
+
+.modal-header {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.modal-header h3 {
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.modal-form {
+  margin-top: 1.5rem;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.modal-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modal-btn-cancel {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.modal-btn-cancel:hover {
+  background-color: #f3f4f6;
+}
+
+.modal-btn-confirm {
+  background-color: #4f46e5;
+  border: 1px solid transparent;
+  color: white;
+}
+
+.modal-btn-confirm:hover {
+  background-color: #4338ca;
+}
+
+.role-badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.no-users {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+}

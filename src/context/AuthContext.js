@@ -223,6 +223,69 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const getAllUsers = () => {
+    return mockUsers;
+  };
+
+  const createUser = async (userData) => {
+    // Check if email or phone already exists
+    const existingUser = mockUsers.find(
+      u => u.email === userData.email || u.phone === userData.phone
+    );
+
+    if (existingUser) {
+      throw new Error('هذا البريد الإلكتروني أو رقم الهاتف مستخدم من قبل');
+    }
+
+    const newUser = {
+      id: mockUsers.length + 1,
+      ...userData,
+      isActive: true
+    };
+
+    mockUsers.push(newUser);
+    return newUser;
+  };
+
+  const updateUser = async (userId, userData) => {
+    const userIndex = mockUsers.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      throw new Error('المستخدم غير موجود');
+    }
+
+    // Check if email or phone already exists for another user
+    const existingUser = mockUsers.find(
+      u => (u.email === userData.email || u.phone === userData.phone) && u.id !== userId
+    );
+
+    if (existingUser) {
+      throw new Error('هذا البريد الإلكتروني أو رقم الهاتف مستخدم من قبل');
+    }
+
+    mockUsers[userIndex] = { ...mockUsers[userIndex], ...userData };
+    return mockUsers[userIndex];
+  };
+
+  const deleteUser = async (userId) => {
+    const userIndex = mockUsers.findIndex(u => u.id === userId);
+    if (userIndex === -1) {
+      throw new Error('المستخدم غير موجود');
+    }
+
+    // Don't allow deleting the current user
+    if (currentUser && currentUser.id === userId) {
+      throw new Error('لا يمكن حذف حسابك الخاص');
+    }
+
+    // Don't allow deleting other admins if current user is not admin
+    const userToDelete = mockUsers[userIndex];
+    if (currentUser.role !== 'admin' && userToDelete.role === 'admin') {
+      throw new Error('لا يمكن حذف حساب المدير');
+    }
+
+    mockUsers.splice(userIndex, 1);
+  };
+
   const value = {
     currentUser,
     login,
@@ -238,7 +301,11 @@ export const AuthProvider = ({ children }) => {
     deleteTask,
     registerUser,
     getRegistrationRequests,
-    updateRegistrationRequestStatus
+    updateRegistrationRequestStatus,
+    getAllUsers,
+    createUser,
+    updateUser,
+    deleteUser
   };
 
   return (

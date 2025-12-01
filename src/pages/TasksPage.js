@@ -18,6 +18,7 @@ const TasksPage = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [poleFilter, setPoleFilter] = useState(''); // Adding the new Pôle filter
+  const [priorityFilter, setPriorityFilter] = useState(''); // Adding the new Priority filter
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -51,6 +52,11 @@ const TasksPage = () => {
     // Apply pole filter
     if (poleFilter) {
       result = result.filter(task => task.pole === poleFilter);
+    }
+
+    // Apply priority filter
+    if (priorityFilter) {
+      result = result.filter(task => task.priority === priorityFilter);
     }
 
     // Apply date filters
@@ -188,6 +194,23 @@ const TasksPage = () => {
             </div>
 
             <div className="text-right">
+              <label className="block text-sm font-medium text-gray-700 mb-1">الأولوية</label>
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="">الكل</option>
+                <option value="Faible">ضعيفة</option>
+                <option value="Normal">عادي</option>
+                <option value="Important">مهم</option>
+                <option value="Urgent">عاجل</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="text-right">
               <label className="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
               <input
                 type="date"
@@ -238,6 +261,9 @@ const TasksPage = () => {
                     القطب
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    الأولوية
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الحالة
                   </th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -264,6 +290,19 @@ const TasksPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                         {task.pole || 'غير محدد'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          task.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
+                          task.priority === 'Important' ? 'bg-orange-100 text-orange-800' :
+                          task.priority === 'Normal' ? 'bg-blue-100 text-blue-800' :
+                          task.priority === 'Faible' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {task.priority === 'Urgent' ? '⚠️ عاجل' :
+                           task.priority === 'Important' ? 'مهم' :
+                           task.priority === 'Normal' ? 'عادي' :
+                           task.priority === 'Faible' ? 'ضعيفة' : task.priority}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

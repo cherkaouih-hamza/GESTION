@@ -6,6 +6,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     description: '',
     type: 'فيديو',
     pole: '', // Adding the new Pôle field
+    priority: 'Normal', // Adding the new Priority field
     startDate: '',
     endDate: '',
     mediaLink: '',
@@ -20,6 +21,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         description: task.description || '',
         type: task.type || 'فيديو',
         pole: task.pole || '', // Adding the pole field for existing tasks
+        priority: task.priority || 'Normal', // Adding the priority field for existing tasks
         startDate: task.startDate || '',
         endDate: task.endDate || '',
         mediaLink: task.mediaLink || '',
@@ -31,6 +33,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         description: '',
         type: 'فيديو',
         pole: '', // Adding the pole field for new tasks
+        priority: 'Normal', // Adding the priority field for new tasks
         startDate: '',
         endDate: '',
         mediaLink: '',
@@ -114,7 +117,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">نوع المهمة</label>
           <select
@@ -145,6 +148,21 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
             <option value="ال Pedagogical">ال Pedagogical</option>
             <option value="الإدارية">الإدارية</option>
             <option value="ال Pedagogique">ال Pedagogique</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">الأولوية</label>
+          <select
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="Faible">ضعيفة</option>
+            <option value="Normal">عادي</option>
+            <option value="Important">مهم</option>
+            <option value="Urgent">عاجل</option>
           </select>
         </div>
       </div>

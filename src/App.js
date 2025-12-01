@@ -9,6 +9,8 @@ import TasksPage from './pages/TasksPage';
 import ValidationPage from './pages/ValidationPage';
 import UsersPage from './pages/UsersPage';
 import ProfilePage from './pages/ProfilePage';
+import ReportsPage from './pages/ReportsPage';
+import SettingsPage from './pages/SettingsPage';
 import WhatsAppFloatingButton from './components/WhatsAppFloatingButton';
 import './styles/App.css';
 
@@ -63,6 +65,16 @@ function App() {
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/reports" element={
+                <ProtectedRoute allowedRoles={['responsable', 'admin']}>
+                  <ReportsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <SettingsPage />
                 </ProtectedRoute>
               } />
               <Route path="/register" element={<RegisterPage />} />

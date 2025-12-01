@@ -12,6 +12,12 @@ const DashboardLayout = ({ children }) => {
     { name: 'لوحة التحكم', href: '/dashboard', icon: '📊' },
     { name: 'المهام', href: '/tasks', icon: '✅' },
     {
+      name: 'تقرير المهام',
+      href: '/reports',
+      icon: '📈',
+      roles: ['responsable', 'admin']
+    },
+    {
       name: 'صفحة المسؤول',
       href: '/validation',
       icon: '📋',
@@ -22,6 +28,12 @@ const DashboardLayout = ({ children }) => {
       href: '/users',
       icon: '👥',
       roles: ['responsable', 'admin']
+    },
+    {
+      name: 'الإعدادات',
+      href: '/settings',
+      icon: '⚙️',
+      roles: ['admin']
     },
     { name: 'الحساب', href: '/profile', icon: '👤' },
   ];

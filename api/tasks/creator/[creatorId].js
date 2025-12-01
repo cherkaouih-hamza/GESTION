@@ -1,5 +1,5 @@
 // api/tasks/creator/[creatorId].js
-import { Pool } from 'pg';
+import pool from '../../../lib/db';
 import Cors from 'cors';
 
 // Initialize CORS middleware
@@ -19,12 +19,6 @@ function runMiddleware(req, res, fn) {
     });
   });
 }
-
-// Create a PostgreSQL pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
 
 export default async function handler(req, res) {
   // Run CORS middleware

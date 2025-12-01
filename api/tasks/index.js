@@ -1,6 +1,7 @@
 // api/tasks/index.js (dans un dossier api à la racine pour Vercel Functions)
-import { Pool } from 'pg';
+import pool from '../../lib/db';
 import Cors from 'cors';
+import { logDatabaseError, logDatabaseSuccess } from '../../utils/dbLogger';
 
 // Initialize CORS middleware
 const cors = Cors({
@@ -20,12 +21,6 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-// Create a PostgreSQL pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-
 export default async function handler(req, res) {
   // Run CORS middleware
   await runMiddleware(req, res, cors);
@@ -33,9 +28,10 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const result = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
+      logDatabaseSuccess('GET tasks', result);
       res.status(200).json(result.rows);
     } catch (error) {
-      console.error('Erreur lors de la récupération des tâches:', error);
+      logDatabaseError(error, 'GET tasks');
       res.status(500).json({ error: 'Erreur serveur lors de la récupération des tâches' });
     }
   } else if (req.method === 'POST') {
@@ -51,9 +47,10 @@ export default async function handler(req, res) {
         [title, description, status, priority, pole, assignee, due_date, created_by]
       );
 
+      logDatabaseSuccess('POST task', result);
       res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la création de la tâche:', error);
+      logDatabaseError(error, 'POST task');
       res.status(500).json({ error: 'Erreur serveur lors de la création de la tâche' });
     }
   } else {

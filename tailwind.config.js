@@ -105,7 +105,6 @@ module.exports = {
           900: '#7f1d1d',
         }
       }
-      }
     },
   },
   plugins: [],

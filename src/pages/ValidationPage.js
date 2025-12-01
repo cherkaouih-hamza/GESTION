@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { taskApi } from '../api/taskApi';
 import DashboardLayout from '../components/DashboardLayout';
 import '../styles/ValidationPage.css';
 
 const ValidationPage = () => {
-  const { currentUser, getTasksForValidation, updateTaskStatus, getAllTasks, getRegistrationRequests, updateRegistrationRequestStatus } = useAuth();
+  const { currentUser, updateTaskStatus, getAllTasks, getRegistrationRequests, updateRegistrationRequestStatus } = useAuth();
   const [activeTab, setActiveTab] = useState('tasks'); // 'tasks' or 'registrations'
   const [tasks, setTasks] = useState([]);
   const [registrations, setRegistrations] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [itemToProcess, setItemToProcess] = useState(null);
   const [rejectionComment, setRejectionComment] = useState('');
   const [processingType, setProcessingType] = useState(null); // 'task' or 'registration'
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -19,22 +22,32 @@ const ValidationPage = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       if (activeTab === 'tasks') {
-        const validationTasks = getTasksForValidation();
+        const allTasksData = await taskApi.getAllTasks();
+        setAllTasks(allTasksData);
+        // Filtrer les tâches en attente de validation
+        const validationTasks = allTasksData.filter(task =>
+          task.status === 'pending' || task.status === 'في انتظار الموافقة'
+        );
         setTasks(validationTasks);
       } else if (activeTab === 'registrations') {
+        // Utiliser une méthode temporaire pour les inscriptions pour l'instant
         const registrationRequests = getRegistrationRequests();
         setRegistrations(registrationRequests);
       }
     } catch (error) {
       console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleApprove = async (itemId, type) => {
     try {
       if (type === 'task') {
-        updateTaskStatus(itemId, 'جارية', currentUser.id);
+        await updateTaskStatus(itemId, 'in_progress', currentUser.id);
+        // Mettre à jour la liste locale des tâches en attente
         setTasks(tasks.filter(task => task.id !== itemId));
       } else if (type === 'registration') {
         updateRegistrationRequestStatus(itemId, 'approved', currentUser.id);
@@ -48,18 +61,19 @@ const ValidationPage = () => {
   const handleReject = async (itemId, type) => {
     try {
       if (type === 'task') {
-        updateTaskStatus(itemId, 'مرفوضة', currentUser.id, rejectionComment);
+        await updateTaskStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setTasks(tasks.filter(task => task.id !== itemId));
       } else if (type === 'registration') {
         updateRegistrationRequestStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setRegistrations(registrations.filter(reg => reg.id !== itemId));
       }
+    } catch (error) {
+      console.error('Error rejecting item:', error);
+    } finally {
       setShowRejectModal(false);
       setItemToProcess(null);
       setRejectionComment('');
       setProcessingType(null);
-    } catch (error) {
-      console.error('Error rejecting item:', error);
     }
   };
 
@@ -101,36 +115,43 @@ const ValidationPage = () => {
         </div>
 
         {/* Stats Card */}
-        <div className="summary-cards">
-          <div className="summary-card">
-            <p className="summary-card-value pending">
-              {activeTab === 'tasks' ? tasks.length : registrations.filter(r => r.status === 'pending').length}
-            </p>
-            <p className="summary-card-title">
-              {activeTab === 'tasks' ? 'المهام في الانتظار' : 'طلبات التسجيل'}
-            </p>
+        {loading ? (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p className="text-gray-600">جاري تحميل الإحصائيات...</p>
           </div>
-          <div className="summary-card">
-            <p className="summary-card-value approved">
-              {activeTab === 'tasks' ?
-                getAllTasks().filter(t => t.status === 'جارية').length :
-                registrations.filter(r => r.status === 'approved').length}
-            </p>
-            <p className="summary-card-title">
-              {activeTab === 'tasks' ? 'المهام الجارية' : 'الحسابات المقبولة'}
-            </p>
+        ) : (
+          <div className="summary-cards">
+            <div className="summary-card">
+              <p className="summary-card-value pending">
+                {activeTab === 'tasks' ? tasks.length : registrations.filter(r => r.status === 'pending').length}
+              </p>
+              <p className="summary-card-title">
+                {activeTab === 'tasks' ? 'المهام في الانتظار' : 'طلبات التسجيل'}
+              </p>
+            </div>
+            <div className="summary-card">
+              <p className="summary-card-value approved">
+                {activeTab === 'tasks' ?
+                  allTasks.filter(t => t.status === 'in_progress' || t.status === 'جارية').length :
+                  registrations.filter(r => r.status === 'approved').length}
+              </p>
+              <p className="summary-card-title">
+                {activeTab === 'tasks' ? 'المهام الجارية' : 'الحسابات المقبولة'}
+              </p>
+            </div>
+            <div className="summary-card">
+              <p className="summary-card-value rejected">
+                {activeTab === 'tasks' ?
+                  allTasks.filter(t => t.status === 'rejected' || t.status === 'مرفوضة').length :
+                  registrations.filter(r => r.status === 'rejected').length}
+              </p>
+              <p className="summary-card-title">
+                {activeTab === 'tasks' ? 'المهام المرفوضة' : 'الحسابات المرفوضة'}
+              </p>
+            </div>
           </div>
-          <div className="summary-card">
-            <p className="summary-card-value rejected">
-              {activeTab === 'tasks' ?
-                getAllTasks().filter(t => t.status === 'مرفوضة').length :
-                registrations.filter(r => r.status === 'rejected').length}
-            </p>
-            <p className="summary-card-title">
-              {activeTab === 'tasks' ? 'المهام المرفوضة' : 'الحسابات المرفوضة'}
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Content based on active tab */}
         {activeTab === 'tasks' ? (
@@ -168,17 +189,18 @@ const ValidationPage = () => {
                     tasks.map((task) => (
                       <tr key={task.id}>
                         <td className="text-right">
-                          <div className="font-medium text-gray-900">{task.name}</div>
+                          <div className="font-medium text-gray-900">{task.title || task.name}</div>
                           <div className="text-sm text-gray-500 mt-1">{task.description}</div>
                         </td>
                         <td className="text-sm text-gray-500 text-right">
                           {task.type}
                         </td>
                         <td className="text-sm text-gray-500 text-right">
-                          {task.createdBy === 3 ? 'المستخدم' : task.createdBy === 2 ? 'المسؤول' : 'المدير'}
+                          {/* Utiliser un mapping pour les utilisateurs ou récupérer depuis l'API */}
+                          {task.created_by ? `المستخدم ${task.created_by}` : 'غير معروف'}
                         </td>
                         <td className="text-sm text-gray-500 text-right">
-                          {new Date(task.startDate).toLocaleDateString('ar-MA')} - {new Date(task.endDate).toLocaleDateString('ar-MA')}
+                          {task.start_date || task.startDate ? new Date(task.start_date || task.startDate).toLocaleDateString('ar-MA') : 'غير محدد'} - {task.end_date || task.endDate ? new Date(task.end_date || task.endDate).toLocaleDateString('ar-MA') : 'غير محدد'}
                         </td>
                         <td className="text-right">
                           {task.mediaLink ? (

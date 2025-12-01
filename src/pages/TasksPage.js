@@ -1,16 +1,18 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
+import { taskApi } from '../api/taskApi';
 import DashboardLayout from '../components/DashboardLayout';
 import TaskForm from '../components/TaskForm';
 import ConfirmationModal from '../components/ConfirmationModal';
 import '../styles/TasksPage.css';
 
 const TasksPage = () => {
-  const { currentUser, getAllTasks, getTasksByUser, createTask, updateTask, deleteTask } = useAuth();
+  const { currentUser, createTask: contextCreateTask, updateTask: contextUpdateTask, deleteTask: contextDeleteTask } = useAuth();
   const { addNotification } = useNotifications();
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,24 +28,47 @@ const TasksPage = () => {
   const [dateTo, setDateTo] = useState('');
 
   useEffect(() => {
-    let allTasks = [];
-    
-    if (currentUser?.role === 'utilisateur') {
-      allTasks = getTasksByUser(currentUser.id);
-    } else {
-      allTasks = getAllTasks();
+    const fetchTasks = async () => {
+      setLoading(true);
+      try {
+        let allTasks = [];
+
+        if (currentUser?.role === 'utilisateur') {
+          // Pour un utilisateur normal, récupérer les tâches assignées ou créées
+          allTasks = await taskApi.getAllTasks();
+          allTasks = allTasks.filter(task => task.created_by === currentUser.id || task.assignee === currentUser.id);
+        } else {
+          // Pour admin et responsable, récupérer toutes les tâches
+          allTasks = await taskApi.getAllTasks();
+        }
+
+        setTasks(allTasks);
+        setFilteredTasks(allTasks);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des tâches:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser) {
+      fetchTasks();
     }
-    
-    setTasks(allTasks);
-    setFilteredTasks(allTasks);
-  }, [currentUser, getAllTasks, getTasksByUser]);
+  }, [currentUser]);
 
   useEffect(() => {
     let result = tasks;
 
     // Apply status filter
     if (statusFilter) {
-      result = result.filter(task => task.status === statusFilter);
+      result = result.filter(task =>
+        task.status === statusFilter ||
+        (statusFilter === 'pending' && task.status === 'في انتظار الموافقة') ||
+        (statusFilter === 'in_progress' && task.status === 'جارية') ||
+        (statusFilter === 'completed' && task.status === 'مكتملة') ||
+        (statusFilter === 'rejected' && task.status === 'مرفوضة') ||
+        (statusFilter === 'draft' && task.status === 'مسودة')
+      );
     }
 
     // Apply type filter
@@ -58,22 +83,28 @@ const TasksPage = () => {
 
     // Apply user assigned filter
     if (userAssignedFilter) {
-      result = result.filter(task => task.assignedTo === userAssignedFilter);
+      result = result.filter(task => task.assignee === userAssignedFilter);
     }
 
     // Apply date filters
     if (dateFrom) {
-      result = result.filter(task => new Date(task.startDate) >= new Date(dateFrom));
+      result = result.filter(task => {
+        const taskDate = new Date(task.start_date || task.startDate);
+        return taskDate >= new Date(dateFrom);
+      });
     }
 
     if (dateTo) {
-      result = result.filter(task => new Date(task.endDate) <= new Date(dateTo));
+      result = result.filter(task => {
+        const taskDate = new Date(task.end_date || task.endDate);
+        return taskDate <= new Date(dateTo);
+      });
     }
 
     // Apply search query
     if (searchQuery) {
       result = result.filter(task =>
-        task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (task.title || task.name).toLowerCase().includes(searchQuery.toLowerCase()) ||
         task.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -93,64 +124,92 @@ const TasksPage = () => {
     return users[userId] || userId;
   };
 
-  const handleCreateTask = (taskData) => {
-    const newTask = createTask(taskData);
-    setTasks([...tasks, newTask]);
+  const handleCreateTask = async (taskData) => {
+    try {
+      const newTask = await contextCreateTask(taskData);
+      setTasks([...tasks, newTask]);
 
-    // Send notification if task is urgent or assigned to another user
-    if (newTask.priority === 'Urgent') {
-      addNotification({
-        title: 'مهمة عاجلة جديدة',
-        message: `تم إنشاء مهمة عاجلة: ${newTask.name}`,
-        type: 'urgent',
-        userId: newTask.assignedTo || null
-      });
-    } else if (newTask.assignedTo && newTask.assignedTo !== currentUser?.id) {
-      addNotification({
-        title: 'مهمة جديدة تم تعيينها لك',
-        message: `تم تعيين المهمة "${newTask.name}" لك`,
-        type: 'assignment',
-        userId: newTask.assignedTo
-      });
-    }
+      // Send notification if task is urgent or assigned to another user
+      if (newTask.priority === 'Urgent') {
+        addNotification({
+          title: 'مهمة عاجلة جديدة',
+          message: `تم إنشاء مهمة عاجلة: ${newTask.title || newTask.name}`,
+          type: 'urgent',
+          userId: newTask.assignee || null
+        });
+      } else if (newTask.assignee && newTask.assignee !== currentUser?.id) {
+        addNotification({
+          title: 'مهمة جديدة تم تعيينها لك',
+          message: `تم تعيين المهمة "${newTask.title || newTask.name}" لك`,
+          type: 'assignment',
+          userId: newTask.assignee
+        });
+      }
 
-    setShowForm(false);
-  };
-
-  const handleUpdateTask = (taskId, taskData) => {
-    const oldTask = tasks.find(task => task.id === taskId);
-    updateTask(taskId, taskData);
-    setTasks(tasks.map(task =>
-      task.id === taskId ? { ...task, ...taskData } : task
-    ));
-
-    // Send notification if task becomes urgent or is reassigned
-    const updatedTask = { ...oldTask, ...taskData };
-    if (updatedTask.priority === 'Urgent' && oldTask.priority !== 'Urgent') {
+      setShowForm(false);
+    } catch (error) {
+      console.error('Erreur lors de la création de la tâche:', error);
       addNotification({
-        title: 'مهمة أصبحت عاجلة',
-        message: `أصبحت المهمة "${updatedTask.name}" عاجلة`,
-        type: 'urgent',
-        userId: updatedTask.assignedTo || null
-      });
-    } else if (updatedTask.assignedTo && updatedTask.assignedTo !== oldTask.assignedTo) {
-      addNotification({
-        title: 'تم تعيينك لمهمة',
-        message: `تم تعيينك لمهمة جديدة: "${updatedTask.name}"`,
-        type: 'assignment',
-        userId: updatedTask.assignedTo
+        title: 'خطأ',
+        message: 'فشل إنشاء المهمة',
+        type: 'error'
       });
     }
-
-    setCurrentTask(null);
-    setShowForm(false);
   };
 
-  const handleDeleteTask = (taskId) => {
-    deleteTask(taskId);
-    setTasks(tasks.filter(task => task.id !== taskId));
-    setShowDeleteModal(false);
-    setTaskToDelete(null);
+  const handleUpdateTask = async (taskId, taskData) => {
+    try {
+      const oldTask = tasks.find(task => task.id === taskId);
+      const updatedTask = await contextUpdateTask(taskId, taskData);
+
+      setTasks(tasks.map(task =>
+        task.id === taskId ? updatedTask : task
+      ));
+
+      // Send notification if task becomes urgent or is reassigned
+      if (updatedTask.priority === 'Urgent' && oldTask.priority !== 'Urgent') {
+        addNotification({
+          title: 'مهمة أصبحت عاجلة',
+          message: `أصبحت المهمة "${updatedTask.title || updatedTask.name}" عاجلة`,
+          type: 'urgent',
+          userId: updatedTask.assignee || null
+        });
+      } else if (updatedTask.assignee && updatedTask.assignee !== oldTask.assignee) {
+        addNotification({
+          title: 'تم تعيينك لمهمة',
+          message: `تم تعيينك لمهمة جديدة: "${updatedTask.title || updatedTask.name}"`,
+          type: 'assignment',
+          userId: updatedTask.assignee
+        });
+      }
+
+      setCurrentTask(null);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
+      addNotification({
+        title: 'خطأ',
+        message: 'فشل تحديث المهمة',
+        type: 'error'
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await contextDeleteTask(taskId);
+      setTasks(tasks.filter(task => task.id !== taskId));
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la tâche:', error);
+      addNotification({
+        title: 'خطأ',
+        message: 'فشل حذف المهمة',
+        type: 'error'
+      });
+    } finally {
+      setShowDeleteModal(false);
+      setTaskToDelete(null);
+    }
   };
 
   const handleEditTask = (task) => {
@@ -166,8 +225,8 @@ const TasksPage = () => {
   const canModifyTask = (task) => {
     // User can only modify their own tasks that are not yet validated
     if (currentUser?.role === 'utilisateur') {
-      return task.createdBy === currentUser.id && 
-             (task.status === 'في انتظار الموافقة' || task.status === 'مسودة');
+      return task.created_by === currentUser.id &&
+             (task.status === 'pending' || task.status === 'في انتظار الموافقة' || task.status === 'draft' || task.status === 'مسودة');
     }
     // Admin and responsable can always modify tasks
     return currentUser?.role === 'admin' || currentUser?.role === 'responsable';
@@ -296,9 +355,15 @@ const TasksPage = () => {
         </div>
 
         {/* Tasks List */}
-        <div className="tasks-table-container">
-          <div className="overflow-x-auto">
-            <table className="tasks-table">
+        {loading ? (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p className="text-gray-600">جاري تحميل المهام...</p>
+          </div>
+        ) : (
+          <div className="tasks-table-container">
+            <div className="overflow-x-auto">
+              <table className="tasks-table">
               <thead>
                 <tr>
                   <th scope="col" className="text-right">
@@ -335,7 +400,7 @@ const TasksPage = () => {
                   filteredTasks.map((task) => (
                     <tr key={task.id}>
                       <td className="text-right">
-                        <div className="font-medium text-gray-900">{task.name}</div>
+                        <div className="font-medium text-gray-900">{task.title || task.name}</div>
                         <div className="text-sm text-gray-500 mt-1">{task.description}</div>
                       </td>
                       <td className="text-sm text-gray-500 text-right">
@@ -346,21 +411,21 @@ const TasksPage = () => {
                       </td>
                       <td className="text-right">
                         <span className={`priority-badge ${
-                          task.priority === 'Urgent' ? 'priority-urgent' :
-                          task.priority === 'Important' ? 'priority-important' :
-                          task.priority === 'Normal' ? 'priority-normal' :
-                          task.priority === 'Faible' ? 'priority-faible' : 'priority-normal'
+                          (task.priority === 'Urgent' || task.priority === 'urgent') ? 'priority-urgent' :
+                          (task.priority === 'Important' || task.priority === 'important') ? 'priority-important' :
+                          (task.priority === 'Normal' || task.priority === 'normal') ? 'priority-normal' :
+                          (task.priority === 'Faible' || task.priority === 'low') ? 'priority-faible' : 'priority-normal'
                         }`}>
-                          {task.priority === 'Urgent' ? '⚠️ عاجل' :
-                           task.priority === 'Important' ? 'مهم' :
-                           task.priority === 'Normal' ? 'عادي' :
-                           task.priority === 'Faible' ? 'ضعيفة' : task.priority}
+                          {task.priority === 'Urgent' || task.priority === 'urgent' ? '⚠️ عاجل' :
+                           task.priority === 'Important' || task.priority === 'important' ? 'مهم' :
+                           task.priority === 'Normal' || task.priority === 'normal' ? 'عادي' :
+                           task.priority === 'Faible' || task.priority === 'low' ? 'ضعيفة' : task.priority}
                         </span>
                       </td>
                       <td className="text-sm text-gray-500 text-right">
-                        {task.assignedTo ? (
+                        {task.assignee ? (
                           <span className="user-badge">
-                            {getUserNameById(task.assignedTo)}
+                            {getUserNameById(task.assignee)}
                           </span>
                         ) : (
                           <span className="user-badge">
@@ -370,17 +435,17 @@ const TasksPage = () => {
                       </td>
                       <td className="text-right">
                         <span className={`status-badge ${
-                          task.status === 'جارية' ? 'status-in-progress' :
-                          task.status === 'مكتملة' ? 'status-completed' :
-                          task.status === 'في انتظار الموافقة' ? 'status-pending' :
-                          task.status === 'مرفوضة' ? 'status-rejected' :
-                          task.status === 'مسودة' ? 'status-draft' : 'status-draft'
+                          task.status === 'in_progress' || task.status === 'جارية' ? 'status-in-progress' :
+                          task.status === 'completed' || task.status === 'مكتملة' ? 'status-completed' :
+                          task.status === 'pending' || task.status === 'في انتظار الموافقة' ? 'status-pending' :
+                          task.status === 'rejected' || task.status === 'مرفوضة' ? 'status-rejected' :
+                          task.status === 'draft' || task.status === 'مسودة' ? 'status-draft' : 'status-draft'
                         }`}>
                           {task.status}
                         </span>
                       </td>
                       <td className="text-sm text-gray-500 text-right">
-                        {new Date(task.startDate).toLocaleDateString('ar-MA')} - {new Date(task.endDate).toLocaleDateString('ar-MA')}
+                        {task.start_date || task.startDate ? new Date(task.start_date || task.startDate).toLocaleDateString('ar-MA') : 'غير محدد'} - {task.end_date || task.endDate ? new Date(task.end_date || task.endDate).toLocaleDateString('ar-MA') : 'غير محدد'}
                       </td>
                       <td className="text-right">
                         {task.mediaLink ? (
@@ -431,6 +496,7 @@ const TasksPage = () => {
             </table>
           </div>
         </div>
+        )}
 
         {/* Task Form Modal */}
         {showForm && (
@@ -459,7 +525,7 @@ const TasksPage = () => {
         {showDeleteModal && (
           <ConfirmationModal
             title="تأكيد الحذف"
-            message={`هل أنت متأكد أنك تريد حذف المهمة "${taskToDelete?.name}"؟`}
+            message={`هل أنت متأكد أنك تريد حذف المهمة "${taskToDelete?.name || taskToDelete?.title}"?`}
             onConfirm={() => handleDeleteTask(taskToDelete?.id)}
             onCancel={() => {
               setShowDeleteModal(false);

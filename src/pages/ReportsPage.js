@@ -7,13 +7,14 @@ import {
   Legend
 } from 'chart.js';
 import { useAuth } from '../context/AuthContext';
+import { taskApi } from '../api/taskApi';
 import DashboardLayout from '../components/DashboardLayout';
 import '../styles/ReportsPage.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ReportsPage = () => {
-  const { currentUser, getAllTasks } = useAuth();
+  const { currentUser } = useAuth();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedPole, setSelectedPole] = useState('');
@@ -24,35 +25,39 @@ const ReportsPage = () => {
 
   const poles = [
     { value: '', label: 'كل الأقطاب' },
-    { value: 'التقنية', label: 'التقنية' },
-    { value: 'الإعلام', label: 'الإعلام' },
-    { value: 'ال Pedagogical', label: 'ال Pedagogical' },
-    { value: 'الإدارية', label: 'الإدارية' },
-    { value: 'ال Pedagogique', label: 'ال Pedagogique' },
-    { value: 'التسويق', label: 'التسويق' },
-    { value: 'الموارد البشرية', label: 'الموارد البشرية' },
-    { value: 'الإدارة', label: 'الإدارة' },
-    { value: 'التحليل', label: 'التحليل' },
-    { value: 'الجودة', label: 'الجودة' },
-    { value: 'الدعم', label: 'الدعم' },
-    { value: 'التكنولوجيا', label: 'التكنولوجيا' },
-    { value: 'التصميم', label: 'التصميم' },
-    { value: 'التعليم', label: 'التعليم' },
-    { value: 'التواصل', label: 'التواصل' },
-    { value: 'الإتصال', label: 'الإتصال' },
-    { value: 'البحث', label: 'البحث' },
-    { value: 'ال.quality', label: 'الجودة' }
+    { value: 'IT', label: 'التقنية' },
+    { value: 'Marketing', label: 'التسويق' },
+    { value: 'HR', label: 'الموارد البشرية' },
+    { value: 'Finance', label: 'المالية' },
+    { value: 'Operations', label: 'العمليات' },
+    { value: 'Support', label: 'الدعم' },
+    { value: 'Research', label: 'البحث' },
+    { value: 'Education', label: 'التعليم' },
+    { value: 'Communication', label: 'التواصل' }
   ];
 
   useEffect(() => {
-    // Get tasks from auth context
-    const allTasks = getAllTasks();
-    setTasks(allTasks);
-    if (allTasks.length > 0 && !hasLoaded.current) {
-      generateReportData(allTasks);
-      hasLoaded.current = true;
-    }
-  }, [currentUser, getAllTasks]);
+    // Get tasks from API
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        const allTasks = await taskApi.getAllTasks();
+        setTasks(allTasks);
+        if (allTasks.length > 0 && !hasLoaded.current) {
+          generateReportData(allTasks);
+          hasLoaded.current = true;
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des tâches:', error);
+        // Utiliser des données vides en cas d'erreur
+        setTasks([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const generateReportData = (tasksToUse = tasks) => {
     // Filter tasks based on date range and pole
@@ -60,7 +65,7 @@ const ReportsPage = () => {
 
     if (startDate && endDate) {
       filteredTasks = filteredTasks.filter(task => {
-        const taskDate = new Date(task.startDate || task.createdAt);
+        const taskDate = new Date(task.created_at || task.createdAt);
         const start = new Date(startDate);
         const end = new Date(endDate);
         return taskDate >= start && taskDate <= end;
@@ -73,20 +78,20 @@ const ReportsPage = () => {
 
     // Generate status distribution data
     const statusCounts = filteredTasks.reduce((acc, task) => {
-      const statusKey = task.status === 'في انتظار الموافقة' ? 'pending' :
-                        task.status === 'جارية' ? 'in_progress' :
-                        task.status === 'مكتملة' ? 'completed' :
-                        task.status === 'مرفوضة' ? 'rejected' : 'pending';
+      const statusKey = task.status === 'pending' || task.status === 'في انتظار الموافقة' ? 'pending' :
+                        task.status === 'in_progress' || task.status === 'جارية' ? 'in_progress' :
+                        task.status === 'completed' || task.status === 'مكتملة' ? 'completed' :
+                        task.status === 'rejected' || task.status === 'مرفوضة' ? 'rejected' : 'pending';
       acc[statusKey] = (acc[statusKey] || 0) + 1;
       return acc;
     }, {});
 
     // Generate type distribution data
     const typeCounts = filteredTasks.reduce((acc, task) => {
-      const typeKey = task.priority === 'Urgent' ? 'urgent' :
-                      task.priority === 'Important' ? 'important' :
-                      task.priority === 'Normal' ? 'normal' :
-                      task.priority === 'Faible' ? 'low' : 'normal';
+      const typeKey = task.priority === 'Urgent' || task.priority === 'urgent' ? 'urgent' :
+                      task.priority === 'Important' || task.priority === 'important' ? 'important' :
+                      task.priority === 'Normal' || task.priority === 'normal' ? 'normal' :
+                      task.priority === 'Low' || task.priority === 'low' || task.priority === 'Faible' ? 'low' : 'normal';
       acc[typeKey] = (acc[typeKey] || 0) + 1;
       return acc;
     }, {});
@@ -137,11 +142,11 @@ const ReportsPage = () => {
         }]
       },
       pole: {
-        labels: Object.keys(poleCounts).filter(pole => pole.trim() !== ''),
+        labels: Object.keys(poleCounts).filter(pole => pole && pole.trim() !== ''),
         datasets: [{
           label: 'توزيع المهام حسب القطب',
           data: Object.keys(poleCounts)
-            .filter(pole => pole.trim() !== '')
+            .filter(pole => pole && pole.trim() !== '')
             .map(pole => poleCounts[pole]),
           backgroundColor: [
             '#8b5cf6', // violet
@@ -177,9 +182,9 @@ const ReportsPage = () => {
 
   // Calculate summary statistics
   const totalTasks = reportData ? reportData.status.datasets[0].data.reduce((a, b) => a + b, 0) : tasks.length;
-  const completedTasks = reportData ? reportData.status.datasets[0].data[2] : tasks.filter(t => t.status === 'مكتملة').length;
-  const pendingTasks = reportData ? reportData.status.datasets[0].data[0] : tasks.filter(t => t.status === 'في انتظار الموافقة').length;
-  const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'جارية').length;
+  const completedTasks = reportData ? reportData.status.datasets[0].data[2] : tasks.filter(t => t.status === 'completed' || t.status === 'مكتملة').length;
+  const pendingTasks = reportData ? reportData.status.datasets[0].data[0] : tasks.filter(t => t.status === 'pending' || t.status === 'في انتظار الموافقة').length;
+  const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'in_progress' || t.status === 'جارية').length;
 
   return (
     <DashboardLayout>

@@ -5,8 +5,13 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "autoprefixer": "^10.4.13",
+    "axios": "^1.13.2",
     "chart.js": "^4.5.1",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
+    "pg": "^8.16.3",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.3.1",
@@ -22,7 +27,11 @@
     "eject": "react-scripts eject",
     "server": "node server.js",
     "dev": "concurrently \"npm run start\" \"npm run server\"",
-    "heroku-postbuild": "npm run build"
+    "migrate": "node db/migrate.js",
+    "heroku-postbuild": "npm run build",
+    "dev:backend": "nodemon server.js",
+    "dev:frontend": "react-scripts start",
+    "dev:both": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
   },
   "eslintConfig": {
     "extends": [
@@ -41,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

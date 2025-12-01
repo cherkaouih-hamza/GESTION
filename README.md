@@ -1,8 +1,27 @@
 # منصة إدارة المشاريع و المتابعة الإعلامية
 
-نظام إدارة مهام إعلامية متكامل باللغة العربية مع دعم كامل للاتجاه من اليمين إلى اليسار (RTL).
+نظام إدارة مهام إعلامية متكامل باللغة العربية avec دعم complet pour la base de données PostgreSQL sur Neon et support complet للاتجاه من اليمين إلى اليسار (RTL).
 
 ## الميزات
+
+- **Stockage persistant**: Les tâches et utilisateurs sont maintenant stockés dans une base de données PostgreSQL sur Neon.tech
+- **Nouvelle API complète**: Accès aux données via des endpoints RESTful
+- **Scalabilité**: L'application peut maintenant supporter plusieurs utilisateurs et une grande quantité de données
+- **Synchronisation**: Les données sont synchronisées entre tous les utilisateurs en temps réel
+- **نظام تسجيل دخول متعدد الأدوار**: أدمين، مسؤول، مستخدم
+- **نظام تسجيل المستخدمين الجدد**: مع إمكانية التسجيل وطلب التحقق من قبل فريق الإعلام
+- **نظام إدارة المستخدمين**: إمكانية إضافة، تعديل، وحذف المستخدمين (لﻸدمن والمسؤولين)
+- **لوحة تحكم مخصصة حسب الدور**: مع مؤشرات رئيسية وتوزيع المهام
+- **تتبع المهام**: مع إمكانية الفلترة والبحث
+- **نظام تأكيد المهام وطلبات التسجيل**: للمسؤولين والأدمن
+- **واجهة مخصصة للهاتف المحمول**: تصميم متجاوب
+- **دعم اللغة العربية بالكامل**: مع اتجاه RTL
+
+## Configuration de la base de données
+
+Pour connecter l'application à une base de données PostgreSQL sur Neon.tech, suivez les instructions dans [POSTGRESQL_SETUP.md](POSTGRESQL_SETUP.md).
+
+## الأدوار
 
 - **نظام تسجيل دخول متعدد الأدوار**: أدمين، مسؤول، مستخدم
 - **نظام تسجيل المستخدمين الجدد**: مع إمكانية التسجيل وطلب التحقق من قبل فريق الإعلام
@@ -83,10 +102,23 @@ npm start
 ## الملفات الرئيسية
 
 - `src/App.js`: المكون الرئيسي للتطبيق
-- `src/context/AuthContext.js`: سياق المصادقة ونظام البيانات المزيفة
+- `src/context/AuthContext.js`: سياق المصادقة mis à jour pour utiliser l'API
 - `src/pages/`: تحتوي على صفحات التطبيق
 - `src/components/`: تحتوي على المكونات القابلة لإعادة الاستخدام
 - `src/styles/`: تحتوي على ملفات CSS
+- `server.js`: Serveur Express avec endpoints API
+- `config/db.js`: Configuration de la connexion PostgreSQL
+- `models/`: Modèles de données pour les tâches et les utilisateurs
+- `routes/`: Endpoints API pour les tâches et les utilisateurs
+- `api/taskApi.js`: Appels API côté frontend
+
+## Scripts disponibles
+
+- `npm start`: تشغيل تطبيق React في وضع التطوير
+- `npm run build`: بناء التطبيق لإصدار الإنتاج
+- `npm run server`: تشغيل الخادم الخلفي
+- `npm run dev`: تشغيل الخادم والواجهة الأمامية في نفس الوقت
+- `npm run migrate`: تنفيذ عمليات ترحيل قاعدة البيانات
 
 ## ملاحظات
 
@@ -94,3 +126,4 @@ npm start
 - جميع النصوص باللغة العربية مع دعم RTL
 - تم تنفيذ تصميم مخصص للهاتف المحمول أولاً
 - يحتوي على زر WhatsApp عائم للتواصل مع الإدارة
+- تم ترقية النظام لاستخدام قاعدة بيانات PostgreSQL على Neon.tech بدلاً من البيانات المزيفة

@@ -64,7 +64,7 @@ const DashboardLayout = ({ children }) => {
               <span>×</span>
             </button>
             <div className="logo-section">
-              <h2 className="logo-text">نظام المتابعة</h2>
+              <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
             </div>
             <nav className="mobile-nav">
               {filteredNavigation.map((item) => (
@@ -86,7 +86,7 @@ const DashboardLayout = ({ children }) => {
       <div className="sidebar-desktop hidden md:flex md:flex-col">
         <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
           <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
-            <h1 className="logo-text">نظام المتابعة</h1>
+            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
           <nav className="flex-1 px-2 space-y-1">
             {filteredNavigation.map((item) => (
@@ -134,7 +134,7 @@ const DashboardLayout = ({ children }) => {
           >
             <span>☰</span>
           </button>
-          <h1 className="mobile-logo">نظام المتابعة</h1>
+          <img src="/logo.png" alt="LOGOIACSAS" className="mobile-logo-image" />
           <div className="flex items-center space-x-4">
             <NotificationBell />
             <button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,65 +13,54 @@ import '../styles/ReportsPage.css';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ReportsPage = () => {
-  const { user } = useAuth();
+  const { currentUser, getAllTasks } = useAuth();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedPole, setSelectedPole] = useState('');
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState(null);
+  const hasLoaded = useRef(false);
 
   const poles = [
     { value: '', label: 'كل الأقطاب' },
-    { value: 'technique', label: 'تقني' },
-    { value: 'media', label: 'اعلامي' },
-    { value: 'pedagogical', label: 'تربوي' },
-    { value: 'administrative', label: 'إداري' }
+    { value: 'التقنية', label: 'التقنية' },
+    { value: 'الإعلام', label: 'الإعلام' },
+    { value: 'ال Pedagogical', label: 'ال Pedagogical' },
+    { value: 'الإدارية', label: 'الإدارية' },
+    { value: 'ال Pedagogique', label: 'ال Pedagogique' },
+    { value: 'التسويق', label: 'التسويق' },
+    { value: 'الموارد البشرية', label: 'الموارد البشرية' },
+    { value: 'الإدارة', label: 'الإدارة' },
+    { value: 'التحليل', label: 'التحليل' },
+    { value: 'الجودة', label: 'الجودة' },
+    { value: 'الدعم', label: 'الدعم' },
+    { value: 'التكنولوجيا', label: 'التكنولوجيا' },
+    { value: 'التصميم', label: 'التصميم' },
+    { value: 'التعليم', label: 'التعليم' },
+    { value: 'التواصل', label: 'التواصل' },
+    { value: 'الإتصال', label: 'الإتصال' },
+    { value: 'البحث', label: 'البحث' },
+    { value: 'ال.quality', label: 'الجودة' }
   ];
 
   useEffect(() => {
-    // Fetch tasks from API
-    fetchTasks();
-  }, []);
-
-  useEffect(() => {
-    // Generate report data when tasks are loaded
-    if (tasks.length > 0 && !reportData) {
-      generateReportData();
+    // Get tasks from auth context
+    const allTasks = getAllTasks();
+    setTasks(allTasks);
+    if (allTasks.length > 0 && !hasLoaded.current) {
+      generateReportData(allTasks);
+      hasLoaded.current = true;
     }
-  }, [tasks]);
+  }, [currentUser, getAllTasks]);
 
-  const fetchTasks = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTasks(data);
-      } else {
-        console.error('Failed to fetch tasks:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Function to generate report data
-  const generateReportData = () => {
+  const generateReportData = (tasksToUse = tasks) => {
     // Filter tasks based on date range and pole
-    let filteredTasks = tasks;
+    let filteredTasks = tasksToUse;
 
     if (startDate && endDate) {
       filteredTasks = filteredTasks.filter(task => {
-        const taskDate = new Date(task.createdAt);
+        const taskDate = new Date(task.startDate || task.createdAt);
         const start = new Date(startDate);
         const end = new Date(endDate);
         return taskDate >= start && taskDate <= end;
@@ -84,13 +73,21 @@ const ReportsPage = () => {
 
     // Generate status distribution data
     const statusCounts = filteredTasks.reduce((acc, task) => {
-      acc[task.status] = (acc[task.status] || 0) + 1;
+      const statusKey = task.status === 'في انتظار الموافقة' ? 'pending' :
+                        task.status === 'جارية' ? 'in_progress' :
+                        task.status === 'مكتملة' ? 'completed' :
+                        task.status === 'مرفوضة' ? 'rejected' : 'pending';
+      acc[statusKey] = (acc[statusKey] || 0) + 1;
       return acc;
     }, {});
 
     // Generate type distribution data
     const typeCounts = filteredTasks.reduce((acc, task) => {
-      acc[task.type] = (acc[task.type] || 0) + 1;
+      const typeKey = task.priority === 'Urgent' ? 'urgent' :
+                      task.priority === 'Important' ? 'important' :
+                      task.priority === 'Normal' ? 'normal' :
+                      task.priority === 'Faible' ? 'low' : 'normal';
+      acc[typeKey] = (acc[typeKey] || 0) + 1;
       return acc;
     }, {});
 
@@ -102,55 +99,60 @@ const ReportsPage = () => {
 
     setReportData({
       status: {
-        labels: ['معلقة', 'قيد التنفيذ', 'منتهية'],
+        labels: ['معلقة', 'قيد التنفيذ', 'منتهية', 'مرفوضة'],
         datasets: [{
           label: 'توزيع المهام حسب الحالة',
           data: [
             statusCounts.pending || 0,
             statusCounts.in_progress || 0,
-            statusCounts.completed || 0
+            statusCounts.completed || 0,
+            statusCounts.rejected || 0
           ],
           backgroundColor: [
             '#f97316', // orange for pending
             '#3b82f6', // blue for in_progress
-            '#10b981'  // green for completed
+            '#10b981', // green for completed
+            '#ef4444'  // red for rejected
           ],
           borderWidth: 1,
         }]
       },
       type: {
-        labels: ['عاجل', 'مهم', 'عادي'],
+        labels: ['عاجل', 'مهم', 'عادي', 'ضعيفة'],
         datasets: [{
-          label: 'توزيع المهام حسب النوع',
+          label: 'توزيع المهام حسب الأولوية',
           data: [
             typeCounts.urgent || 0,
             typeCounts.important || 0,
-            typeCounts.normal || 0
+            typeCounts.normal || 0,
+            typeCounts.low || 0
           ],
           backgroundColor: [
             '#ef4444', // red for urgent
             '#f59e0b', // amber for important
-            '#8b5cf6'  // violet for normal
+            '#8b5cf6', // violet for normal
+            '#6b7280'  // gray for low
           ],
           borderWidth: 1,
         }]
       },
       pole: {
-        labels: ['تقني', 'إعلامي', 'تربوي', 'إداري'],
+        labels: Object.keys(poleCounts).filter(pole => pole.trim() !== ''),
         datasets: [{
           label: 'توزيع المهام حسب القطب',
-          data: [
-            poleCounts.technique || 0,
-            poleCounts.media || 0,
-            poleCounts.pedagogical || 0,
-            poleCounts.administrative || 0
-          ],
+          data: Object.keys(poleCounts)
+            .filter(pole => pole.trim() !== '')
+            .map(pole => poleCounts[pole]),
           backgroundColor: [
             '#8b5cf6', // violet
             '#06b6d4', // cyan
             '#ec4899', // pink
-            '#f59e0b'  // amber
-          ],
+            '#f59e0b', // amber
+            '#10b981', // green
+            '#3b82f6', // blue
+            '#f97316', // orange
+            '#ef4444'  // red
+          ].slice(0, Object.keys(poleCounts).length),
           borderWidth: 1,
         }]
       }
@@ -160,7 +162,7 @@ const ReportsPage = () => {
   const handleFilter = () => {
     setLoading(true);
     setTimeout(() => {
-      generateReportData();
+      generateReportData(tasks);
       setLoading(false);
     }, 300); // Small delay for better UX
   };
@@ -170,13 +172,14 @@ const ReportsPage = () => {
     setEndDate('');
     setSelectedPole('');
     setReportData(null);
+    generateReportData(tasks);
   };
 
   // Calculate summary statistics
   const totalTasks = reportData ? reportData.status.datasets[0].data.reduce((a, b) => a + b, 0) : tasks.length;
-  const completedTasks = reportData ? reportData.status.datasets[0].data[2] : tasks.filter(t => t.status === 'completed').length;
-  const pendingTasks = reportData ? reportData.status.datasets[0].data[0] : tasks.filter(t => t.status === 'pending').length;
-  const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'in_progress').length;
+  const completedTasks = reportData ? reportData.status.datasets[0].data[2] : tasks.filter(t => t.status === 'مكتملة').length;
+  const pendingTasks = reportData ? reportData.status.datasets[0].data[0] : tasks.filter(t => t.status === 'في انتظار الموافقة').length;
+  const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'جارية').length;
 
   return (
     <DashboardLayout>

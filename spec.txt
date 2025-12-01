@@ -1,0 +1,390 @@
+rompt complet pour ton site React (à copier-coller dans un autre GPT)
+
+Tu es un expert en architecture d’applications web en React, UX/UI mobile-first et gestion de projet.
+
+Je veux que tu conçoives et génères un site complet en React (composants, structure, routing, gestion des rôles, maquettes UX, et si possible un pseudo-backend ou mock API) pour une application de gestion de projet et de suivi de tâches, entièrement en langue arabe (interface + textes) avec une mise en page RTL.
+
+🎯 Objectif général
+
+Créer une application web en React (SPA) pour la gestion de projets et de tâches, utilisée principalement par un équipe média / communication.
+L’appli doit permettre :
+
+La gestion des utilisateurs avec 3 profils :
+
+Administrateur (أدمين)
+
+Responsable (مسؤول)
+
+Utilisateur (مستخدم)
+
+La création, validation, suivi et clôture des tâches.
+
+Un dashboard clair en arabe, surtout pour mobile, avec des indicateurs clés.
+
+90% des utilisateurs seront sur mobile, donc l’UI doit être mobile-first, très simple, avec de gros boutons, des listes claires, et peu de texte par écran.
+
+Utilise de préférence :
+
+React + React Router
+
+Un système de state management simple (Context API ou Redux Toolkit)
+
+Tailwind CSS ou autre solution simple pour le responsive
+
+Support complet RTL (flex, text-align, direction: rtl, etc.)
+
+👤 Pages & rôles
+1) Page de connexion (تسجيل الدخول)
+
+Champ email / téléphone
+
+Champ mot de passe
+
+Sélection ou détection automatique du rôle après login (via données utilisateur).
+
+Affichage du logo et du nom de la plateforme en arabe (par exemple :
+منصة إدارة المشاريع و المتابعة الإعلامية).
+
+Gestion basique d’erreurs :
+
+Identifiants incorrects
+
+Compte inactif
+
+Redirection :
+
+Admin → Dashboard Admin
+
+Responsable → Dashboard Responsable
+
+Utilisateur → Dashboard Utilisateur
+
+Merci de proposer un système simple de fausse authentification (mock) pour la démo : par exemple une petite liste d’utilisateurs en dur avec rôle et mot de passe.
+
+📊 Page Dashboard (لوحة التحكم)
+
+Une page principale après login, différente selon le rôle, mais basée sur les mêmes indicateurs.
+
+Indicateurs à afficher (en cartes simples) :
+
+عدد المهام الجارية (nombre de tâches en cours)
+
+عدد المهام المكتملة (nombre de tâches terminées)
+
+عدد المستخدمين غير النشطين
+
+Utilisateurs qui n’ont aucune tâche créée ou assignée sur une période (configurable, par ex. 30 jours).
+
+عدد المهام في انتظار الموافقة (tâches en attente de validation par le responsable / admin)
+
+عدد المهام غير النشطة (tâches marquées comme inactives)
+
+Répartition des tâches par type sous forme de petite liste ou graphique simple :
+
+فيديو
+
+بطاقة (bitaka – visuel/carte)
+
+إعلان (i3lane – annonce)
+
+صوتي (audio)
+
+أخرى (autre)
+
+Prochaine échéance : afficher la tâche la plus proche de sa date de fin (deadline).
+
+Pour chaque rôle :
+
+Administrateur : voit les statistiques globales (tous les utilisateurs)
+
+Responsable : voit les indicateurs uniquement sur les tâches de son équipe
+
+Utilisateur : voit un mini tableau de bord personnel :
+
+Nombre de ses tâches en cours
+
+Nombre de ses tâches terminées
+
+Tâches en attente de validation
+
+Merci de :
+
+Définir les composants React pour ces cartes d’indicateurs.
+
+Prévoir une version liste simple sur mobile, avec des cartes empilées.
+
+✅ Page de suivi des tâches (متابعة المهام)
+
+Créer une page principale "Suivi des tâches" avec :
+
+Liste des tâches sous forme de cartes ou tableau adapté au mobile.
+
+Filtres :
+
+Par statut : (جارية، مكتملة، في الإنتظار، غير مفعلة)
+
+Par type : (فيديو، بطاقة، إعلان، صوتي، أخرى)
+
+Par date début / date fin
+
+Barre de recherche par nom de tâche.
+
+Chaque tâche est définie par les champs suivants (en arabe dans l’UI, mais tu peux utiliser des noms anglais pour les props) :
+
+name : اسم المهمة
+
+description : وصف مختصر
+
+type : نوع المهمة (قائمة اختيار) :
+
+فيديو
+
+بطاقة
+
+إعلان
+
+صوتي
+
+أخرى
+
+startDate : تاريخ البداية
+
+endDate : تاريخ النهاية
+
+mediaLink : رابط الوسائط (رابط فيديو، صورة، ملف…)
+
+isActive : حالة التفعيل (مفعلة / غير مفعلة)
+
+status :
+
+مسودة
+
+في انتظار الموافقة
+
+جارية
+
+مكتملة
+
+مرفوضة
+
+createdBy : المستخدم الذي أنشأ المهمة
+
+validatedBy : المسؤول / الأدمين الذي قام بالموافقة (si applicable)
+
+Actions possibles :
+
+Créer une tâche (formulaire détaillé)
+
+Modifier une tâche (si rôle autorisé et selon statut)
+
+Supprimer une tâche (confirmation modale)
+
+Merci de :
+
+Proposer une validation basique des formulaires (champs obligatoires, format des dates, etc.)
+
+Adapter les formulaires pour utilisation mobile (grands champs, labels au-dessus).
+
+👥 Règles de gestion & rôles
+
+Rôles :
+
+Utilisateur (مستخدم) :
+
+Peut créer une nouvelle tâche.
+
+Peut voir ses propres tâches.
+
+Peut modifier ses tâches tant qu’elles ne sont pas validées.
+
+Ne peut pas valider ni rejeter de tâches.
+
+Responsable (مسؤول) :
+
+Reçoit les tâches créées par les utilisateurs de son équipe.
+
+Peut approuver (قبول) ou rejeter (رفض) une tâche.
+
+Peut renvoyer un commentaire à l’utilisateur (par exemple champ "ملاحظة المسؤول").
+
+Une fois la tâche approuvée, elle devient :
+
+Visible comme "en cours" ou "validée"
+
+Comptabilisée sur le dashboard.
+
+Administrateur (أدمين) :
+
+Possède tous les droits du responsable.
+
+Peut gérer la liste des utilisateurs (activer / désactiver un compte).
+
+Peut voir toutes les tâches, tous les indicateurs globaux.
+
+Règle clé :
+
+Quand un utilisateur crée une tâche :
+
+Son statut initial = "في انتظار الموافقة"
+
+Elle est assignée au responsable correspondant.
+
+La tâche n’apparaît sur le dashboard (comme tâche "en cours" ou "validée") qu’après validation par un responsable ou un administrateur.
+
+Merci de :
+
+Implémenter cette logique côté front (au moins au niveau de l’état local / mock API).
+
+Prévoir dans le code la possibilité de brancher plus tard une vraie API (endpoints suggérés).
+
+🧾 Page de validation des tâches (خاصة بالمسؤول و الأدمين)
+
+Créer une page dédiée, accessible uniquement par :
+
+Responsables
+
+Administrateurs
+
+Fonctionnalités :
+
+Liste des tâches "en attente de validation" (في انتظار الموافقة).
+
+Sur chaque ligne / carte :
+
+Nom de la tâche
+
+Type
+
+Créateur
+
+Dates début/fin
+
+Lien média (cliquable, s’ouvre dans un nouvel onglet)
+
+Boutons :
+
+قبول المهمة (valider)
+
+رفض المهمة (rejeter)
+
+Champ texte optionnel : "ملاحظة المسؤول" (commentaire pour l’utilisateur).
+
+Effet sur le statut :
+
+Si acceptée → statut passe à "جارية" (ou "مكتملة" si la date de fin est passée ou selon une logique simple que tu peux proposer).
+
+Si refusée → statut = "مرفوضة" et la tâche n’apparaît pas dans les KPIs du dashboard.
+
+📱 UX/UI & Design (en arabe, mobile-first)
+
+Langue de l’interface : arabe uniquement (tous les textes, labels, boutons).
+
+Direction : RTL partout.
+
+Style :
+
+Design épuré, clair, sans surcharge.
+
+Cartes avec bords arrondis, ombres légères.
+
+Couleurs sobres (par ex. base blanche, accents bleu / vert) – tu peux proposer une palette.
+
+Navigation :
+
+Menu simplifié en bas de l’écran sur mobile (Bottom Nav) avec icônes :
+
+لوحة التحكم
+
+المهام
+
+صفحة المسؤول (si rôle)
+
+الإعدادات / الحساب الشخصي
+
+Typographie :
+
+Police adaptée à l’arabe (par exemple Google Fonts : "Tajawal" ou "Cairo").
+
+Merci de :
+
+Décrire la structure des composants (ex : DashboardLayout, TaskList, TaskForm, ValidationPage, RoleGuard, etc.).
+
+Donner des exemples d’écrans (wireframes textuels) adaptés au mobile.
+
+🟢 Bouton WhatsApp – Contacter l’administrateur
+
+Ajouter un bouton flottant (en bas à droite ou gauche, adapté RTL) sur toutes les pages :
+
+Icône WhatsApp
+
+Texte : "تواصل مع الإدارة عبر الواتساب"
+
+Au clic : ouvre un lien https://wa.me/ avec un numéro fictif (que je pourrai changer).
+
+Merci de :
+
+Encapsuler ce bouton dans un composant réutilisable : par exemple <WhatsAppFloatingButton />.
+
+Expliquer où l’insérer dans la hiérarchie des composants (par ex. dans le layout principal).
+
+🗄️ Modélisation & Préparation back-end futur
+
+Même si tu ne crées pas une vraie API, merci de :
+
+Proposer une structure de données (types ou interfaces TypeScript si possible) pour :
+
+User
+
+Task
+
+Team (optionnel)
+
+Proposer la liste des endpoints REST qu’on pourrait utiliser plus tard, par exemple :
+
+POST /login
+
+GET /tasks
+
+POST /tasks
+
+PUT /tasks/:id
+
+DELETE /tasks/:id
+
+POST /tasks/:id/validate
+
+GET /dashboard/stats
+
+Prévoir un faux service en front (TaskService, AuthService) qui utilise des données mock.
+
+📦 Livrable attendu
+
+Une description complète de l’architecture du projet React.
+
+Un plan de dossiers (structure du projet).
+
+La liste des composants avec leur rôle.
+
+Des exemples de code pour :
+
+La page de login
+
+Le dashboard
+
+La liste et le formulaire de tâches
+
+La page de validation
+
+Le bouton WhatsApp flottant
+
+La gestion des rôles et des routes protégées
+
+Tous les textes d’interface en arabe, clairement écrits en RTL.
+
+Je veux un résultat organisé, structuré, commenté, facile à comprendre et à modifier, en gardant toujours en tête :
+
+Simplicité pour l’utilisateur mobile
+
+Lisibilité de l’arabe
+
+Règles de validation des tâches et des rôles.

@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Tajawal', 'Segoe UI', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-container {
+  direction: rtl;
+  text-align: right;
+}
+
+body, html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar for RTL */
+::-webkit-scrollbar {
+  width: 8px;
+  direction: rtl;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  direction: rtl;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Fix for some Tailwind RTL issues */
+.rtl\:flex-row {
+  flex-direction: row-reverse;
+}
+
+.rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}

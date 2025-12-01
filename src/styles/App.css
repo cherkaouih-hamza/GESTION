@@ -1,0 +1,8 @@
+.App {
+  text-align: center;
+}
+
+.rtl-container {
+  direction: rtl;
+  text-align: right;
+}

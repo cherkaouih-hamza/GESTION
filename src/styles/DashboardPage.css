@@ -1,0 +1,9 @@
+.dashboard-layout {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-container {
+  direction: rtl;
+  text-align: right;
+}

@@ -1,0 +1,206 @@
+import React, { useState, useEffect } from 'react';
+
+const TaskForm = ({ task, onSubmit, onCancel }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    type: 'فيديو',
+    startDate: '',
+    endDate: '',
+    mediaLink: '',
+    isActive: true
+  });
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (task) {
+      setFormData({
+        name: task.name || '',
+        description: task.description || '',
+        type: task.type || 'فيديو',
+        startDate: task.startDate || '',
+        endDate: task.endDate || '',
+        mediaLink: task.mediaLink || '',
+        isActive: task.isActive !== undefined ? task.isActive : true
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        type: 'فيديو',
+        startDate: '',
+        endDate: '',
+        mediaLink: '',
+        isActive: true
+      });
+    }
+  }, [task]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'اسم المهمة مطلوب';
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = 'الوصف مطلوب';
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = 'تاريخ البداية مطلوب';
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = 'تاريخ النهاية مطلوب';
+    }
+
+    if (formData.startDate && formData.endDate && new Date(formData.startDate) > new Date(formData.endDate)) {
+      newErrors.endDate = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      if (task) {
+        onSubmit(task.id, formData);
+      } else {
+        onSubmit(formData);
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rtl text-right">
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">اسم المهمة *</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className={`w-full border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+          placeholder="أدخل اسم المهمة"
+        />
+        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">وصف مختصر *</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          rows="3"
+          className={`w-full border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+          placeholder="أدخل وصف المهمة"
+        />
+        {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">نوع المهمة</label>
+          <select
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="فيديو">فيديو</option>
+            <option value="بطاقة">بطاقة</option>
+            <option value="إعلان">إعلان</option>
+            <option value="صوتي">صوتي</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">حالة التفعيل</label>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="isActive"
+              checked={formData.isActive}
+              onChange={handleChange}
+              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <span className="mr-2 text-sm text-gray-700">
+              {formData.isActive ? 'مفعلة' : 'غير مفعلة'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ البداية *</label>
+          <input
+            type="date"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleChange}
+            className={`w-full border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+          />
+          {errors.startDate && <p className="mt-1 text-sm text-red-600">{errors.startDate}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ النهاية *</label>
+          <input
+            type="date"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleChange}
+            className={`w-full border ${errors.endDate ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+          />
+          {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate}</p>}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">رابط الوسائط</label>
+        <input
+          type="url"
+          name="mediaLink"
+          value={formData.mediaLink}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="https://example.com/video.mp4"
+        />
+        <p className="mt-1 text-sm text-gray-500">رابط الفيديو أو الصورة أو الملف</p>
+      </div>
+
+      <div className="flex justify-end space-x-3 space-x-reverse">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          إلغاء
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          {task ? 'تحديث المهمة' : 'إنشاء المهمة'}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default TaskForm;

@@ -1,0 +1,8 @@
+.tasks-page {
+  direction: rtl;
+  text-align: right;
+}
+
+.space-x-reverse {
+  direction: rtl;
+}

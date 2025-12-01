@@ -1,0 +1,8 @@
+.login-container {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl:mr-2 {
+  margin-right: 0.5rem;
+}

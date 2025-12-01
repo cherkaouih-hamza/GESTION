@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+build/
+dist/
+out/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE generated files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary files
+tmp/
+temp/

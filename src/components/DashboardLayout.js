@@ -38,109 +38,94 @@ const DashboardLayout = ({ children }) => {
   };
 
   return (
-    <div className="dashboard-layout min-h-screen bg-gray-100 flex flex-col">
+    <div className="dashboard-layout min-h-screen flex flex-col">
       {/* Mobile sidebar */}
-      <div className={`mobile-sidebar-container fixed inset-0 z-40 flex ${sidebarOpen ? '' : 'hidden'}`}>
-        <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
-        <div className="relative flex-1 flex max-w-xs w-full bg-indigo-700 mobile-sidebar mobile-sidebar-content">
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
+      {sidebarOpen && (
+        <div className="mobile-sidebar-container">
+          <div className="mobile-overlay" onClick={() => setSidebarOpen(false)}></div>
+          <div className="mobile-sidebar">
             <button
-              className="mobile-menu-close ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="mobile-close-btn"
               onClick={() => setSidebarOpen(false)}
             >
-              <span className="sr-only">إغلاق</span>
-              <span className="text-white text-xl">×</span>
+              <span>×</span>
             </button>
-          </div>
-          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-            <div className="flex-shrink-0 flex items-center px-4">
-              <h2 className="text-white text-lg font-bold">نظام المتابعة</h2>
+            <div className="logo-section">
+              <h2 className="logo-text">نظام المتابعة</h2>
             </div>
-            <nav className="mt-5 px-2 space-y-1">
+            <nav className="mobile-nav">
               {filteredNavigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`${
-                    isActive(item.href)
-                      ? 'bg-indigo-800 text-white'
-                      : 'text-indigo-100 hover:bg-indigo-600'
-                  } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+                  className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <span className="ml-3">{item.icon} {item.name}</span>
+                  <span>{item.icon} {item.name}</span>
                 </Link>
               ))}
             </nav>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div className="flex-1 flex flex-col min-h-0 bg-indigo-700">
-          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-            <div className="flex items-center justify-center flex-shrink-0 px-4">
-              <h1 className="text-white text-xl font-bold text-center">نظام المتابعة</h1>
-            </div>
-            <nav className="mt-5 flex-1 px-2 space-y-1">
-              {filteredNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`${
-                    isActive(item.href)
-                      ? 'bg-indigo-800 text-white'
-                      : 'text-indigo-100 hover:bg-indigo-600'
-                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
-                >
-                  <span className="ml-3">{item.icon} {item.name}</span>
-                </Link>
-              ))}
-            </nav>
+      {/* Desktop sidebar */}
+      <div className="sidebar-desktop hidden md:flex md:flex-col">
+        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
+          <div className="flex items-center justify-center flex-shrink-0 px-4 py-6">
+            <h1 className="logo-text">نظام المتابعة</h1>
           </div>
-          <div className="flex-shrink-0 flex pb-4 px-4">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
-              </div>
-              <div className="mr-3">
-                <p className="text-sm font-medium text-white">{currentUser?.name}</p>
-                <p className="text-xs font-medium text-indigo-200 capitalize">{currentUser?.role}</p>
-              </div>
-              <button
-                onClick={logout}
-                className="mr-auto bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+          <nav className="flex-1 px-2 space-y-1">
+            {filteredNavigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
               >
-                خروج
-              </button>
+                <span>{item.icon} {item.name}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="user-section">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
+            </div>
+            <div className="mr-3 flex-1">
+              <p className="user-info">{currentUser?.name}</p>
+              <p className="user-role capitalize">{currentUser?.role}</p>
             </div>
           </div>
+          <button
+            onClick={logout}
+            className="logout-btn mt-3"
+          >
+            خروج
+          </button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="md:dir-ltr md:pr-64 flex flex-col flex-1">
+      <div className="flex flex-col flex-1">
         {/* Mobile header */}
-        <div className="md:hidden">
-          <div className="flex items-center justify-between bg-indigo-700 px-4 py-3">
-            <button
-              className="mobile-menu-toggle ml-2 flex items-center justify-center h-10 w-10 rounded-md text-indigo-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <span className="text-white text-xl">☰</span>
-            </button>
-            <h1 className="text-white text-lg font-bold">نظام المتابعة</h1>
-            <button
-              onClick={logout}
-              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-            >
-              خروج
-            </button>
-          </div>
+        <div className="md:hidden mobile-header">
+          <button
+            className="mobile-menu-toggle"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <span>☰</span>
+          </button>
+          <h1 className="mobile-logo">نظام المتابعة</h1>
+          <button
+            onClick={logout}
+            className="mobile-logout"
+          >
+            خروج
+          </button>
         </div>
 
-        <main className="flex-1">
+        <main className="main-content flex-1">
           {children}
         </main>
       </div>

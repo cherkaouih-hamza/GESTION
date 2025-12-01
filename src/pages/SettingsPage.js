@@ -44,78 +44,119 @@ const SettingsPage = () => {
   };
 
   const renderGeneralSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">الإعدادات العامة</h3>
-        
-        <div className="space-y-4">
+    <div className="space-y-8">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+        <div className="flex items-center mb-6">
+          <div className="w-2 h-8 bg-blue-600 rounded-full ml-3"></div>
+          <h3 className="text-xl font-semibold text-gray-800">الإعدادات العامة</h3>
+        </div>
+
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">اسم النظام</label>
-            <input
-              type="text"
-              value={settings.general.systemName}
-              onChange={(e) => handleInputChange('general', 'systemName', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">وصف النظام</label>
-            <textarea
-              value={settings.general.systemDescription}
-              onChange={(e) => handleInputChange('general', 'systemDescription', e.target.value)}
-              rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">المنطقة الزمنية</label>
-              <select
-                value={settings.general.timezone}
-                onChange={(e) => handleInputChange('general', 'timezone', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Africa/Casablanca">الدار البيضاء</option>
-                <option value="Europe/Paris">باريس</option>
-                <option value="UTC">UTC</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">اللغة</label>
-              <select
-                value={settings.general.language}
-                onChange={(e) => handleInputChange('general', 'language', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="ar">العربية</option>
-                <option value="fr">الفرنسية</option>
-                <option value="en">الإنجليزية</option>
-              </select>
+            <label className="block text-sm font-medium text-gray-700 mb-3">اسم النظام</label>
+            <div className="relative">
+              <input
+                type="text"
+                value={settings.general.systemName}
+                onChange={(e) => handleInputChange('general', 'systemName', e.target.value)}
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <div className="absolute right-3 top-3.5 text-gray-400">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                </svg>
+              </div>
             </div>
           </div>
-          
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">تنسيق التاريخ</label>
-            <select
-              value={settings.general.dateFormat}
-              onChange={(e) => handleInputChange('general', 'dateFormat', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-            </select>
+            <label className="block text-sm font-medium text-gray-700 mb-3">وصف النظام</label>
+            <div className="relative">
+              <textarea
+                value={settings.general.systemDescription}
+                onChange={(e) => handleInputChange('general', 'systemDescription', e.target.value)}
+                rows="4"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <div className="absolute right-3 top-3.5 text-gray-400">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">المنطقة الزمنية</label>
+              <div className="relative">
+                <select
+                  value={settings.general.timezone}
+                  onChange={(e) => handleInputChange('general', 'timezone', e.target.value)}
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+                >
+                  <option value="Africa/Casablanca">الدار البيضاء</option>
+                  <option value="Europe/Paris">باريس</option>
+                  <option value="UTC">UTC</option>
+                </select>
+                <div className="absolute right-3 top-3.5 text-gray-400 pointer-events-none">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">اللغة</label>
+              <div className="relative">
+                <select
+                  value={settings.general.language}
+                  onChange={(e) => handleInputChange('general', 'language', e.target.value)}
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+                >
+                  <option value="ar">العربية</option>
+                  <option value="fr">الفرنسية</option>
+                  <option value="en">الإنجليزية</option>
+                </select>
+                <div className="absolute right-3 top-3.5 text-gray-400 pointer-events-none">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">تنسيق التاريخ</label>
+            <div className="relative">
+              <select
+                value={settings.general.dateFormat}
+                onChange={(e) => handleInputChange('general', 'dateFormat', e.target.value)}
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+              >
+                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              </select>
+              <div className="absolute right-3 top-3.5 text-gray-400 pointer-events-none">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div className="mt-6">
+
+        <div className="mt-8 flex justify-end">
           <button
             onClick={() => handleSaveSettings('general')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
           >
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
             حفظ الإعدادات العامة
           </button>
         </div>
@@ -124,69 +165,106 @@ const SettingsPage = () => {
   );
 
   const renderNotificationSettings = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">إعدادات الإشعارات</h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">إشعارات البريد الإلكتروني</label>
-              <p className="text-sm text-gray-500">السماح بإرسال إشعارات عبر البريد الإلكتروني</p>
+    <div className="space-y-8">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+        <div className="flex items-center mb-6">
+          <div className="w-2 h-8 bg-purple-600 rounded-full ml-3"></div>
+          <h3 className="text-xl font-semibold text-gray-800">إعدادات الإشعارات</h3>
+        </div>
+
+        <div className="space-y-6">
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-purple-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  <label className="text-base font-medium text-gray-800">إشعارات البريد الإلكتروني</label>
+                </div>
+                <p className="text-sm text-gray-500 mr-9 mt-2">السماح بإرسال إشعارات عبر البريد الإلكتروني</p>
+              </div>
+              <button
+                onClick={() => handleInputChange('notifications', 'emailNotifications', !settings.notifications.emailNotifications)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.notifications.emailNotifications ? 'bg-purple-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.notifications.emailNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
-            <button
-              onClick={() => handleInputChange('notifications', 'emailNotifications', !settings.notifications.emailNotifications)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.notifications.emailNotifications ? 'bg-blue-600' : 'bg-gray-200'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.notifications.emailNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">إشعارات الدفع</label>
-              <p className="text-sm text-gray-500">السماح بإرسال إشعارات دفع للهاتف</p>
+
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-purple-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                  </svg>
+                  <label className="text-base font-medium text-gray-800">إشعارات الدفع</label>
+                </div>
+                <p className="text-sm text-gray-500 mr-9 mt-2">السماح بإرسال إشعارات دفع للهاتف</p>
+              </div>
+              <button
+                onClick={() => handleInputChange('notifications', 'pushNotifications', !settings.notifications.pushNotifications)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.notifications.pushNotifications ? 'bg-purple-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.notifications.pushNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
-            <button
-              onClick={() => handleInputChange('notifications', 'pushNotifications', !settings.notifications.pushNotifications)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.notifications.pushNotifications ? 'bg-blue-600' : 'bg-gray-200'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.notifications.pushNotifications ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">تذكيرات انتهاء المهلة</label>
-              <p className="text-sm text-gray-500">إرسال تذكيرات قبل انتهاء مهلة المهمة</p>
+
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-purple-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <label className="text-base font-medium text-gray-800">تذكيرات انتهاء المهلة</label>
+                </div>
+                <p className="text-sm text-gray-500 mr-9 mt-2">إرسال تذكيرات قبل انتهاء مهلة المهمة</p>
+              </div>
+              <button
+                onClick={() => handleInputChange('notifications', 'dueDateReminders', !settings.notifications.dueDateReminders)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.notifications.dueDateReminders ? 'bg-purple-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.notifications.dueDateReminders ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
-            <button
-              onClick={() => handleInputChange('notifications', 'dueDateReminders', !settings.notifications.dueDateReminders)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.notifications.dueDateReminders ? 'bg-blue-600' : 'bg-gray-200'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.notifications.dueDateReminders ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">عدد الساعات للتذكير</label>
-            <input
-              type="number"
-              value={settings.notifications.reminderHours}
-              onChange={(e) => handleInputChange('notifications', 'reminderHours', parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min="1"
-              max="168"
-            />
-            <p className="text-sm text-gray-500 mt-1">عدد الساعات قبل انتهاء المهلة</p>
+
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div>
+              <div className="flex items-center">
+                <svg className="w-6 h-6 text-purple-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <label className="text-base font-medium text-gray-800">عدد الساعات للتذكير</label>
+              </div>
+              <div className="mt-4 flex items-center">
+                <input
+                  type="number"
+                  value={settings.notifications.reminderHours}
+                  onChange={(e) => handleInputChange('notifications', 'reminderHours', parseInt(e.target.value))}
+                  className="w-24 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  min="1"
+                  max="168"
+                />
+                <span className="mr-4 text-gray-500">ساعة</span>
+              </div>
+              <p className="text-sm text-gray-500 mr-9 mt-2">عدد الساعات قبل انتهاء المهلة</p>
+            </div>
           </div>
         </div>
-        
-        <div className="mt-6">
+
+        <div className="mt-8 flex justify-end">
           <button
             onClick={() => handleSaveSettings('notifications')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
           >
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
             حفظ إعدادات الإشعارات
           </button>
         </div>
@@ -195,56 +273,86 @@ const SettingsPage = () => {
   );
 
   const renderSecuritySettings = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">إعدادات الأمان</h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-gray-700">تعقيد كلمة المرور</label>
-              <p className="text-sm text-gray-500">تطبيق قواعد تعقيد كلمة المرور</p>
+    <div className="space-y-8">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+        <div className="flex items-center mb-6">
+          <div className="w-2 h-8 bg-red-600 rounded-full ml-3"></div>
+          <h3 className="text-xl font-semibold text-gray-800">إعدادات الأمان</h3>
+        </div>
+
+        <div className="space-y-6">
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-red-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                  <label className="text-base font-medium text-gray-800">تعقيد كلمة المرور</label>
+                </div>
+                <p className="text-sm text-gray-500 mr-9 mt-2">تطبيق قواعد تعقيد كلمة المرور</p>
+              </div>
+              <button
+                onClick={() => handleInputChange('security', 'passwordComplexity', !settings.security.passwordComplexity)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.security.passwordComplexity ? 'bg-red-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.security.passwordComplexity ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
-            <button
-              onClick={() => handleInputChange('security', 'passwordComplexity', !settings.security.passwordComplexity)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.security.passwordComplexity ? 'bg-blue-600' : 'bg-gray-200'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.security.passwordComplexity ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">مهلة الجلسة (بالدقائق)</label>
-            <input
-              type="number"
-              value={settings.security.sessionTimeout}
-              onChange={(e) => handleInputChange('security', 'sessionTimeout', parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min="5"
-              max="120"
-            />
-            <p className="text-sm text-gray-500 mt-1">عدد الدقائق قبل انتهاء الجلسة تلقائيًا</p>
-          </div>
-          
-          <div className="flex items-center justify-between">
+
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
             <div>
-              <label className="text-sm font-medium text-gray-700">المصادقة الثنائية</label>
-              <p className="text-sm text-gray-500">تمكين المصادقة الثنائية للحسابات</p>
+              <div className="flex items-center">
+                <svg className="w-6 h-6 text-red-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <label className="text-base font-medium text-gray-800">مهلة الجلسة (بالدقائق)</label>
+              </div>
+              <div className="mt-4 flex items-center">
+                <input
+                  type="number"
+                  value={settings.security.sessionTimeout}
+                  onChange={(e) => handleInputChange('security', 'sessionTimeout', parseInt(e.target.value))}
+                  className="w-24 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  min="5"
+                  max="120"
+                />
+                <span className="mr-4 text-gray-500">دقيقة</span>
+              </div>
+              <p className="text-sm text-gray-500 mr-9 mt-2">عدد الدقائق قبل انتهاء الجلسة تلقائيًا</p>
             </div>
-            <button
-              onClick={() => handleInputChange('security', 'twoFactorAuth', !settings.security.twoFactorAuth)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.security.twoFactorAuth ? 'bg-blue-600' : 'bg-gray-200'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.security.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
+          </div>
+
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center">
+                  <svg className="w-6 h-6 text-red-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                  <label className="text-base font-medium text-gray-800">المصادقة الثنائية</label>
+                </div>
+                <p className="text-sm text-gray-500 mr-9 mt-2">تمكين المصادقة الثنائية للحسابات</p>
+              </div>
+              <button
+                onClick={() => handleInputChange('security', 'twoFactorAuth', !settings.security.twoFactorAuth)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.security.twoFactorAuth ? 'bg-red-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${settings.security.twoFactorAuth ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
+            </div>
           </div>
         </div>
-        
-        <div className="mt-6">
+
+        <div className="mt-8 flex justify-end">
           <button
             onClick={() => handleSaveSettings('security')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
           >
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
             حفظ إعدادات الأمان
           </button>
         </div>
@@ -253,37 +361,82 @@ const SettingsPage = () => {
   );
 
   const renderSystemInfo = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">معلومات النظام</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-700">إصدار النظام</h4>
-            <p className="text-lg font-semibold">1.0.0</p>
+    <div className="space-y-8">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+        <div className="flex items-center mb-6">
+          <div className="w-2 h-8 bg-green-600 rounded-full ml-3"></div>
+          <h3 className="text-xl font-semibold text-gray-800">معلومات النظام</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200 shadow-sm">
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-xl mr-4">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700">إصدار النظام</h4>
+                <p className="text-xl font-bold text-gray-800">1.0.0</p>
+              </div>
+            </div>
           </div>
-          
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-700">عدد المستخدمين</h4>
-            <p className="text-lg font-semibold">25</p>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200 shadow-sm">
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 rounded-xl mr-4">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700">عدد المستخدمين</h4>
+                <p className="text-xl font-bold text-gray-800">25</p>
+              </div>
+            </div>
           </div>
-          
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-700">عدد المهام</h4>
-            <p className="text-lg font-semibold">142</p>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200 shadow-sm">
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-100 rounded-xl mr-4">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700">عدد المهام</h4>
+                <p className="text-xl font-bold text-gray-800">142</p>
+              </div>
+            </div>
           </div>
-          
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-700">الاستخدام</h4>
-            <p className="text-lg font-semibold">3.2 GB</p>
+
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 border border-yellow-200 shadow-sm">
+            <div className="flex items-center">
+              <div className="p-3 bg-yellow-100 rounded-xl mr-4">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700">الاستخدام</h4>
+                <p className="text-xl font-bold text-gray-800">3.2 GB</p>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div className="mt-6">
-          <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <button className="px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center">
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
             إنشاء نسخة احتياطية
           </button>
-          <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2">
+          <button className="px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center">
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+            </svg>
             تفريغ ذاكرة التخزين المؤقت
           </button>
         </div>
@@ -292,56 +445,58 @@ const SettingsPage = () => {
   );
 
   return (
-    <div className="p-6" dir="rtl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">إعدادات النظام</h1>
+    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">إعدادات النظام</h1>
         <p className="text-gray-600">إدارة إعدادات النظام وتخصيصه</p>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8 space-x-reverse">
-          <button
-            onClick={() => setActiveTab('general')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'general'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            الإعدادات العامة
-          </button>
-          <button
-            onClick={() => setActiveTab('notifications')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'notifications'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            الإشعارات
-          </button>
-          <button
-            onClick={() => setActiveTab('security')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'security'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            الأمان
-          </button>
-          <button
-            onClick={() => setActiveTab('info')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'info'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            معلومات النظام
-          </button>
-        </nav>
+      <div className="mb-10">
+        <div className="bg-white rounded-2xl shadow-xl p-2 border border-gray-200">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveTab('general')}
+              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
+                activeTab === 'general'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              الإعدادات العامة
+            </button>
+            <button
+              onClick={() => setActiveTab('notifications')}
+              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
+                activeTab === 'notifications'
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              الإشعارات
+            </button>
+            <button
+              onClick={() => setActiveTab('security')}
+              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
+                activeTab === 'security'
+                  ? 'bg-red-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              الأمان
+            </button>
+            <button
+              onClick={() => setActiveTab('info')}
+              className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
+                activeTab === 'info'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              معلومات النظام
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Tab Content */}

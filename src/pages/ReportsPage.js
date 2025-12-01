@@ -178,59 +178,74 @@ const ReportsPage = () => {
   const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'in_progress').length;
 
   return (
-    <div className="p-6" dir="rtl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">تقرير المهام</h1>
+    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">تقرير المهام</h1>
         <p className="text-gray-600">عرض تحليلي لحالة المهام حسب التاريخ والقطب</p>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">مرشحات التقرير</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 mb-10 border border-gray-200">
+        <div className="flex items-center mb-6">
+          <div className="w-2 h-8 bg-blue-600 rounded-full ml-3"></div>
+          <h2 className="text-xl font-semibold text-gray-800">مرشحات التقرير</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">من تاريخ</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-3">من تاريخ</label>
+            <div className="relative">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">إلى تاريخ</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-3">إلى تاريخ</label>
+            <div className="relative">
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">القطب</label>
-            <select
-              value={selectedPole}
-              onChange={(e) => setSelectedPole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {poles.map((pole) => (
-                <option key={pole.value} value={pole.value}>
-                  {pole.label}
-                </option>
-              ))}
-            </select>
+            <label className="block text-sm font-medium text-gray-700 mb-3">القطب</label>
+            <div className="relative">
+              <select
+                value={selectedPole}
+                onChange={(e) => setSelectedPole(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+              >
+                {poles.map((pole) => (
+                  <option key={pole.value} value={pole.value}>
+                    {pole.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="flex items-end space-x-2 space-x-reverse">
+          <div className="flex items-end space-x-3 space-x-reverse">
             <button
               onClick={handleFilter}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
             >
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+              </svg>
               تطبيق التصفية
             </button>
             <button
               onClick={handleReset}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
             >
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
               إعادة تعيين
             </button>
           </div>
@@ -238,56 +253,116 @@ const ReportsPage = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800">إجمالي المهام</h3>
-          <p className="text-3xl font-bold text-blue-600">{totalTasks}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-blue-100 text-sm">إجمالي المهام</p>
+              <p className="text-3xl font-bold mt-2">{totalTasks}</p>
+            </div>
+            <div className="bg-blue-400 bg-opacity-30 p-3 rounded-xl">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800">منتهية</h3>
-          <p className="text-3xl font-bold text-green-600">{completedTasks}</p>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-green-100 text-sm">منتهية</p>
+              <p className="text-3xl font-bold mt-2">{completedTasks}</p>
+            </div>
+            <div className="bg-green-400 bg-opacity-30 p-3 rounded-xl">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800">معلقة</h3>
-          <p className="text-3xl font-bold text-orange-600">{pendingTasks}</p>
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-orange-100 text-sm">معلقة</p>
+              <p className="text-3xl font-bold mt-2">{pendingTasks}</p>
+            </div>
+            <div className="bg-orange-400 bg-opacity-30 p-3 rounded-xl">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800">قيد التنفيذ</h3>
-          <p className="text-3xl font-bold text-blue-500">{inProgressTasks}</p>
+        <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-indigo-100 text-sm">قيد التنفيذ</p>
+              <p className="text-3xl font-bold mt-2">{inProgressTasks}</p>
+            </div>
+            <div className="bg-indigo-400 bg-opacity-30 p-3 rounded-xl">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Charts Section */}
       {loading && (
-        <div className="flex justify-center items-center h-64">
-          <p className="text-gray-600">جاري تحميل التقرير...</p>
+        <div className="flex justify-center items-center h-80">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-gray-600">جاري تحميل التقرير...</p>
+          </div>
         </div>
       )}
 
       {!loading && reportData ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Status Distribution Chart */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">توزيع المهام حسب الحالة</h3>
-            <Pie data={reportData.status} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex items-center mb-4">
+              <div className="w-2 h-6 bg-blue-500 rounded-full ml-3"></div>
+              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب الحالة</h3>
+            </div>
+            <div className="h-80 flex items-center justify-center">
+              <Pie data={reportData.status} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+            </div>
           </div>
 
           {/* Type Distribution Chart */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">توزيع المهام حسب النوع</h3>
-            <Pie data={reportData.type} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex items-center mb-4">
+              <div className="w-2 h-6 bg-purple-500 rounded-full ml-3"></div>
+              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب النوع</h3>
+            </div>
+            <div className="h-80 flex items-center justify-center">
+              <Pie data={reportData.type} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+            </div>
           </div>
 
           {/* Pole Distribution Chart */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">توزيع المهام حسب القطب</h3>
-            <Pie data={reportData.pole} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+          <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200 transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex items-center mb-4">
+              <div className="w-2 h-6 bg-pink-500 rounded-full ml-3"></div>
+              <h3 className="text-lg font-semibold text-gray-800">توزيع المهام حسب القطب</h3>
+            </div>
+            <div className="h-80 flex items-center justify-center">
+              <Pie data={reportData.pole} options={{ responsive: true, plugins: { legend: { position: 'bottom' } } }} />
+            </div>
           </div>
         </div>
       ) : (
         !loading && (
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-600">يرجى تطبيق المرشحات لعرض التقرير</p>
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-200">
+            <div className="flex justify-center mb-6">
+              <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <p className="text-gray-600 text-lg">يرجى تطبيق المرشحات لعرض التقرير</p>
+            <p className="text-gray-500 mt-2">اختر التواريخ والقطب لبدء تحليل المهام</p>
           </div>
         )
       )}

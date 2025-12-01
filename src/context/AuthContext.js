@@ -75,6 +75,11 @@ export const AuthProvider = ({ children }) => {
 
   const getAllTasks = async () => {
     try {
+      // Si les tâches sont déjà chargées, les retourner directement
+      if (tasks.length > 0) {
+        return tasks;
+      }
+      // Sinon, les récupérer de l'API
       const tasksFromApi = await taskApi.getAllTasks();
       setTasks(tasksFromApi);
       return tasksFromApi;
@@ -86,9 +91,13 @@ export const AuthProvider = ({ children }) => {
 
   const getTasksByUser = async (userId) => {
     try {
-      // Pour l'instant, on récupère toutes les tâches et on filtre côté client
-      const allTasks = await getAllTasks();
-      return allTasks.filter(task => task.created_by === userId || task.assignee === userId);
+      // Récupérer toutes les tâches depuis l'API
+      const allTasks = await taskApi.getAllTasks();
+      // Filtrer côté client pour les tâches assignées ou créées par l'utilisateur
+      return allTasks.filter(task =>
+        (task.created_by && task.created_by == userId) ||
+        (task.assignee && task.assignee == userId)
+      );
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches utilisateur:', error);
       return [];
@@ -97,9 +106,15 @@ export const AuthProvider = ({ children }) => {
 
   const getTasksForValidation = async () => {
     try {
-      // Pour l'instant, on récupère toutes les tâches et on filtre côté client
-      const allTasks = await getAllTasks();
-      return allTasks.filter(task => task.status === 'pending' || task.status === 'في انتظار الموافقة');
+      // Récupérer toutes les tâches depuis l'API
+      const allTasks = await taskApi.getAllTasks();
+      // Filtrer les tâches en attente de validation
+      return allTasks.filter(task =>
+        task.status === 'pending' ||
+        task.status === 'في انتظار الموافقة' ||
+        task.status === 'draft' ||
+        task.status === 'مسودة'
+      );
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches en attente de validation:', error);
       return [];

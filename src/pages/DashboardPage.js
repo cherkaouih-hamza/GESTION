@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../components/DashboardLayout';
 import '../styles/DashboardPage.css';
@@ -30,7 +30,8 @@ const StatCard = ({ title, value, icon, color = 'blue' }) => {
 
 const TaskTypeChart = ({ tasks }) => {
   const typeCounts = tasks.reduce((acc, task) => {
-    acc[task.type] = (acc[task.type] || 0) + 1;
+    const type = task.type || task.title || 'غير محدد';
+    acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {});
 
@@ -67,36 +68,107 @@ const TaskTypeChart = ({ tasks }) => {
 };
 
 const DashboardPage = () => {
-  const { currentUser, getAllTasks, getTasksByUser, getTasksForValidation } = useAuth();
-  
-  let allTasks = getAllTasks();
-  let userTasks = [];
+  const { currentUser, getAllTasks, getTasksByUser } = useAuth();
+  const [allTasks, setAllTasks] = useState([]);
+  const [userTasks, setUserTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  if (currentUser?.role === 'utilisateur') {
-    userTasks = getTasksByUser(currentUser.id);
-    allTasks = userTasks;
-  } else if (currentUser?.role === 'responsable') {
-    // For this demo, responsable sees tasks from their team
-    userTasks = allTasks.filter(task => task.createdBy === currentUser.id || task.assignedTo === currentUser.id);
-  }
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        let tasks = await getAllTasks();
+        
+        if (currentUser?.role === 'utilisateur') {
+          // Pour un utilisateur normal, récupérer ses tâches assignées ou créées
+          const allTasksData = await getAllTasks();
+          tasks = allTasksData.filter(task => 
+            task.created_by === currentUser.id || task.assignee === currentUser.id
+          );
+        } else if (currentUser?.role === 'responsable') {
+          // Pour un responsable, récupérer les tâches pertinentes
+          const allTasksData = await getAllTasks();
+          tasks = allTasksData.filter(task => 
+            task.created_by === currentUser.id || task.assignee === currentUser.id
+          );
+        }
+        
+        setAllTasks(tasks);
+        
+        // Récupérer spécifiquement les tâches de l'utilisateur
+        if (currentUser?.role === 'utilisateur') {
+          const userTasksData = await getTasksByUser(currentUser.id);
+          setUserTasks(userTasksData);
+        } else {
+          setUserTasks(tasks);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des tâches:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Calculate stats based on role
+    if (currentUser) {
+      fetchTasks();
+    }
+  }, [currentUser, getAllTasks, getTasksByUser]);
+
+  // Calculer les statistiques
   const stats = {
-    activeTasks: allTasks.filter(task => task.status === 'جارية').length,
-    completedTasks: allTasks.filter(task => task.status === 'مكتملة').length,
-    pendingTasks: allTasks.filter(task => task.status === 'في انتظار الموافقة').length,
-    inactiveTasks: allTasks.filter(task => !task.isActive).length,
+    activeTasks: allTasks.filter(task => 
+      task.status === 'in_progress' || task.status === 'جارية'
+    ).length,
+    completedTasks: allTasks.filter(task => 
+      task.status === 'completed' || task.status === 'مكتملة'
+    ).length,
+    pendingTasks: allTasks.filter(task => 
+      task.status === 'pending' || task.status === 'في انتظار الموافقة'
+    ).length,
+    inactiveTasks: allTasks.filter(task => 
+      task.status === 'rejected' || task.status === 'مرفوضة'
+    ).length,
   };
 
-  // Add user stats if admin
+  // Ajouter les stats utilisateur si admin
   if (currentUser?.role === 'admin') {
-    stats.totalUsers = 3; // mock data
-    stats.inactiveUsers = 0; // mock data
+    stats.totalUsers = 3; // données factices pour le moment
+    stats.inactiveUsers = 0; // données factices pour le moment
   }
 
-  // Find next deadline
-  const sortedTasks = [...allTasks].sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+  // Trouver la prochaine échéance
+  const sortedTasks = [...allTasks].sort((a, b) => {
+    const dateA = new Date(a.end_date || a.endDate);
+    const dateB = new Date(b.end_date || b.endDate);
+    return dateA - dateB;
+  });
   const nextDeadline = sortedTasks.length > 0 ? sortedTasks[0] : null;
+
+  // Stats utilisateur spécifique
+  const userStats = {
+    activeTasks: userTasks.filter(task => 
+      task.status === 'in_progress' || task.status === 'جارية'
+    ).length,
+    completedTasks: userTasks.filter(task => 
+      task.status === 'completed' || task.status === 'مكتملة'
+    ).length,
+    pendingTasks: userTasks.filter(task => 
+      task.status === 'pending' || task.status === 'في انتظار الموافقة'
+    ).length,
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="py-6 px-4 sm:px-6 lg:px-8 dashboard-page">
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p className="text-gray-600">جاري تحميل لوحة التحكم...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -133,30 +205,21 @@ const DashboardPage = () => {
             icon="⏳"
             color="yellow"
           />
-
-          {currentUser?.role === 'admin' && (
-            <>
-              <StatCard
-                title="عدد المستخدمين"
-                value={stats.totalUsers}
-                icon="👥"
-                color="purple"
-              />
-              <StatCard
-                title="المستخدمين غير النشطين"
-                value={stats.inactiveUsers}
-                icon="👤"
-                color="red"
-              />
-            </>
-          )}
-
           <StatCard
-            title="المهام غير النشطة"
+            title="المهام المرفوضة"
             value={stats.inactiveTasks}
             icon="❌"
             color="red"
           />
+
+          {currentUser?.role === 'admin' && (
+            <StatCard
+              title="عدد المستخدمين"
+              value={stats.totalUsers}
+              icon="👥"
+              color="purple"
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -169,9 +232,9 @@ const DashboardPage = () => {
             </div>
             {nextDeadline ? (
               <div className="deadline-item">
-                <p className="deadline-name">{nextDeadline.name}</p>
-                <p className="deadline-type">النوع: {nextDeadline.type}</p>
-                <p className="deadline-date">تاريخ الانتهاء: {new Date(nextDeadline.endDate).toLocaleDateString('ar-MA')}</p>
+                <p className="deadline-name">{nextDeadline.title || nextDeadline.name}</p>
+                <p className="deadline-type">النوع: {nextDeadline.type || 'غير محدد'}</p>
+                <p className="deadline-date">تاريخ الانتهاء: {new Date(nextDeadline.end_date || nextDeadline.endDate).toLocaleDateString('ar-MA')}</p>
                 <p className="deadline-status">
                   {nextDeadline.status}
                 </p>
@@ -193,15 +256,15 @@ const DashboardPage = () => {
             </div>
             <div className="user-stats-grid">
               <div className="user-stat-item">
-                <p className="user-stat-value">{userTasks.filter(t => t.status === 'جارية').length}</p>
+                <p className="user-stat-value">{userStats.activeTasks}</p>
                 <p className="user-stat-label">مهامك الجارية</p>
               </div>
               <div className="user-stat-item">
-                <p className="user-stat-value">{userTasks.filter(t => t.status === 'مكتملة').length}</p>
+                <p className="user-stat-value">{userStats.completedTasks}</p>
                 <p className="user-stat-label">مهامك المكتملة</p>
               </div>
               <div className="user-stat-item">
-                <p className="user-stat-value">{userTasks.filter(t => t.status === 'في انتظار الموافقة').length}</p>
+                <p className="user-stat-value">{userStats.pendingTasks}</p>
                 <p className="user-stat-label">في انتظار الموافقة</p>
               </div>
             </div>

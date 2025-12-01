@@ -1,25 +1,11 @@
-// api/tasks/index.js (dans un dossier api à la racine pour Vercel Functions)
-import pool from '../../lib/db';
-import Cors from 'cors';
-import { logDatabaseError, logDatabaseSuccess } from '../../utils/dbLogger';
+// api/tasks/index.js
+import { Pool } from 'pg';
 
-// Initialize CORS middleware
-const cors = Cors({
-  methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
-  origin: '*', // Limitez cela à votre domaine en production
+// Configuration du pool pour Vercel
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
-
-// Helper method to wait for middleware
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
 
 export default async function handler(req, res) {
   // Définir les en-têtes CORS manuellement aussi
@@ -34,16 +20,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Run CORS middleware
-  await runMiddleware(req, res, cors);
-
   if (req.method === 'GET') {
     try {
       const result = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
-      logDatabaseSuccess('GET tasks', result);
+      console.log('GET tasks successful, count:', result.rows.length);
       res.status(200).json(result.rows);
     } catch (error) {
-      logDatabaseError(error, 'GET tasks');
+      console.error('Erreur serveur lors de la récupération des tâches:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la récupération des tâches' });
     }
   } else if (req.method === 'POST') {
@@ -59,10 +42,10 @@ export default async function handler(req, res) {
         [title, description, status, priority, pole, assignee, due_date, created_by]
       );
 
-      logDatabaseSuccess('POST task', result);
+      console.log('POST task successful, ID:', result.rows[0].id);
       res.status(201).json(result.rows[0]);
     } catch (error) {
-      logDatabaseError(error, 'POST task');
+      console.error('Erreur serveur lors de la création de la tâche:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la création de la tâche' });
     }
   } else {

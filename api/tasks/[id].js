@@ -1,24 +1,11 @@
 // api/tasks/[id].js
-import pool from '../../lib/db';
-import Cors from 'cors';
+import { Pool } from 'pg';
 
-// Initialize CORS middleware
-const cors = Cors({
-  methods: ['GET', 'HEAD', 'PUT', 'DELETE'],
-  origin: '*', // Limitez cela à votre domaine en production
+// Configuration du pool pour Vercel
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
-
-// Helper method to wait for middleware
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
 
 export default async function handler(req, res) {
   // Définir les en-têtes CORS manuellement aussi
@@ -33,9 +20,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Run CORS middleware
-  await runMiddleware(req, res, cors);
-
   const { id } = req.query;
 
   if (req.method === 'GET') {
@@ -46,7 +30,7 @@ export default async function handler(req, res) {
       }
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      logDatabaseError(error, 'GET task by ID');
+      console.error('Erreur lors de la récupération de la tâche:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la récupération de la tâche' });
     }
   } else if (req.method === 'PUT') {
@@ -64,7 +48,7 @@ export default async function handler(req, res) {
 
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      logDatabaseError(error, 'PUT task by ID');
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la mise à jour de la tâche' });
     }
   } else if (req.method === 'DELETE') {
@@ -77,7 +61,7 @@ export default async function handler(req, res) {
 
       res.status(200).json(result.rows[0]);
     } catch (error) {
-      logDatabaseError(error, 'DELETE task by ID');
+      console.error('Erreur lors de la suppression de la tâche:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la suppression de la tâche' });
     }
   } else {

@@ -1,25 +1,11 @@
 // api/users/index.js
-import pool from '../../lib/db';
-import Cors from 'cors';
-import { logDatabaseError, logDatabaseSuccess } from '../../utils/dbLogger';
+import { Pool } from 'pg';
 
-// Initialize CORS middleware
-const cors = Cors({
-  methods: ['GET', 'HEAD', 'POST'],
-  origin: '*', // Limitez cela à votre domaine en production
+// Configuration du pool pour Vercel
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
-
-// Helper method to wait for middleware
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
 
 export default async function handler(req, res) {
   // Définir les en-têtes CORS manuellement aussi
@@ -34,16 +20,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Run CORS middleware
-  await runMiddleware(req, res, cors);
-
   if (req.method === 'GET') {
     try {
       const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
-      logDatabaseSuccess('GET users', result);
+      console.log('GET users successful, count:', result.rows.length);
       res.status(200).json(result.rows);
     } catch (error) {
-      logDatabaseError(error, 'GET users');
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la récupération des utilisateurs' });
     }
   } else if (req.method === 'POST') {
@@ -59,10 +42,10 @@ export default async function handler(req, res) {
         [username, email, password, role, pole]
       );
 
-      logDatabaseSuccess('POST user', result);
+      console.log('POST user successful, ID:', result.rows[0].id);
       res.status(201).json(result.rows[0]);
     } catch (error) {
-      logDatabaseError(error, 'POST user');
+      console.error('Erreur lors de la création de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la création de l\'utilisateur' });
     }
   } else {

@@ -7,6 +7,7 @@ import {
   Legend
 } from 'chart.js';
 import { useAuth } from '../context/AuthContext';
+import DashboardLayout from '../components/DashboardLayout';
 import '../styles/ReportsPage.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -178,11 +179,12 @@ const ReportsPage = () => {
   const inProgressTasks = reportData ? reportData.status.datasets[0].data[1] : tasks.filter(t => t.status === 'in_progress').length;
 
   return (
-    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
-      <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">تقرير المهام</h1>
-        <p className="text-gray-600">عرض تحليلي لحالة المهام حسب التاريخ والقطب</p>
-      </div>
+    <DashboardLayout>
+      <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">تقرير المهام</h1>
+          <p className="text-gray-600">عرض تحليلي لحالة المهام حسب التاريخ والقطب</p>
+        </div>
 
       {/* Filters Section */}
       <div className="bg-white rounded-2xl shadow-xl p-8 mb-10 border border-gray-200">
@@ -367,6 +369,7 @@ const ReportsPage = () => {
         )
       )}
     </div>
+    </DashboardLayout>
   );
 };
 

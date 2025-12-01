@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import DashboardLayout from '../components/DashboardLayout';
 
 const SettingsPage = () => {
   const { user } = useAuth();
@@ -445,11 +446,12 @@ const SettingsPage = () => {
   );
 
   return (
-    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
-      <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">إعدادات النظام</h1>
-        <p className="text-gray-600">إدارة إعدادات النظام وتخصيصه</p>
-      </div>
+    <DashboardLayout>
+      <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen" dir="rtl">
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">إعدادات النظام</h1>
+          <p className="text-gray-600">إدارة إعدادات النظام وتخصيصه</p>
+        </div>
 
       {/* Tabs Navigation */}
       <div className="mb-10">
@@ -503,8 +505,9 @@ const SettingsPage = () => {
       {activeTab === 'general' && renderGeneralSettings()}
       {activeTab === 'notifications' && renderNotificationSettings()}
       {activeTab === 'security' && renderSecuritySettings()}
-      {activeTab === 'info' && renderSystemInfo()}
+      {activeTab === 'system' && renderSystemInfo()}
     </div>
+    </DashboardLayout>
   );
 };
 

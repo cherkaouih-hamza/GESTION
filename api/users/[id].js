@@ -60,14 +60,30 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'DELETE') {
     try {
+      // Démarrer une transaction pour s'assurer que les suppressions sont atomiques
+      await pool.query('BEGIN');
+
+      // Supprimer d'abord les tâches créées par l'utilisateur
+      await pool.query('DELETE FROM tasks WHERE created_by = $1', [id]);
+
+      // Supprimer les tâches assignées à l'utilisateur (mettre à jour ou supprimer)
+      // Pour les tâches assignées à l'utilisateur, on peut soit les supprimer, soit les réaffecter à un administrateur
+      // Ici, nous allons les supprimer
+      await pool.query('DELETE FROM tasks WHERE assignee = $1', [id]);
+
+      // Maintenant supprimer l'utilisateur
       const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
 
       if (result.rows.length === 0) {
+        await pool.query('ROLLBACK');
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
+      await pool.query('COMMIT');
+
       res.status(200).json(result.rows[0]);
     } catch (error) {
+      await pool.query('ROLLBACK');
       console.error('Erreur lors de la suppression de l\'utilisateur:', error);
       res.status(500).json({ error: 'Erreur serveur lors de la suppression de l\'utilisateur' });
     } finally {

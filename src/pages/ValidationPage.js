@@ -32,8 +32,8 @@ const ValidationPage = () => {
         );
         setTasks(validationTasks);
       } else if (activeTab === 'registrations') {
-        // Utiliser une méthode temporaire pour les inscriptions pour l'instant
-        const registrationRequests = getRegistrationRequests();
+        // Récupérer les demandes d'inscription
+        const registrationRequests = await getRegistrationRequests();
         setRegistrations(registrationRequests);
       }
     } catch (error) {
@@ -50,7 +50,7 @@ const ValidationPage = () => {
         // Mettre à jour la liste locale des tâches en attente
         setTasks(tasks.filter(task => task.id !== itemId));
       } else if (type === 'registration') {
-        updateRegistrationRequestStatus(itemId, 'approved', currentUser.id);
+        await updateRegistrationRequestStatus(itemId, 'approved', currentUser.id);
         setRegistrations(registrations.filter(reg => reg.id !== itemId));
       }
     } catch (error) {
@@ -64,7 +64,7 @@ const ValidationPage = () => {
         await updateTaskStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setTasks(tasks.filter(task => task.id !== itemId));
       } else if (type === 'registration') {
-        updateRegistrationRequestStatus(itemId, 'rejected', currentUser.id, rejectionComment);
+        await updateRegistrationRequestStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setRegistrations(registrations.filter(reg => reg.id !== itemId));
       }
     } catch (error) {

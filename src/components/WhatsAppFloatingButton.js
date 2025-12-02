@@ -3,11 +3,11 @@ import '../styles/WhatsAppFloatingButton.css';
 
 const WhatsAppFloatingButton = () => {
   const handleWhatsAppClick = () => {
-    // Using a sample WhatsApp number - this can be changed to the actual admin number
-    const phoneNumber = "212612345678"; // Example Moroccan number
+    // Numéro de téléphone WhatsApp spécifié
+    const phoneNumber = "212706954855"; // Numéro +212706954855 sans le +
     const message = encodeURIComponent("السلام عليكم، أحتاج إلى مساعدة بشأن نظام المتابعة والإعلام.");
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-    
+
     window.open(whatsappUrl, '_blank');
   };
 

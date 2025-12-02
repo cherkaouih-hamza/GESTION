@@ -1,4 +1,4 @@
-// api/index.js (Fichier principal Vercel Functions pour gérer toutes les opérations)
+// api/resources.js (Fonction Vercel pour les ressources)
 const { Pool } = require('pg');
 
 module.exports = async function handler(req, res) {
@@ -24,19 +24,14 @@ module.exports = async function handler(req, res) {
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
     
-    // Déterminer le type de ressource à partir du chemin
-    if (pathParts.length === 0) {
+    if (pathParts.length < 2) {
       return res.status(404).json({ error: 'Route non trouvée' });
     }
 
-    const resourceType = pathParts[0];
-    const resourceId = pathParts[1];
+    const resourceType = pathParts[1]; // users, tasks, poles
+    const resourceId = pathParts[2];
 
-    if (resourceType === 'login') {
-      return await handleLogin(req, res, pool);
-    } else if (resourceType === 'register') {
-      return await handleRegister(req, res, pool);
-    } else if (resourceType === 'users') {
+    if (resourceType === 'users') {
       return await handleUsers(req, res, pool, resourceId);
     } else if (resourceType === 'tasks') {
       return await handleTasks(req, res, pool, resourceId);
@@ -46,89 +41,13 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ error: 'Route non trouvée' });
     }
   } catch (error) {
-    console.error('Erreur générale:', error);
+    console.error('Erreur dans resources handler:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
   } finally {
     if (pool) {
       await pool.end();
     }
   }
-}
-
-// Fonction de gestion du login
-async function handleLogin(req, res, pool) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email et mot de passe requis' });
-  }
-
-  // Trouver l'utilisateur
-  const result = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $1', [email]);
-  
-  if (result.rows.length === 0) {
-    return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
-  }
-
-  const user = result.rows[0];
-  
-  // Vérifier le mot de passe avec hachage
-  const crypto = require('crypto');
-  const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-  if (hashedPassword !== user.password) {
-    return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
-  }
-
-  if (!user.is_active) {
-    return res.status(401).json({ message: 'Compte inactif' });
-  }
-
-  res.status(200).json({ 
-    success: true,
-    user: { 
-      id: user.id, 
-      username: user.username, 
-      email: user.email, 
-      role: user.role,
-      is_active: user.is_active
-    } 
-  });
-}
-
-// Fonction de gestion de l'inscription
-async function handleRegister(req, res, pool) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { username, email, password, role } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({ error: 'Nom d\'utilisateur, email et mot de passe sont requis' });
-  }
-
-  // Vérifier si l'utilisateur existe déjà
-  const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-  
-  if (existingUser.rows.length > 0) {
-    return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
-  }
-
-  // Hacher le mot de passe avant de l'enregistrer
-  const crypto = require('crypto');
-  const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-
-  // Créer le nouvel utilisateur (inactif par défaut)
-  const result = await pool.query(
-    'INSERT INTO users (username, email, password, role, is_active) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, is_active',
-    [username, email, hashedPassword, role || 'utilisateur', false]  // Nouvel utilisateur inactif par défaut
-  );
-
-  res.status(201).json({ success: true, user: result.rows[0] });
 }
 
 // Fonction de gestion des utilisateurs

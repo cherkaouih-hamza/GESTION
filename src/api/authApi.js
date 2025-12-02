@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL ||
 const authApi = {
   login: async (email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await axios.post(`${API_BASE_URL}/login`, {
         email,
         password
       });
@@ -32,7 +32,7 @@ const authApi = {
   register: async (userData) => {
     try {
       console.log('Envoi des données d\'inscription:', userData);
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
+      const response = await axios.post(`${API_BASE_URL}/register`, userData);
       console.log('Réponse d\'inscription:', response.data);
       return response.data;
     } catch (error) {

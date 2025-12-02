@@ -66,18 +66,18 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
   }, []);
 
   useEffect(() => {
-    if (task) {
+    if (task && typeof task === 'object' && !Array.isArray(task)) {
       setFormData({
         name: task.name || '',
         description: task.description || '',
         type: task.type || 'فيديو',
         pole: task.pole || '', // Adding the pole field for existing tasks
         priority: task.priority || 'Normal', // Adding the priority field for existing tasks
-        assignedTo: task.assignedTo || '', // Adding the assignment field for existing tasks
-        startDate: task.startDate || '',
-        endDate: task.endDate || '',
-        mediaLink: task.mediaLink || '',
-        isActive: task.isActive !== undefined ? task.isActive : true
+        assignedTo: task.assignee ? task.assignee.toString() : '', // Convertir assignee en chaîne pour le select
+        startDate: task.start_date || task.startDate || '',
+        endDate: task.end_date || task.endDate || '',
+        mediaLink: task.media_link || task.mediaLink || '',
+        isActive: task.is_active !== undefined ? task.is_active : task.isActive !== undefined ? task.isActive : true
       });
     } else {
       setFormData({
@@ -93,7 +93,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         isActive: true
       });
     }
-  }, [task?.id, task]);
+  }, [task]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

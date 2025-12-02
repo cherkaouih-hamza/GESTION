@@ -45,30 +45,38 @@ const ValidationPage = () => {
 
   const handleApprove = async (itemId, type) => {
     try {
+      console.log(`Tentative d'approbation de ${type} avec ID: ${itemId}`);
       if (type === 'task') {
         await updateTaskStatus(itemId, 'in_progress', currentUser.id);
         // Mettre à jour la liste locale des tâches en attente
         setTasks(tasks.filter(task => task.id !== itemId));
+        console.log('Tâche approuvée avec succès');
       } else if (type === 'registration') {
         await updateRegistrationRequestStatus(itemId, 'approved', currentUser.id);
         setRegistrations(registrations.filter(reg => reg.id !== itemId));
+        console.log('Inscription approuvée avec succès');
       }
     } catch (error) {
-      console.error('Error approving item:', error);
+      console.error(`Erreur lors de l'approbation de ${type} avec ID ${itemId}:`, error);
+      console.error('Détails:', error.message, error.response?.data);
     }
   };
 
   const handleReject = async (itemId, type) => {
     try {
+      console.log(`Tentative de rejet de ${type} avec ID: ${itemId}`);
       if (type === 'task') {
         await updateTaskStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setTasks(tasks.filter(task => task.id !== itemId));
+        console.log('Tâche rejetée avec succès');
       } else if (type === 'registration') {
         await updateRegistrationRequestStatus(itemId, 'rejected', currentUser.id, rejectionComment);
         setRegistrations(registrations.filter(reg => reg.id !== itemId));
+        console.log('Inscription rejetée avec succès');
       }
     } catch (error) {
-      console.error('Error rejecting item:', error);
+      console.error(`Erreur lors du rejet de ${type} avec ID ${itemId}:`, error);
+      console.error('Détails:', error.message, error.response?.data);
     } finally {
       setShowRejectModal(false);
       setItemToProcess(null);

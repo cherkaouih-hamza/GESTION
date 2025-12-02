@@ -116,11 +116,18 @@ export const AuthProvider = ({ children }) => {
 
   const createTask = async (taskData) => {
     try {
+      console.log('createTask appelé avec:', { taskData, currentUser, currentUserId: currentUser?.id });
+
+      if (!currentUser || !currentUser.id) {
+        throw new Error('Utilisateur non authentifié ou ID utilisateur manquant');
+      }
+
       const newTask = await taskApi.createTask({
         ...taskData,
         created_by: currentUser.id
       });
-      
+
+      console.log('Tâche créée avec succès:', newTask);
       // Mettre à jour la liste locale des tâches
       setTasks([...tasks, newTask]);
       return newTask;

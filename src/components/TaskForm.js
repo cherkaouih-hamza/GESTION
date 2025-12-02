@@ -93,12 +93,14 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         priority: formData.priority,
         pole: formData.pole,
         assignee: formData.assignedTo || null,  // Renommer assignedTo à assignee
-        due_date: formData.endDate,  // Convertir endDate à due_date
-        start_date: formData.startDate,  // Inclure start_date
+        due_date: formData.endDate ? new Date(formData.endDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
+        start_date: formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
         media_link: formData.mediaLink || null,  // Inclure media_link
         type: formData.type || null,  // Inclure type
         is_active: formData.isActive !== undefined ? formData.isActive : true  // Inclure is_active
       };
+
+      console.log('Données envoyées pour la création de tâche:', taskData);
 
       if (task) {
         onSubmit(task.id, taskData);

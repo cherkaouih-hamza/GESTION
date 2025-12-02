@@ -48,16 +48,26 @@ export default async function handler(req, res) {
         body: req.body
       });
 
-      if (!title || !status || !priority || !pole || !created_by) {
-        console.log('Validation échouée - champs manquants:', {
-          hasTitle: !!title,
-          hasStatus: !!status,
-          hasPriority: !!priority,
-          hasPole: !!pole,
-          hasCreatedBy: !!created_by,
-          created_by: created_by
-        });
-        return res.status(400).json({ error: 'Les champs title, status, priority, pole et created_by sont obligatoires' });
+      // Validation des champs obligatoires
+      if (!title) {
+        console.log('Validation échouée - title manquant');
+        return res.status(400).json({ error: 'Le champ title est obligatoire' });
+      }
+      if (!status) {
+        console.log('Validation échouée - status manquant');
+        return res.status(400).json({ error: 'Le champ status est obligatoire' });
+      }
+      if (!priority) {
+        console.log('Validation échouée - priority manquant');
+        return res.status(400).json({ error: 'Le champ priority est obligatoire' });
+      }
+      if (!pole) {
+        console.log('Validation échouée - pole manquant');
+        return res.status(400).json({ error: 'Le champ pole est obligatoire' });
+      }
+      if (!created_by) {
+        console.log('Validation échouée - created_by manquant:', { created_by: created_by, type: typeof created_by });
+        return res.status(400).json({ error: 'Le champ created_by est obligatoire' });
       }
 
       const result = await pool.query(

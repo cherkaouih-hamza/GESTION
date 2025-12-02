@@ -33,21 +33,29 @@ const TasksPage = () => {
     const fetchTasks = async () => {
       setLoading(true);
       try {
+        console.log('Chargement des tâches pour l\'utilisateur:', currentUser);
         let allTasks = [];
 
         if (currentUser?.role === 'utilisateur') {
           // Pour un utilisateur normal, récupérer les tâches assignées ou créées
+          console.log('Récupération de toutes les tâches pour filtrer par utilisateur...');
           allTasks = await taskApi.getAllTasks();
+          console.log('Toutes les tâches reçues:', allTasks);
           allTasks = allTasks.filter(task => task.created_by === currentUser.id || task.assignee === currentUser.id);
+          console.log('Tâches filtrées pour l\'utilisateur:', allTasks);
         } else {
           // Pour admin et responsable, récupérer toutes les tâches
+          console.log('Récupération de toutes les tâches pour admin/responsable...');
           allTasks = await taskApi.getAllTasks();
+          console.log('Tâches reçues pour admin:', allTasks);
         }
 
         setTasks(allTasks);
         setFilteredTasks(allTasks);
+        console.log('Tâches définies dans le state:', allTasks);
       } catch (error) {
         console.error('Erreur lors de la récupération des tâches:', error);
+        console.error('Détails de l\'erreur:', error.response || error.message);
       } finally {
         setLoading(false);
       }
@@ -55,6 +63,9 @@ const TasksPage = () => {
 
     if (currentUser) {
       fetchTasks();
+    } else {
+      console.log('Aucun utilisateur connecté, impossible de charger les tâches');
+      setLoading(false);
     }
   }, [currentUser]);
 

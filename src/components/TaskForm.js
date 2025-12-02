@@ -7,14 +7,17 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     name: '',
     description: '',
     type: 'فيديو',
-    pole: '', // Adding the new Pôle field
-    priority: 'Normal', // Adding the new Priority field
-    assignedTo: '', // Adding the new assignment field
+    pole: '',
+    priority: 'Normal',
+    assignedTo: '',
     startDate: '',
     endDate: '',
     mediaLink: '',
     isActive: true
   });
+
+  // État pour suivre si le composant est complètement initialisé
+  const [isInitialized, setIsInitialized] = useState(false);
   const [poles, setPoles] = useState([]);
   const [users, setUsers] = useState([]);
   const [loadingPoles, setLoadingPoles] = useState(true);
@@ -61,8 +64,12 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       }
     };
 
-    loadPoles();
-    loadUsers();
+    const loadData = async () => {
+      await Promise.all([loadPoles(), loadUsers()]);
+      setIsInitialized(true);
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -172,7 +179,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
   };
 
   // Ne pas afficher le formulaire tant que les données nécessaires ne sont pas chargées
-  if (loadingPoles || loadingUsers) {
+  if (loadingPoles || loadingUsers || !isInitialized) {
     return (
       <div className="loading-state">
         <div className="loading-spinner"></div>

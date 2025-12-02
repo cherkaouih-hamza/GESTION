@@ -1,8 +1,8 @@
 // api/pole-manager.js
-import { Pool } from 'pg';
-import { corsHeaders } from '../utils/cors';
+const { Pool } = require('pg');
+const { corsHeaders } = require('../utils/cors');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Configuration du pool pour chaque requête (meilleur pour les fonctions serverless)
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,

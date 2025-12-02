@@ -75,6 +75,16 @@
   font-weight: bold;
 }
 
+.logo-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+}
+
 .login-header h2 {
   font-size: 1.875rem;
   font-weight: 800;

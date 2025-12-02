@@ -1,20 +1,13 @@
 // api/task-manager.js - Task management API routes
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
+const { getPool } = require('./db');
 require('dotenv').config();
 
 // GET all tasks
 router.get('/', async (req, res) => {
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       `SELECT t.*, u.username as assignee_name, u2.username as created_by_name
@@ -28,25 +21,14 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la récupération des tâches:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération des tâches' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
 // GET task by ID
 router.get('/:id', async (req, res) => {
   const taskId = req.params.id;
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       `SELECT t.*, u.username as assignee_name, u2.username as created_by_name
@@ -55,19 +37,15 @@ router.get('/:id', async (req, res) => {
        LEFT JOIN users u2 ON t.created_by = u2.id
        WHERE t.id = $1`, [taskId]
     );
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Tâche non trouvée' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Erreur lors de la récupération de la tâche:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération de la tâche' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -79,15 +57,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Les champs title, status, priority, pole et created_by sont obligatoires' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       'INSERT INTO tasks (title, description, status, priority, pole, assignee, due_date, start_date, created_by, media_link, type, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW()) RETURNING *',
@@ -98,10 +69,6 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la création de la tâche:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la création de la tâche' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -114,15 +81,8 @@ router.put('/:id', async (req, res) => {
     return res.status(400).json({ error: 'ID tâche requis' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     // Déterminer les champs à mettre à jour
     let updateFields = [];
@@ -212,10 +172,6 @@ router.put('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la tâche:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la mise à jour de la tâche' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -226,15 +182,8 @@ router.delete('/:id', async (req, res) => {
     return res.status(400).json({ error: 'ID tâche requis' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       'UPDATE tasks SET is_active = false WHERE id = $1 RETURNING *',
@@ -249,10 +198,6 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la suppression de la tâche:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la suppression de la tâche' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 

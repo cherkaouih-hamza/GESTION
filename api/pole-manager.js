@@ -1,20 +1,13 @@
 // api/pole-manager.js - Pole management API routes
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
+const { getPool } = require('./db');
 require('dotenv').config();
 
 // GET all poles
 router.get('/', async (req, res) => {
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       'SELECT * FROM poles WHERE is_active = true ORDER BY name'
@@ -23,40 +16,25 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la récupération des pôles:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération des pôles' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
 // GET pole by ID
 router.get('/:id', async (req, res) => {
   const poleId = req.params.id;
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query('SELECT * FROM poles WHERE id = $1', [poleId]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Pôle non trouvé' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Erreur lors de la récupération du pôle:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la récupération du pôle' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -68,15 +46,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Le nom du pôle est requis' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       'INSERT INTO poles (name, description, is_active) VALUES ($1, $2, true) RETURNING *',
@@ -87,10 +58,6 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la création du pôle:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la création du pôle' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -103,15 +70,8 @@ router.put('/:id', async (req, res) => {
     return res.status(400).json({ error: 'ID pôle requis' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     // Vérifier si le pôle existe
     const existingPole = await pool.query('SELECT * FROM poles WHERE id = $1', [poleId]);
@@ -128,10 +88,6 @@ router.put('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la mise à jour du pôle:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la mise à jour du pôle' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 
@@ -142,15 +98,8 @@ router.delete('/:id', async (req, res) => {
     return res.status(400).json({ error: 'ID pôle requis' });
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const result = await pool.query(
       'UPDATE poles SET is_active = false WHERE id = $1 RETURNING *',
@@ -165,10 +114,6 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erreur lors de la suppression du pôle:', error);
     res.status(500).json({ error: 'Erreur serveur lors de la suppression du pôle' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 });
 

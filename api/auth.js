@@ -1,5 +1,6 @@
 // api/auth.js (Gestion de l'authentification)
-const { Pool } = require('pg');
+const { getPool } = require('./db');
+const crypto = require('crypto');
 
 module.exports = async function handler(req, res) {
   // Configuration CORS pour Vercel
@@ -11,15 +12,8 @@ module.exports = async function handler(req, res) {
     return res.status(200).end();
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
+    const pool = await getPool();
 
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
@@ -35,15 +29,14 @@ module.exports = async function handler(req, res) {
 
       // Trouver l'utilisateur
       const result = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $1', [email]);
-      
+
       if (result.rows.length === 0) {
         return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
       }
 
       const user = result.rows[0];
-      
+
       // Vérifier le mot de passe avec hachage
-      const crypto = require('crypto');
       const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
       if (hashedPassword !== user.password) {
         return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
@@ -53,15 +46,15 @@ module.exports = async function handler(req, res) {
         return res.status(401).json({ message: 'Compte en attente d\'activation. Veuillez contacter un administrateur.' });
       }
 
-      res.status(200).json({ 
+      res.status(200).json({
         success: true,
-        user: { 
-          id: user.id, 
-          username: user.username, 
-          email: user.email, 
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
           role: user.role,
           is_active: user.is_active
-        } 
+        }
       });
     } else if (req.method === 'POST' && authAction === 'register') {
       // Gérer l'inscription
@@ -94,7 +87,6 @@ module.exports = async function handler(req, res) {
         }
 
         // Hacher le mot de passe avant de l'enregistrer
-        const crypto = require('crypto');
         const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
         // Créer le nouvel utilisateur (inactif par défaut pour approbation)
@@ -115,9 +107,5 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Erreur dans auth handler:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 }

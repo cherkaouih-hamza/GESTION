@@ -40,6 +40,8 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'PUT') {
     try {
+      console.log(`Requête PUT reçue pour l'utilisateur ID: ${id}`);
+      console.log('Body reçu:', req.body);
       const { username, email, role, pole, is_active, phone } = req.body;
 
       // Déterminer les champs à mettre à jour
@@ -83,19 +85,26 @@ export default async function handler(req, res) {
       updateValues.push(new Date().toISOString());
       updatePlaceholders.push(`$${updateValues.length}`);
 
+      console.log('Champs à mettre à jour:', updateFields);
+      console.log('Valeurs à mettre à jour:', updateValues);
+
       if (updateFields.length <= 1) { // Seulement updated_at est inclus
+        console.log('Aucun champ à mettre à jour, seulement updated_at');
         return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
       }
 
       const updateQuery = `UPDATE users SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
+      console.log('Requête SQL:', updateQuery);
       updateValues.push(id);
 
       const result = await pool.query(updateQuery, updateValues);
 
       if (result.rows.length === 0) {
+        console.log('Aucun utilisateur trouvé avec l\'ID:', id);
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
+      console.log('Utilisateur mis à jour avec succès:', result.rows[0]);
       res.status(200).json(result.rows[0]);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);

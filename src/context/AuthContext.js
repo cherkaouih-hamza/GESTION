@@ -26,6 +26,12 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
+      if (error.message.includes('Impossible de se connecter au serveur')) {
+        return {
+          success: false,
+          message: 'غير قادر على الاتصال بالخادم. يرجى التأكد من تشغيل الخادم الخلفي'
+        };
+      }
       return { success: false, message: error.message || 'حدث خطأ أثناء تسجيل الدخول' };
     }
   };

@@ -271,21 +271,28 @@ export const AuthProvider = ({ children }) => {
 
   const updateRegistrationRequestStatus = async (requestId, status, validatedBy = null, comment = null) => {
     try {
+      console.log(`Tentative de mise à jour du statut de l'inscription ID: ${requestId}, nouveau statut: ${status}`);
+
       // Pour accepter ou refuser une demande d'inscription, on met à jour le champ is_active
       if (status === 'approved') {
         // Mettre à jour le statut du compte à actif
+        console.log(`Approving user ID: ${requestId}`);
         const updatedUser = await userApi.updateUser(requestId, {
           is_active: true,
           updated_at: new Date().toISOString()
         });
+        console.log(`Inscription approuvée avec succès, utilisateur mis à jour:`, updatedUser);
         return updatedUser;
       } else if (status === 'rejected') {
         // Supprimer l'utilisateur car son inscription a été refusée
+        console.log(`Rejecting user ID: ${requestId}`);
         const deletedUser = await userApi.deleteUser(requestId);
+        console.log(`Inscription rejetée avec succès, utilisateur supprimé:`, deletedUser);
         return deletedUser;
       }
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut de la demande d\'inscription:', error);
+      console.error('Détails:', error.message, error.response?.data);
       throw error;
     }
   };

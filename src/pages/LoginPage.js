@@ -46,7 +46,7 @@ const LoginPage = () => {
       <div className="login-card">
         <div className="login-header">
           <div className="logo-section">
-            <img src="/LOGOIACSASVERT.png" alt="LOGOIACSAS" className="logo-image" />
+            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
           <h2>منصة إدارة المشاريع و المتابعة الإعلامية</h2>
           <p>تسجيل الدخول إلى حسابك</p>

@@ -89,7 +89,7 @@ const RegisterPage = () => {
       <div className="register-card">
         <div className="register-header">
           <div className="logo-section">
-            <img src="/LOGOIACSASVERT.png" alt="LOGOIACSAS" className="logo-image" />
+            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
           <h2 className="text-2xl font-bold text-center mt-4">انضم إلينا الآن</h2>
           <p className="text-gray-600 text-center mt-2">أنشئ حسابك لتبدأ رحلتك معنا</p>

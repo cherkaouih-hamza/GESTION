@@ -28,7 +28,24 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     const loadPoles = async () => {
       try {
         const polesData = await poleApi.getPoles();
-        setPoles(polesData);
+        // Vérifier que les données sont un tableau
+        if (Array.isArray(polesData)) {
+          setPoles(polesData);
+        } else {
+          console.warn('Les données des pôles ne sont pas un tableau:', polesData);
+          // Fallback: utiliser une liste par défaut
+          setPoles([
+            { id: 1, name: 'Production Générale', description: 'Toutes les activités de production générale' },
+            { id: 2, name: 'Koutoub', description: 'Activités liées aux publications et ouvrages' },
+            { id: 3, name: 'Traduction', description: 'Activités de traduction' },
+            { id: 4, name: 'Nadwate', description: 'Conférences et séminaires' },
+            { id: 5, name: 'Ziyarate', description: 'Activités de visites et pèlerinages' },
+            { id: 6, name: 'Projet (Wikalaat Assfar et Koutab Al-Tazkiya)', description: 'Projets spéciaux et voyages' },
+            { id: 7, name: 'Podcast', description: 'Émissions et contenus audio' },
+            { id: 8, name: 'Academia', description: 'Éducation et formations académiques' },
+            { id: 9, name: 'Autre', description: 'Autres activités non classées' }
+          ]);
+        }
       } catch (error) {
         console.error('Erreur lors du chargement des pôles:', error);
         // Fallback: utiliser une liste par défaut
@@ -51,7 +68,17 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     const loadUsers = async () => {
       try {
         const usersData = await userApi.getAllUsers();
-        setUsers(usersData);
+        // Vérifier que les données sont un tableau
+        if (Array.isArray(usersData)) {
+          setUsers(usersData);
+        } else {
+          console.warn('Les données des utilisateurs ne sont pas un tableau:', usersData);
+          // Fallback: utiliser une liste par défaut
+          setUsers([
+            { id: 1, username: 'Admin User', email: 'admin@example.com', role: 'admin' },
+            { id: 2, username: 'Test User', email: 'user@example.com', role: 'utilisateur' }
+          ]);
+        }
       } catch (error) {
         console.error('Erreur lors du chargement des utilisateurs:', error);
         // Fallback: utiliser une liste par défaut

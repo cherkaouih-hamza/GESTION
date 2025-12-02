@@ -36,12 +36,14 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
+      console.log('Requête POST reçue avec body:', req.body);
       const { name, email, password, phone, role, pole } = req.body;
 
       // Conversion : name -> username pour la base de données
       const username = name;
 
       if (!username || !email || !password) {
+        console.log('Validation échouée: champs manquants', { username: !!username, email: !!email, password: !!password });
         return res.status(400).json({ error: 'Les champs nom, email et password sont obligatoires' });
       }
 
@@ -58,8 +60,22 @@ export default async function handler(req, res) {
       console.log('POST user successful, ID:', result.rows[0].id);
       res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Erreur lors de la création de l\'utilisateur:', error);
-      res.status(500).json({ error: 'Erreur serveur lors de la création de l\'utilisateur' });
+      console.error('Erreur détaillée lors de la création de l\'utilisateur:', error);
+      console.error('Erreur code:', error.code);
+      console.error('Erreur detail:', error.detail);
+      console.error('Erreur message:', error.message);
+
+      // Gérer les erreurs spécifiques de PostgreSQL
+      if (error.code === '23505') { // Erreur de contrainte d'unicité
+        if (error.detail && error.detail.includes('email')) {
+          return res.status(400).json({ error: 'Cet email est déjà utilisé' });
+        }
+      }
+
+      res.status(500).json({
+        error: 'Erreur serveur lors de la création de l\'utilisateur',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     } finally {
       await pool.end();
     }

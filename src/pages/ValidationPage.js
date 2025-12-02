@@ -53,7 +53,7 @@ const ValidationPage = () => {
         console.log('Tâche approuvée avec succès');
       } else if (type === 'registration') {
         await updateRegistrationRequestStatus(itemId, 'approved', currentUser.id);
-        setRegistrations(registrations.filter(reg => reg.id !== itemId));
+        setRegistrations(prevRegistrations => prevRegistrations.filter(reg => reg.id !== itemId));
         console.log('Inscription approuvée avec succès');
       }
     } catch (error) {
@@ -71,7 +71,7 @@ const ValidationPage = () => {
         console.log('Tâche rejetée avec succès');
       } else if (type === 'registration') {
         await updateRegistrationRequestStatus(itemId, 'rejected', currentUser.id, rejectionComment);
-        setRegistrations(registrations.filter(reg => reg.id !== itemId));
+        setRegistrations(prevRegistrations => prevRegistrations.filter(reg => reg.id !== itemId));
         console.log('Inscription rejetée avec succès');
       }
     } catch (error) {

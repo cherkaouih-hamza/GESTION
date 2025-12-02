@@ -252,7 +252,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Récupérer tous les utilisateurs avec is_active = false (en attente de validation)
       const allUsers = await userApi.getAllUsers();
-      const pendingUsers = allUsers.filter(user => user.is_active === false || user.is_active === 'false');
+      const pendingUsers = allUsers.filter(user => user.is_active === false || user.is_active === 'false' || user.is_active === 'f');
 
       // Formater les données pour qu'elles correspondent au format attendu
       return pendingUsers.map(user => ({

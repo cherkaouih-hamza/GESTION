@@ -76,6 +76,10 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       newErrors.endDate = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
     }
 
+    if (!formData.pole) {
+      newErrors.pole = 'القطب مطلوب';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -161,7 +165,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
             name="pole"
             value={formData.pole}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className={`w-full border ${errors.pole ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
           >
             <option value="">اختر القطب</option>
             <option value="التقنية">التقنية</option>
@@ -170,6 +174,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
             <option value="الإدارية">الإدارية</option>
             <option value="ال Pedagogique">ال Pedagogique</option>
           </select>
+          {errors.pole && <p className="mt-1 text-sm text-red-600">{errors.pole}</p>}
         </div>
 
         <div>

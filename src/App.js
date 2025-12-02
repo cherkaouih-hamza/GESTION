@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AccountPendingPage from './pages/AccountPendingPage';
 import WebPushNotification from './components/WebPushNotification';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -14,7 +15,6 @@ import ProfilePage from './pages/ProfilePage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import DatabaseTestPage from './pages/DatabaseTestPage';
-import WhatsAppFloatingButton from './components/WhatsAppFloatingButton';
 import './styles/App.css';
 
 function App() {
@@ -26,6 +26,8 @@ function App() {
             <div className="min-h-screen bg-gray-50">
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/account-pending" element={<AccountPendingPage />} />
                 <Route
                   path="/"
                   element={
@@ -89,7 +91,6 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
               </Routes>
               <WebPushNotification />
-              <WhatsAppFloatingButton />
             </div>
           </Router>
         </NotificationProvider>

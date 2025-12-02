@@ -118,13 +118,6 @@ const DashboardLayout = ({ children }) => {
               خروج
             </button>
             <div className="mt-3 flex items-center justify-center space-x-3">
-              <a href="https://wa.me/212706954855" target="_blank" rel="noopener noreferrer" className="whatsapp-icon">
-                <img
-                  src="/whatsapp.png"
-                  alt="WhatsApp"
-                  className="w-5 h-5 rounded-full object-contain bg-white p-0.5"
-                />
-              </a>
               <span className="text-sm text-gray-300">IACSAS 2025</span>
             </div>
           </div>

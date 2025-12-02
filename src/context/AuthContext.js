@@ -277,10 +277,12 @@ export const AuthProvider = ({ children }) => {
       if (status === 'approved') {
         // Mettre à jour le statut du compte à actif
         console.log(`Approving user ID: ${requestId}`);
-        const updatedUser = await userApi.updateUser(requestId, {
+        const userData = {
           is_active: true,
           updated_at: new Date().toISOString()
-        });
+        };
+        console.log('Données envoyées pour la mise à jour:', userData);
+        const updatedUser = await userApi.updateUser(requestId, userData);
         console.log(`Inscription approuvée avec succès, utilisateur mis à jour:`, updatedUser);
         return updatedUser;
       } else if (status === 'rejected') {
@@ -293,6 +295,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut de la demande d\'inscription:', error);
       console.error('Détails:', error.message, error.response?.data);
+      console.error('Statut:', status, 'ID:', requestId);
       throw error;
     }
   };

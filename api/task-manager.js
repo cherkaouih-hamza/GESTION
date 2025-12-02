@@ -21,11 +21,12 @@ module.exports = async function handler(req, res) {
     const pathParts = url.pathname.split('/').filter(Boolean);
     console.log('URL décomposée:', pathParts);
 
-    const taskId = pathParts[1]; // La deuxième partie après le premier segment dans Vercel
-    console.log('Task ID extrait:', taskId);
+    const hasId = pathParts.length > 1; // Vérifier s'il y a un ID dans l'URL
+    const taskId = hasId ? pathParts[1] : null; // Le cas échéant, c'est le deuxième segment
+    console.log('Task ID extrait:', taskId, 'Avec ID:', hasId);
 
     if (req.method === 'GET') {
-      if (taskId) {
+      if (hasId && taskId) {
         // Récupérer une tâche spécifique
         console.log('Recherche de la tâche avec ID:', taskId);
         const result = await pool.query(

@@ -18,11 +18,12 @@ module.exports = async function handler(req, res) {
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
     console.log('URL décomposée dans user-manager:', pathParts);
-    const userId = pathParts[1]; // La deuxième partie après le premier segment dans Vercel
-    console.log('User ID extrait:', userId);
+    const hasId = pathParts.length > 1; // Vérifier s'il y a un ID dans l'URL
+    const userId = hasId ? pathParts[1] : null; // Le cas échéant, c'est le deuxième segment
+    console.log('User ID extrait:', userId, 'Avec ID:', hasId);
 
     if (req.method === 'GET') {
-      if (userId) {
+      if (hasId && userId) {
         // Récupérer un utilisateur spécifique
         console.log('Recherche de l\'utilisateur avec ID:', userId);
         const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users WHERE id = $1', [userId]);

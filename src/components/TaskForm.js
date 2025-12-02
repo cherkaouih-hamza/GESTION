@@ -188,6 +188,16 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     );
   }
 
+  // Vérifier que les données sont correctement formatées avant le rendu
+  if (!Array.isArray(poles) || !Array.isArray(users)) {
+    console.error("Poles or users data is not in expected format", { poles, users });
+    return (
+      <div className="error-state">
+        <p className="text-red-600">خطأ في تحميل البيانات</p>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="rtl text-right">
       <div className="mb-4">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import { taskApi } from '../api/taskApi';
+import { userApi } from '../api/userApi';
 import DashboardLayout from '../components/DashboardLayout';
 import TaskForm from '../components/TaskForm';
 import ConfirmationModal from '../components/ConfirmationModal';

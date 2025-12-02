@@ -22,7 +22,11 @@ CREATE TABLE IF NOT EXISTS tasks (
   pole VARCHAR(100),
   assignee INTEGER REFERENCES users(id),
   due_date DATE,
+  start_date DATE,
   created_by INTEGER NOT NULL REFERENCES users(id),
+  media_link TEXT,
+  type VARCHAR(50),
+  is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

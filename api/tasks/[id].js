@@ -40,11 +40,11 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const { title, description, status, priority, pole, assignee, due_date } = req.body;
+      const { title, description, status, priority, pole, assignee, due_date, start_date, media_link, type, is_active } = req.body;
 
       const result = await pool.query(
-        'UPDATE tasks SET title = $1, description = $2, status = $3, priority = $4, pole = $5, assignee = $6, due_date = $7, updated_at = NOW() WHERE id = $8 RETURNING *',
-        [title, description, status, priority, pole, assignee, due_date, id]
+        'UPDATE tasks SET title = $1, description = $2, status = $3, priority = $4, pole = $5, assignee = $6, due_date = $7, start_date = $8, media_link = $9, type = $10, is_active = $11, updated_at = NOW() WHERE id = $12 RETURNING *',
+        [title, description, status, priority, pole, assignee, due_date, start_date, media_link, type, is_active, id]
       );
 
       if (result.rows.length === 0) {

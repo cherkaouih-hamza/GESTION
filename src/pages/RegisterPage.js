@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
@@ -14,8 +15,40 @@ const RegisterPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const { registerUser } = useAuth();
   const navigate = useNavigate();
+
+  // Fonction pour tester la connexion au backend
+  const testConnection = async () => {
+    try {
+      setConnectionStatus('Testing...');
+      const response = await axios.get('/api/status');
+      setConnectionStatus(`Connected: ${response.data.status}`);
+    } catch (err) {
+      setConnectionStatus(`Connection failed: ${err.message}`);
+      setError('Erreur de connexion au serveur. Vérifiez que le serveur est démarré.');
+    }
+  };
+
+  // Fonction pour tester la connexion à la base de données
+  const testDatabaseConnection = async () => {
+    try {
+      setError('');
+      setConnectionStatus('Testing database connection...');
+      const response = await axios.get('/api/db-test');
+
+      if (response.data.success) {
+        setConnectionStatus(`DB Connected: ${response.data.message} - DB: ${response.data.database_name}`);
+      } else {
+        setConnectionStatus(`DB Connection failed: ${response.data.message}`);
+        setError(`Erreur de base de données: ${response.data.error}`);
+      }
+    } catch (err) {
+      setConnectionStatus(`DB Connection failed: ${err.message}`);
+      setError(`Erreur de connexion à la base de données: ${err.message}`);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -43,13 +76,15 @@ const RegisterPage = () => {
 
     try {
       const result = await registerUser(formData);
+      console.log('Résultat d\'inscription:', result); // Ajout d'un log pour le débogage
       if (result.success) {
         setSuccess(true);
       } else {
-        setError(result.message);
+        setError(result.message || 'Erreur inconnue lors de l\'inscription');
       }
     } catch (err) {
-      setError('حدث خطأ أثناء التسجيل');
+      console.error('Erreur détaillée:', err); // Ajout d'un log pour le débogage
+      setError(`Erreur lors de l'inscription: ${err.message || 'Erreur inconnue'}`);
     } finally {
       setLoading(false);
     }
@@ -100,6 +135,48 @@ const RegisterPage = () => {
             {error}
           </div>
         )}
+
+        {/* Section de test de connexion */}
+        <div className="connection-test-section" style={{ padding: '10px', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <strong>حالة الاتصال:</strong>
+              <span style={{ color: connectionStatus?.includes('Connected') ? 'green' : connectionStatus?.includes('Testing') ? 'orange' : (connectionStatus?.includes('failed') || connectionStatus?.includes('DB Connection') ? 'red' : 'black') }}>
+                {connectionStatus || 'Non testé'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '5px' }}>
+              <button
+                type="button"
+                onClick={testConnection}
+                style={{
+                  backgroundColor: '#3B82F6',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                اختبار API
+              </button>
+              <button
+                type="button"
+                onClick={testDatabaseConnection}
+                style={{
+                  backgroundColor: '#10B981',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                اختبار DB
+              </button>
+            </div>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">

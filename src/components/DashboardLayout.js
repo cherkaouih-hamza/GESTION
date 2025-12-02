@@ -26,12 +26,6 @@ const DashboardLayout = ({ children }) => {
       roles: ['responsable', 'admin']
     },
     {
-      name: 'اختبار قاعدة البيانات',
-      href: '/database-test',
-      icon: '🔬',
-      roles: ['admin']
-    },
-    {
       name: 'الإعدادات',
       href: '/settings',
       icon: '⚙️',

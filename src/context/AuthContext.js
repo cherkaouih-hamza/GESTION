@@ -192,16 +192,31 @@ export const AuthProvider = ({ children }) => {
         role: userData.role || 'utilisateur'
       });
 
+      console.log('Réponse de l\'API d\'inscription:', response);
+
       if (response.success) {
         console.log('Utilisateur créé avec succès:', response.user);
 
         return { success: true, message: 'تم إنشاء الحساب بنجاح', user: response.user };
       } else {
+        console.log('Erreur de l\'API d\'inscription:', response.error || response.message);
         return { success: false, message: response.error || response.message || 'خطأ أثناء التسجيل' };
       }
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
-      return { success: false, message: 'حدث خطأ أثناء التسجيل: ' + (error.message || 'Erreur inconnue') };
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      return {
+        success: false,
+        message: 'حدث خطأ أثناء التسجيل: ' +
+          (error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message ||
+          'Erreur inconnue')
+      };
     }
   };
 

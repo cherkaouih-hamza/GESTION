@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { poleApi } from '../api/poleApi';
 
 const TaskForm = ({ task, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,36 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     mediaLink: '',
     isActive: true
   });
+  const [poles, setPoles] = useState([]);
+  const [loadingPoles, setLoadingPoles] = useState(true);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const loadPoles = async () => {
+      try {
+        const polesData = await poleApi.getPoles();
+        setPoles(polesData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des pôles:', error);
+        // Fallback: utiliser une liste par défaut
+        setPoles([
+          { id: 1, name: 'Production Générale', description: 'Toutes les activités de production générale' },
+          { id: 2, name: 'Koutoub', description: 'Activités liées aux publications et ouvrages' },
+          { id: 3, name: 'Traduction', description: 'Activités de traduction' },
+          { id: 4, name: 'Nadwate', description: 'Conférences et séminaires' },
+          { id: 5, name: 'Ziyarate', description: 'Activités de visites et pèlerinages' },
+          { id: 6, name: 'Projet (Wikalaat Assfar et Koutab Al-Tazkiya)', description: 'Projets spéciaux et voyages' },
+          { id: 7, name: 'Podcast', description: 'Émissions et contenus audio' },
+          { id: 8, name: 'Academia', description: 'Éducation et formations académiques' },
+          { id: 9, name: 'Autre', description: 'Autres activités non classées' }
+        ]);
+      } finally {
+        setLoadingPoles(false);
+      }
+    };
+
+    loadPoles();
+  }, []);
 
   useEffect(() => {
     if (task) {
@@ -168,11 +198,15 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
             className={`w-full border ${errors.pole ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
           >
             <option value="">اختر القطب</option>
-            <option value="التقنية">التقنية</option>
-            <option value="الإعلام">الإعلام</option>
-            <option value="ال Pedagogical">ال Pedagogical</option>
-            <option value="الإدارية">الإدارية</option>
-            <option value="ال Pedagogique">ال Pedagogique</option>
+            {loadingPoles ? (
+              <option value="" disabled>جاري التحميل...</option>
+            ) : (
+              poles.map((pole) => (
+                <option key={pole.id} value={pole.name}>
+                  {pole.name}
+                </option>
+              ))
+            )}
           </select>
           {errors.pole && <p className="mt-1 text-sm text-red-600">{errors.pole}</p>}
         </div>

@@ -1,4 +1,4 @@
-// api/resources.js (Fonction Vercel pour les ressources)
+// api/users-tasks.js (Gestion des utilisateurs et des tâches)
 const { Pool } = require('pg');
 
 module.exports = async function handler(req, res) {
@@ -28,20 +28,18 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ error: 'Route non trouvée' });
     }
 
-    const resourceType = pathParts[1]; // users, tasks, poles
+    const resourceType = pathParts[1]; // users, tasks
     const resourceId = pathParts[2];
 
     if (resourceType === 'users') {
       return await handleUsers(req, res, pool, resourceId);
     } else if (resourceType === 'tasks') {
       return await handleTasks(req, res, pool, resourceId);
-    } else if (resourceType === 'poles') {
-      return await handlePoles(req, res, pool, resourceId);
     } else {
       return res.status(404).json({ error: 'Route non trouvée' });
     }
   } catch (error) {
-    console.error('Erreur dans resources handler:', error);
+    console.error('Erreur dans users-tasks handler:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
   } finally {
     if (pool) {
@@ -344,80 +342,6 @@ async function handleTasks(req, res, pool, taskId) {
     }
 
     res.status(200).json({ message: 'Tâche désactivée avec succès' });
-  } else {
-    res.status(405).json({ error: 'Méthode non autorisée' });
-  }
-}
-
-// Fonction de gestion des pôles
-async function handlePoles(req, res, pool, poleId) {
-  if (req.method === 'GET') {
-    if (poleId) {
-      // Récupérer un pôle spécifique
-      const result = await pool.query('SELECT * FROM poles WHERE id = $1', [poleId]);
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Pôle non trouvé' });
-      }
-
-      res.status(200).json(result.rows[0]);
-    } else {
-      // Récupérer tous les pôles
-      const result = await pool.query(
-        'SELECT * FROM poles WHERE is_active = true ORDER BY name'
-      );
-      res.status(200).json(result.rows);
-    }
-  } else if (req.method === 'POST') {
-    // Créer un nouveau pôle
-    const { name, description } = req.body;
-
-    if (!name) {
-      return res.status(400).json({ error: 'Le nom du pôle est requis' });
-    }
-
-    const result = await pool.query(
-      'INSERT INTO poles (name, description, is_active) VALUES ($1, $2, true) RETURNING *',
-      [name, description]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } else if (req.method === 'PUT') {
-    if (!poleId) {
-      return res.status(400).json({ error: 'ID pôle requis' });
-    }
-
-    // Mettre à jour un pôle
-    const { name, description, is_active } = req.body;
-
-    // Vérifier si le pôle existe
-    const existingPole = await pool.query('SELECT * FROM poles WHERE id = $1', [poleId]);
-    if (existingPole.rows.length === 0) {
-      return res.status(404).json({ error: 'Pôle non trouvé' });
-    }
-
-    const result = await pool.query(
-      'UPDATE poles SET name = $1, description = $2, is_active = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *',
-      [name, description, is_active, poleId]
-    );
-
-    res.status(200).json(result.rows[0]);
-  } else if (req.method === 'DELETE') {
-    if (!poleId) {
-      return res.status(400).json({ error: 'ID pôle requis' });
-    }
-
-    // Supprimer un pôle (désactiver en fait)
-    const result = await pool.query(
-      'UPDATE poles SET is_active = false WHERE id = $1 RETURNING *',
-      [poleId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Pôle non trouvé' });
-    }
-
-    res.status(200).json({ message: 'Pôle désactivé avec succès' });
   } else {
     res.status(405).json({ error: 'Méthode non autorisée' });
   }

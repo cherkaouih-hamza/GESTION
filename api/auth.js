@@ -1,4 +1,4 @@
-// api/auth.js (Fonction Vercel pour l'authentification)
+// api/auth.js (Gestion de l'authentification)
 const { Pool } = require('pg');
 
 module.exports = async function handler(req, res) {
@@ -73,7 +73,7 @@ module.exports = async function handler(req, res) {
 
       // Vérifier si l'utilisateur existe déjà
       const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-
+      
       if (existingUser.rows.length > 0) {
         return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
       }

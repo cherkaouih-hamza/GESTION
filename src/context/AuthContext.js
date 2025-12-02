@@ -192,8 +192,12 @@ export const AuthProvider = ({ children }) => {
 
   const registerUser = async (userData) => {
     try {
+      console.log('Tentative d\'inscription avec les données:', userData);
+
       // Vérifier si l'utilisateur existe déjà
       const existingUsers = await userApi.getAllUsers();
+      console.log('Utilisateurs existants:', existingUsers);
+
       const emailExists = existingUsers.some(u => u.email === userData.email);
       const phoneExists = existingUsers.some(u => u.phone === userData.phone);
 
@@ -208,27 +212,29 @@ export const AuthProvider = ({ children }) => {
       // Hash du mot de passe (dans une application réelle, cela devrait être fait côté serveur)
       // Pour l'instant, nous enregistrons le mot de passe tel quel (à améliorer pour la sécurité)
       const newUser = {
-        username: userData.name, // Utiliser name comme username
+        name: userData.name, // Envoyer name au lieu de username à l'API
         email: userData.email,
         password: userData.password, // Ce devrait être un mot de passe hashé dans une application réelle
         phone: userData.phone, // Ajouter le téléphone
         role: 'utilisateur', // Par défaut, un nouvel utilisateur est un utilisateur standard
-        is_active: false, // Par défaut, les nouveaux utilisateurs doivent être approuvés
-        created_at: new Date().toISOString()
       };
+
+      console.log('Données envoyées à l\'API:', newUser);
 
       // Créer l'utilisateur dans la base de données
       const createdUser = await userApi.createUser(newUser);
+      console.log('Utilisateur créé avec succès:', createdUser);
 
       // Envoyer un email de confirmation (simulé pour l'instant)
       try {
-        await fetch('/api/send-confirmation-email', {
+        const emailResponse = await fetch('/api/send-confirmation-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ email: userData.email, name: userData.name })
         });
+        console.log('Réponse email confirmation:', emailResponse.status);
       } catch (emailError) {
         console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
         // Ne pas échouer l'inscription même si l'email échoue
@@ -237,7 +243,8 @@ export const AuthProvider = ({ children }) => {
       return { success: true, message: 'تم إنشاء الحساب بنجاح', user: createdUser };
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
-      return { success: false, message: 'حدث خطأ أثناء التسجيل' };
+      console.error('Détails de l\'erreur:', error.message, error.response?.data || error.response);
+      return { success: false, message: 'حدث خطأ أثناء التسجيل: ' + (error.message || 'Erreur inconnue') };
     }
   };
 

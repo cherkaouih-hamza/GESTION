@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'PUT') {
     try {
-      const { username, email, role, pole, is_active } = req.body;
+      const { username, email, role, pole, is_active, phone } = req.body;
 
       // Déterminer les champs à mettre à jour
       let updateFields = [];
@@ -70,6 +70,11 @@ export default async function handler(req, res) {
       if (is_active !== undefined) {
         updateFields.push('is_active');
         updateValues.push(is_active);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
+      if (phone !== undefined) {
+        updateFields.push('phone');
+        updateValues.push(phone);
         updatePlaceholders.push(`$${updateValues.length}`);
       }
 

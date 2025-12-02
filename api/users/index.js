@@ -36,10 +36,13 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { username, email, password, role, pole, phone } = req.body;
+      const { name, email, password, phone, role, pole } = req.body;
+
+      // Conversion : name -> username pour la base de données
+      const username = name;
 
       if (!username || !email || !password) {
-        return res.status(400).json({ error: 'Les champs username, email et password sont obligatoires' });
+        return res.status(400).json({ error: 'Les champs nom, email et password sont obligatoires' });
       }
 
       const result = await pool.query(

@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
 
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
-    const userId = pathParts[2]; // La troisième partie après /api/user-manager
+    const userId = pathParts[1]; // La deuxième partie après le premier segment dans Vercel
 
     if (req.method === 'GET') {
       if (userId) {

@@ -82,12 +82,26 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
+      // Convertir les champs pour correspondre au format attendu par le backend
+      const taskData = {
+        ...formData,
+        title: formData.name,  // Convertir name à title
+        due_date: formData.endDate,  // Convertir endDate à due_date
+        assignee: formData.assignedTo || null,  // Renommer assignedTo à assignee
+        start_date: formData.startDate,  // Ajouter le champ start_date
+        created_by: formData.created_by || formData.createdBy || null  // S'assurer que created_by est inclus
+      };
+
+      // Retirer les champs qui ne sont pas nécessaires ou qui sont redondants
+      delete taskData.name;
+      delete taskData.assignedTo;
+
       if (task) {
-        onSubmit(task.id, formData);
+        onSubmit(task.id, taskData);
       } else {
-        onSubmit(formData);
+        onSubmit(taskData);
       }
     }
   };

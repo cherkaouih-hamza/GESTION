@@ -12,6 +12,7 @@ const TasksPage = () => {
   const { addNotification } = useNotifications();
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
+  const [users, setUsers] = useState([]); // Add state for users
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
@@ -53,6 +54,29 @@ const TasksPage = () => {
 
     if (currentUser) {
       fetchTasks();
+    }
+  }, [currentUser]);
+
+  // Fetch users to display their names instead of IDs
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const allUsers = await userApi.getAllUsers();
+        setUsers(allUsers);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
+        // If API fails, use fallback data
+        setUsers([
+          { id: 'user1', name: 'محمد أحمد', username: 'mohamed.ahmed' },
+          { id: 'user2', name: 'فاطمة الزهرة', username: 'fatiha.zahra' },
+          { id: 'user3', name: 'علي حسن', username: 'ali.hassan' },
+          { id: 'user4', name: 'نور الهدى', username: 'nour.huda' }
+        ]);
+      }
+    };
+
+    if (currentUser) {
+      fetchUsers();
     }
   }, [currentUser]);
 
@@ -114,14 +138,9 @@ const TasksPage = () => {
 
   // Function to get user name by ID
   const getUserNameById = (userId) => {
-    // This would typically come from the user context or API
-    const users = {
-      'user1': 'محمد أحمد',
-      'user2': 'فاطمة الزهرة',
-      'user3': 'علي حسن',
-      'user4': 'نور الهدى'
-    };
-    return users[userId] || userId;
+    if (!userId) return 'غير معين';
+    const user = users.find(u => u.id === userId);
+    return user ? (user.name || user.username) : userId;
   };
 
   const handleCreateTask = async (taskData) => {
@@ -312,10 +331,11 @@ const TasksPage = () => {
                 className="w-full"
               >
                 <option value="">الكل</option>
-                <option value="user1">محمد أحمد</option>
-                <option value="user2">فاطمة الزهرة</option>
-                <option value="user3">علي حسن</option>
-                <option value="user4">نور الهدى</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.name || user.username}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

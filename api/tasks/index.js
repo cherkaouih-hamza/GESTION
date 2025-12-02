@@ -36,15 +36,15 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { title, description, status, priority, pole, assignee, due_date, created_by } = req.body;
+      const { title, description, status, priority, pole, assignee, due_date, created_by, start_date, mediaLink, type, isActive } = req.body;
 
       if (!title || !status || !priority || !pole || !created_by) {
         return res.status(400).json({ error: 'Les champs title, status, priority, pole et created_by sont obligatoires' });
       }
 
       const result = await pool.query(
-        'INSERT INTO tasks (title, description, status, priority, pole, assignee, due_date, created_by, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) RETURNING *',
-        [title, description, status, priority, pole, assignee, due_date, created_by]
+        'INSERT INTO tasks (title, description, status, priority, pole, assignee, due_date, start_date, created_by, media_link, type, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW()) RETURNING *',
+        [title, description, status, priority, pole, assignee, due_date, start_date, created_by, mediaLink, type, isActive]
       );
 
       console.log('POST task successful, ID:', result.rows[0].id);

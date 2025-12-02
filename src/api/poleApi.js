@@ -7,7 +7,7 @@ export const poleApi = {
   // Récupérer tous les pôles
   getPoles: async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/poles`);
+      const response = await axios.get(`${API_BASE_URL}/api/pole-manager`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des pôles:', error);
@@ -18,7 +18,7 @@ export const poleApi = {
   // Créer un nouveau pôle
   createPole: async (poleData) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/poles`, poleData);
+      const response = await axios.post(`${API_BASE_URL}/api/pole-manager`, poleData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la création du pôle:', error);
@@ -29,7 +29,7 @@ export const poleApi = {
   // Mettre à jour un pôle
   updatePole: async (id, poleData) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/poles/${id}`, poleData);
+      const response = await axios.put(`${API_BASE_URL}/api/pole-manager/${id}`, poleData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la mise à jour du pôle:', error);
@@ -40,7 +40,7 @@ export const poleApi = {
   // Supprimer (désactiver) un pôle
   deletePole: async (id) => {
     try {
-      const response = await axios.delete(`${API_BASE_URL}/api/poles/${id}`);
+      const response = await axios.delete(`${API_BASE_URL}/api/pole-manager/${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la suppression du pôle:', error);

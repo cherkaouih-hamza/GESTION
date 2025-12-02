@@ -30,7 +30,7 @@ export const taskApi = {
   // Récupérer toutes les tâches
   getAllTasks: async () => {
     try {
-      const response = await api.get('/tasks');
+      const response = await api.get('/task-manager');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches:', error);
@@ -41,7 +41,7 @@ export const taskApi = {
   // Récupérer une tâche par ID
   getTaskById: async (id) => {
     try {
-      const response = await api.get(`/tasks/${id}`);
+      const response = await api.get(`/task-manager/${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération de la tâche:', error);
@@ -52,7 +52,7 @@ export const taskApi = {
   // Créer une nouvelle tâche
   createTask: async (taskData) => {
     try {
-      const response = await api.post('/tasks', taskData);
+      const response = await api.post('/task-manager', taskData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la création de la tâche:', error);
@@ -63,7 +63,7 @@ export const taskApi = {
   // Mettre à jour une tâche
   updateTask: async (id, taskData) => {
     try {
-      const response = await api.put(`/tasks/${id}`, taskData);
+      const response = await api.put(`/task-manager/${id}`, taskData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche:', error);
@@ -74,7 +74,7 @@ export const taskApi = {
   // Supprimer une tâche
   deleteTask: async (id) => {
     try {
-      const response = await api.delete(`/tasks/${id}`);
+      const response = await api.delete(`/task-manager/${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la suppression de la tâche:', error);
@@ -85,7 +85,7 @@ export const taskApi = {
   // Récupérer les tâches assignées à un utilisateur
   getTasksByAssignee: async (assigneeId) => {
     try {
-      const response = await api.get(`/tasks/assignee/${assigneeId}`);
+      const response = await api.get(`/task-manager/assignee/${assigneeId}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches assignées:', error);
@@ -96,7 +96,7 @@ export const taskApi = {
   // Récupérer les tâches créées par un utilisateur
   getTasksByCreator: async (creatorId) => {
     try {
-      const response = await api.get(`/tasks/creator/${creatorId}`);
+      const response = await api.get(`/task-manager/creator/${creatorId}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches créées:', error);

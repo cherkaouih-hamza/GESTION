@@ -151,6 +151,14 @@ module.exports = async function handler(req, res) {
     }
   } catch (error) {
     console.error('Erreur dans user-manager handler:', error);
-    res.status(500).json({ error: 'Erreur serveur interne' });
+    console.error('Détails de l\'erreur:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    res.status(500).json({
+      error: 'Erreur serveur interne',
+      details: error.message
+    });
   }
 }

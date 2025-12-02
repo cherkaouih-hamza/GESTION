@@ -11,8 +11,9 @@ const UsersPage = () => {
   const [modalType, setModalType] = useState(''); // 'add' or 'edit'
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     email: '',
+    phone: '',
     password: '',
     role: 'utilisateur',
     pole: ''
@@ -42,7 +43,8 @@ const UsersPage = () => {
       email: '',
       phone: '',
       password: '',
-      role: 'utilisateur'
+      role: 'utilisateur',
+      pole: ''
     });
     setShowModal(true);
   };
@@ -51,8 +53,9 @@ const UsersPage = () => {
     setModalType('edit');
     setSelectedUser(user);
     setFormData({
-      username: user.username || user.name,
+      name: user.name || user.username,
       email: user.email,
+      phone: user.phone || '',
       password: '', // Don't show password in edit form
       role: user.role,
       pole: user.pole || ''
@@ -96,8 +99,9 @@ const UsersPage = () => {
 
   // Filter users based on search term
   const filteredUsers = users.filter(user =>
-    (user.username || user.name).toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.name || user.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.phone || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (user.pole || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -171,7 +175,7 @@ const UsersPage = () => {
                   filteredUsers.map((user) => (
                     <tr key={user.id}>
                       <td className="text-right">
-                        <div className="font-medium text-gray-900">{user.name}</div>
+                        <div className="font-medium text-gray-900">{user.name || user.username}</div>
                       </td>
                       <td className="text-sm text-gray-500 text-right">
                         {user.email}
@@ -193,9 +197,9 @@ const UsersPage = () => {
                       </td>
                       <td className="text-right">
                         <span className={`status-badge ${
-                          user.isActive ? 'status-active' : 'status-inactive'
+                          user.is_active ? 'status-active' : 'status-inactive'
                         }`}>
-                          {user.isActive ? 'نشط' : 'غير نشط'}
+                          {user.is_active ? 'نشط' : 'غير نشط'}
                         </span>
                       </td>
                       <td className="text-right">
@@ -247,8 +251,20 @@ const UsersPage = () => {
                     <label className="form-label">الاسم الكامل</label>
                     <input
                       type="text"
-                      name="username"
-                      value={formData.username}
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">رقم الهاتف</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
                       onChange={handleInputChange}
                       className="form-input"
                       required

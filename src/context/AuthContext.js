@@ -161,18 +161,18 @@ export const AuthProvider = ({ children }) => {
       if (!currentTask) {
         throw new Error('Tâche non trouvée');
       }
-      
-      // Créer les données mises à jour
-      const updatedTaskData = { 
-        ...currentTask, 
-        status 
+
+      // Créer les données mises à jour avec uniquement les champs nécessaires
+      const updatedTaskData = {
+        status,
+        updated_at: new Date().toISOString()
       };
-      
+
       if (validatedBy) updatedTaskData.validated_by = validatedBy;
       if (comment) updatedTaskData.comment = comment;
-      
+
       const updatedTask = await taskApi.updateTask(taskId, updatedTaskData);
-      
+
       // Mettre à jour la liste locale des tâches
       setTasks(tasks.map(task => task.id === taskId ? updatedTask : task));
       return updatedTask;

@@ -259,7 +259,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
           {loadingUsers ? (
             <option value="" disabled>جاري التحميل...</option>
           ) : (
-            users.map((user) => (
+            (users || []).map((user) => (
               <option key={user.id} value={user.id}>
                 {user.username || user.email}
               </option>

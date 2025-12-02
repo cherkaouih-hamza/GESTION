@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { poleApi } from '../api/poleApi';
+import { userApi } from '../api/userApi';
 
 const TaskForm = ({ task, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,9 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     isActive: true
   });
   const [poles, setPoles] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loadingPoles, setLoadingPoles] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(true);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -42,7 +45,24 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       }
     };
 
+    const loadUsers = async () => {
+      try {
+        const usersData = await userApi.getAllUsers();
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des utilisateurs:', error);
+        // Fallback: utiliser une liste par défaut
+        setUsers([
+          { id: 1, username: 'Admin User', email: 'admin@example.com', role: 'admin' },
+          { id: 2, username: 'Test User', email: 'user@example.com', role: 'utilisateur' }
+        ]);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
     loadPoles();
+    loadUsers();
   }, []);
 
   useEffect(() => {
@@ -126,7 +146,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         status: formData.status || 'pending',  // Valeur par défaut
         priority: formData.priority,
         pole: formData.pole,
-        assignee: formData.assignedTo || null,  // Renommer assignedTo à assignee
+        assignee: formData.assignedTo ? parseInt(formData.assignedTo) : null,  // Renommer assignedTo à assignee et convertir en entier
         due_date: formData.endDate ? new Date(formData.endDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
         start_date: formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
         media_link: formData.mediaLink || null,  // Inclure media_link
@@ -236,11 +256,15 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
           className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         >
           <option value="">اختر المستخدم</option>
-          {/* In a real app, this would be populated with actual users */}
-          <option value="user1">محمد أحمد</option>
-          <option value="user2">فاطمة الزهرة</option>
-          <option value="user3">علي حسن</option>
-          <option value="user4">نور الهدى</option>
+          {loadingUsers ? (
+            <option value="" disabled>جاري التحميل...</option>
+          ) : (
+            users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.username || user.email}
+              </option>
+            ))
+          )}
         </select>
       </div>
 

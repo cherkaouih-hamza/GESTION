@@ -104,10 +104,19 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Utilisateur non authentifié ou ID utilisateur manquant');
       }
 
-      const newTask = await taskApi.createTask({
+      // Convertir les champs pour correspondre au format attendu par le backend
+      const formattedTaskData = {
         ...taskData,
-        created_by: currentUser.id
-      });
+        created_by: currentUser.id,  // L'utilisateur connecté est le créateur
+        createdBy: currentUser.id    // Ajout selon les conventions possibles
+      };
+
+      // Si assignee est fourni comme une chaîne vide ou null, le définir explicitement à null
+      if (formattedTaskData.assignee === '' || formattedTaskData.assignee === undefined) {
+        formattedTaskData.assignee = null;
+      }
+
+      const newTask = await taskApi.createTask(formattedTaskData);
 
       console.log('Tâche créée avec succès:', newTask);
       // Mettre à jour la liste locale des tâches
@@ -115,6 +124,12 @@ export const AuthProvider = ({ children }) => {
       return newTask;
     } catch (error) {
       console.error('Erreur lors de la création de la tâche:', error);
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        stack: error.stack
+      });
       throw error;
     }
   };

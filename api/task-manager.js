@@ -14,13 +14,20 @@ module.exports = async function handler(req, res) {
   try {
     const pool = await getPool();
 
+    console.log('Requête reçue:', req.method, req.url);
+    console.log('Headers:', req.headers);
+
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
+    console.log('URL décomposée:', pathParts);
+
     const taskId = pathParts[1]; // La deuxième partie après le premier segment dans Vercel
+    console.log('Task ID extrait:', taskId);
 
     if (req.method === 'GET') {
       if (taskId) {
         // Récupérer une tâche spécifique
+        console.log('Recherche de la tâche avec ID:', taskId);
         const result = await pool.query(
           `SELECT t.*, u.username as assignee_name, u2.username as created_by_name
            FROM tasks t
@@ -36,6 +43,7 @@ module.exports = async function handler(req, res) {
         res.status(200).json(result.rows[0]);
       } else {
         // Récupérer toutes les tâches
+        console.log('Requête de toutes les tâches');
         const result = await pool.query(
           `SELECT t.*, u.username as assignee_name, u2.username as created_by_name
            FROM tasks t
@@ -44,6 +52,7 @@ module.exports = async function handler(req, res) {
            WHERE t.is_active = true
            ORDER BY t.created_at DESC`
         );
+        console.log('Nombre de tâches récupérées:', result.rows.length);
         res.status(200).json(result.rows);
       }
     } else if (req.method === 'POST') {

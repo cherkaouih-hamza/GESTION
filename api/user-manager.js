@@ -14,13 +14,17 @@ module.exports = async function handler(req, res) {
   try {
     const pool = await getPool();
 
+    console.log('Requête reçue à user-manager:', req.method, req.url);
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
+    console.log('URL décomposée dans user-manager:', pathParts);
     const userId = pathParts[1]; // La deuxième partie après le premier segment dans Vercel
+    console.log('User ID extrait:', userId);
 
     if (req.method === 'GET') {
       if (userId) {
         // Récupérer un utilisateur spécifique
+        console.log('Recherche de l\'utilisateur avec ID:', userId);
         const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users WHERE id = $1', [userId]);
 
         if (result.rows.length === 0) {
@@ -30,7 +34,9 @@ module.exports = async function handler(req, res) {
         res.status(200).json(result.rows[0]);
       } else {
         // Récupérer tous les utilisateurs
+        console.log('Requête de tous les utilisateurs');
         const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users ORDER BY username');
+        console.log('Nombre d\'utilisateurs récupérés:', result.rows.length);
         res.status(200).json(result.rows);
       }
     } else if (req.method === 'POST') {

@@ -179,7 +179,7 @@ export const AuthProvider = ({ children }) => {
 
       // Utiliser l'API d'inscription directement
       const response = await authApi.register({
-        username: userData.name, // Utiliser username au lieu de name
+        username: userData.name,
         email: userData.email,
         password: userData.password,
         phone: userData.phone,

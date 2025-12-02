@@ -146,7 +146,10 @@ const TasksPage = () => {
 
   const handleCreateTask = async (taskData) => {
     try {
+      console.log('handleCreateTask appelé avec:', taskData);
       const newTask = await contextCreateTask(taskData);
+      console.log('Tâche créée avec succès dans le backend:', newTask);
+
       setTasks([...tasks, newTask]);
 
       // Send notification if task is urgent or assigned to another user
@@ -169,9 +172,15 @@ const TasksPage = () => {
       setShowForm(false);
     } catch (error) {
       console.error('Erreur lors de la création de la tâche:', error);
+      console.error('Détails de l\'erreur:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+
       addNotification({
         title: 'خطأ',
-        message: 'فشل إنشاء المهمة',
+        message: error.response?.data?.error || 'فشل إنشاء المهمة',
         type: 'error'
       });
     }

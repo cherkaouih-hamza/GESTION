@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
       }
 
       if (!user.is_active) {
-        return res.status(401).json({ message: 'Compte inactif' });
+        return res.status(401).json({ message: 'Compte en attente d\'activation. Veuillez contacter un administrateur.' });
       }
 
       res.status(200).json({ 
@@ -74,7 +74,14 @@ module.exports = async function handler(req, res) {
           hasEmail: !!email,
           hasPassword: !!password
         });
-        return res.status(400).json({ error: 'Nom d\'utilisateur, email et mot de passe sont requis' });
+        return res.status(400).json({
+          error: 'Nom d\'utilisateur, email et mot de passe sont requis',
+          details: {
+            hasUsername: !!username,
+            hasEmail: !!email,
+            hasPassword: !!password
+          }
+        });
       }
 
       try {
@@ -90,17 +97,17 @@ module.exports = async function handler(req, res) {
         const crypto = require('crypto');
         const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
-        // Créer le nouvel utilisateur (inactif par défaut)
+        // Créer le nouvel utilisateur (inactif par défaut pour approbation)
         const result = await pool.query(
           'INSERT INTO users (username, email, password, role, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, role, is_active',
-          [username, email, hashedPassword, role || 'utilisateur', false, phone || null]  // Nouvel utilisateur inactif par défaut
+          [username, email, hashedPassword, role || 'utilisateur', false, phone || null]
         );
 
         console.log('Utilisateur créé avec succès:', result.rows[0]);
         res.status(201).json({ success: true, user: result.rows[0] });
       } catch (dbError) {
         console.error('Erreur lors de la création de l\'utilisateur:', dbError);
-        return res.status(500).json({ error: 'Erreur serveur interne lors de la création de l\'utilisateur' });
+        return res.status(500).json({ error: 'Erreur serveur interne lors de la création de l\'utilisateur', details: dbError.message });
       }
     } else {
       return res.status(404).json({ error: 'Route non trouvée' });

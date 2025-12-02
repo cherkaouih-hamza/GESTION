@@ -185,11 +185,11 @@ export const AuthProvider = ({ children }) => {
 
       // Utiliser l'API d'inscription directement
       const response = await authApi.register({
-        username: userData.name,
+        username: userData.name || userData.username,
         email: userData.email,
         password: userData.password,
         phone: userData.phone,
-        role: 'utilisateur'
+        role: userData.role || 'utilisateur'
       });
 
       if (response.success) {
@@ -197,7 +197,7 @@ export const AuthProvider = ({ children }) => {
 
         return { success: true, message: 'تم إنشاء الحساب بنجاح', user: response.user };
       } else {
-        return { success: false, message: response.error || 'خطأ أثناء التسcription' };
+        return { success: false, message: response.error || response.message || 'خطأ أثناء التسجيل' };
       }
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);

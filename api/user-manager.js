@@ -151,8 +151,8 @@ module.exports = async function handler(req, res) {
         // Créer un nouvel utilisateur
         const { username, email, password, role, pole, is_active = false, phone } = req.body;
 
-        if (!username || !email) {
-          return res.status(400).json({ error: 'Le nom d\'utilisateur et l\'email sont requis' });
+        if (!username || !email || !password) {
+          return res.status(400).json({ error: 'Le nom d\'utilisateur, l\'email et le mot de passe sont requis' });
         }
 
         // Vérifier si l'utilisateur existe déjà
@@ -161,9 +161,13 @@ module.exports = async function handler(req, res) {
           return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
         }
 
+        // Hacher le mot de passe avant de l'enregistrer
+        const passwordUtils = require('crypto');
+        const hashedPassword = passwordUtils.createHash('sha256').update(password).digest('hex');
+
         const result = await pool.query(
           'INSERT INTO users (username, email, password, role, pole, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, email, role, pole, is_active',
-          [username, email, password, role, pole, is_active, phone]
+          [username, email, hashedPassword, role, pole, is_active, phone]
         );
 
         res.status(201).json(result.rows[0]);

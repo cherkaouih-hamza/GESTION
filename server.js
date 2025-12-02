@@ -39,11 +39,11 @@ app.use('/api/pole-manager', require('./api/pole-manager'));
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       return res.status(400).json({ error: 'Email et mot de passe requis' });
     }
-    
+
     // Import dynamique pour éviter les problèmes d'importation
     const { Pool } = require('pg');
     const pool = new Pool({
@@ -53,34 +53,36 @@ app.post('/api/login', async (req, res) => {
       connectionTimeoutMillis: 10000,
       idleTimeoutMillis: 30000,
     });
-    
+
     // Trouver l'utilisateur
     const result = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $1', [email]);
     await pool.end();
-    
+
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
-    
+
     const user = result.rows[0];
-    
-    if (user.password !== password) {
+
+    // Vérifier le mot de passe avec hachage
+    const passwordUtils = require('./utils/password');
+    if (!passwordUtils.verifyPassword(password, user.password)) {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
-    
+
     if (!user.is_active) {
       return res.status(401).json({ message: 'Compte inactif' });
     }
-    
-    res.json({ 
+
+    res.json({
       success: true,
-      user: { 
-        id: user.id, 
-        username: user.username, 
-        email: user.email, 
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
         role: user.role,
         is_active: user.is_active
-      } 
+      }
     });
   } catch (error) {
     console.error('Erreur lors du login:', error);
@@ -108,16 +110,20 @@ app.post('/api/register', async (req, res) => {
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-    
+
     if (existingUser.rows.length > 0) {
       await pool.end();
       return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
     }
 
+    // Hacher le mot de passe avant de l'enregistrer
+    const passwordUtils = require('./utils/password');
+    const hashedPassword = passwordUtils.hashPassword(password);
+
     // Créer le nouvel utilisateur (inactif par défaut)
     const result = await pool.query(
       'INSERT INTO users (username, email, password, role, is_active) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, is_active',
-      [username, email, password, role || 'utilisateur', false]  // Nouvel utilisateur inactif par défaut
+      [username, email, hashedPassword, role || 'utilisateur', false]  // Nouvel utilisateur inactif par défaut
     );
 
     await pool.end();

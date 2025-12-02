@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import { taskApi } from '../api/taskApi';
 import { userApi } from '../api/userApi';
+import authApi from '../api/authApi';
 
 const AuthContext = createContext();
 
@@ -14,43 +15,18 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (identifier, password) => {
     try {
-      // Récupérer tous les utilisateurs de la base de données
-      const allUsers = await userApi.getAllUsers();
+      // Utiliser l'API de login directement au lieu de récupérer tous les utilisateurs
+      const response = await authApi.login(identifier, password);
 
-      // Trouver l'utilisateur par email ou téléphone
-      let user = null;
-
-      // Chercher par email
-      const userByEmail = allUsers.find(u => u.email === identifier);
-      if (userByEmail) {
-        user = userByEmail;
+      if (response.success) {
+        setCurrentUser(response.user);
+        return { success: true, user: response.user };
       } else {
-        // Chercher par téléphone
-        const userByPhone = allUsers.find(u => u.phone === identifier || u.phone === identifier.replace(/[^0-9]/g, ''));
-        if (userByPhone) {
-          user = userByPhone;
-        }
+        return { success: false, message: response.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
       }
-
-      if (!user) {
-        return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
-      }
-
-      // Vérifier le mot de passe (dans une application réelle, le mot de passe devrait être hashé)
-      // Pour l'instant, nous faisons une vérification simple
-      if (user.password !== password) {
-        return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
-      }
-
-      if (user.is_active === false || user.is_active === 'false' || user.is_active === 0) {
-        return { success: false, message: 'الحساب غير نشط' };
-      }
-
-      setCurrentUser(user);
-      return { success: true, user };
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
-      return { success: false, message: 'حدث خطأ أثناء تسجيل الدخول' };
+      return { success: false, message: error.message || 'حدث خطأ أثناء تسجيل الدخول' };
     }
   };
 
@@ -201,56 +177,39 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('Tentative d\'inscription avec les données:', userData);
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUsers = await userApi.getAllUsers();
-      console.log('Utilisateurs existants:', existingUsers);
-
-      const emailExists = existingUsers.some(u => u.email === userData.email);
-      const phoneExists = existingUsers.some(u => u.phone === userData.phone);
-
-      if (emailExists) {
-        return { success: false, message: 'البريد الإلكتروني مسجل مسبقاً' };
-      }
-
-      if (phoneExists) {
-        return { success: false, message: 'رقم الهاتف مسجل مسبقاً' };
-      }
-
-      // Hash du mot de passe (dans une application réelle, cela devrait être fait côté serveur)
-      // Pour l'instant, nous enregistrons le mot de passe tel quel (à améliorer pour la sécurité)
-      const newUser = {
-        name: userData.name, // Envoyer name au lieu de username à l'API
+      // Utiliser l'API d'inscription directement
+      const response = await authApi.register({
+        username: userData.name, // Utiliser username au lieu de name
         email: userData.email,
-        password: userData.password, // Ce devrait être un mot de passe hashé dans une application réelle
-        phone: userData.phone, // Ajouter le téléphone
-        role: 'utilisateur', // Par défaut, un nouvel utilisateur est un utilisateur standard
-      };
+        password: userData.password,
+        phone: userData.phone,
+        role: 'utilisateur'
+      });
 
-      console.log('Données envoyées à l\'API:', newUser);
+      if (response.success) {
+        console.log('Utilisateur créé avec succès:', response.user);
 
-      // Créer l'utilisateur dans la base de données
-      const createdUser = await userApi.createUser(newUser);
-      console.log('Utilisateur créé avec succès:', createdUser);
+        // Envoyer un email de confirmation (simulé pour l'instant)
+        try {
+          const emailResponse = await fetch('/api/send-confirmation-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userData.email, name: userData.name })
+          });
+          console.log('Réponse email confirmation:', emailResponse.status);
+        } catch (emailError) {
+          console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
+          // Ne pas échouer l'inscription même si l'email échoue
+        }
 
-      // Envoyer un email de confirmation (simulé pour l'instant)
-      try {
-        const emailResponse = await fetch('/api/send-confirmation-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email: userData.email, name: userData.name })
-        });
-        console.log('Réponse email confirmation:', emailResponse.status);
-      } catch (emailError) {
-        console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
-        // Ne pas échouer l'inscription même si l'email échoue
+        return { success: true, message: 'تم إنشاء الحساب بنجاح', user: response.user };
+      } else {
+        return { success: false, message: response.error || 'خطأ أثناء التسcription' };
       }
-
-      return { success: true, message: 'تم إنشاء الحساب بنجاح', user: createdUser };
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
-      console.error('Détails de l\'erreur:', error.message, error.response?.data || error.response);
       return { success: false, message: 'حدث خطأ أثناء التسجيل: ' + (error.message || 'Erreur inconnue') };
     }
   };

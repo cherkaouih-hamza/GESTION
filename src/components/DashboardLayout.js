@@ -58,7 +58,7 @@ const DashboardLayout = ({ children }) => {
             <span>×</span>
           </button>
           <div className="logo-section">
-            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
+            <img src="/LOGOIACSASVERT.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
           <nav className="mobile-nav">
             {filteredNavigation.map((item) => (
@@ -79,7 +79,7 @@ const DashboardLayout = ({ children }) => {
       <div className="sidebar-desktop">
         <div className="flex flex-col flex-shrink-0 px-4 py-6">
           <div className="flex justify-center">
-            <img src="/logo.png" alt="LOGOIACSAS" className="logo-image" />
+            <img src="/LOGOIACSASVERT.png" alt="LOGOIACSAS" className="logo-image" />
           </div>
           <div className="mt-4 flex items-center justify-between px-4 py-3">
             <div className="flex items-center">
@@ -141,7 +141,7 @@ const DashboardLayout = ({ children }) => {
           >
             <span>☰</span>
           </button>
-          <img src="/logo.png" alt="LOGOIACSAS" className="mobile-logo-image" />
+          <img src="/LOGOIACSASVERT.png" alt="LOGOIACSAS" className="mobile-logo-image" />
           <div className="flex items-center space-x-4">
             <NotificationBell />
             <button

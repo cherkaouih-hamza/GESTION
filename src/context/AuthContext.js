@@ -162,10 +162,10 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Tâche non trouvée');
       }
 
-      // Créer les données mises à jour avec uniquement les champs nécessaires
+      // Créer les données mises à jour
       const updatedTaskData = {
-        status,
-        updated_at: new Date().toISOString()
+        ...currentTask,
+        status
       };
 
       if (validatedBy) updatedTaskData.validated_by = validatedBy;

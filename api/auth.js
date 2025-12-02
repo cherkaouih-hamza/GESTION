@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
       });
     } else if (req.method === 'POST' && authAction === 'register') {
       // Gérer l'inscription
-      const { username, email, password, role } = req.body;
+      const { username, email, password, role, phone } = req.body;
 
       if (!username || !email || !password) {
         return res.status(400).json({ error: 'Nom d\'utilisateur, email et mot de passe sont requis' });
@@ -73,7 +73,7 @@ module.exports = async function handler(req, res) {
 
       // Vérifier si l'utilisateur existe déjà
       const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-      
+
       if (existingUser.rows.length > 0) {
         return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
       }
@@ -84,8 +84,8 @@ module.exports = async function handler(req, res) {
 
       // Créer le nouvel utilisateur (inactif par défaut)
       const result = await pool.query(
-        'INSERT INTO users (username, email, password, role, is_active) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, is_active',
-        [username, email, hashedPassword, role || 'utilisateur', false]  // Nouvel utilisateur inactif par défaut
+        'INSERT INTO users (username, email, password, role, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, role, is_active',
+        [username, email, hashedPassword, role || 'utilisateur', false, phone || null]  // Nouvel utilisateur inactif par défaut
       );
 
       res.status(201).json({ success: true, user: result.rows[0] });

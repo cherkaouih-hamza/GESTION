@@ -85,7 +85,7 @@ async function handleUsers(req, res, pool, userId) {
 
     const result = await pool.query(
       'INSERT INTO users (username, email, password, role, pole, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, email, role, pole, is_active',
-      [username, email, hashedPassword, role, pole, is_active, phone]
+      [username, email, hashedPassword, role, pole, is_active, phone || null]
     );
 
     res.status(201).json(result.rows[0]);

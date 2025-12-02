@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' };
       }
 
-      if (user.isActive === false || user.isActive === 'false') {
+      if (user.is_active === false || user.is_active === 'false' || user.is_active === 0) {
         return { success: false, message: 'الحساب غير نشط' };
       }
 

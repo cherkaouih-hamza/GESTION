@@ -1,5 +1,6 @@
-// api/users-tasks.js (Gestion des utilisateurs et des tâches)
-const { Pool } = require('pg');
+// api/users-tasks.js (Gestion des utilisateurs et des tâches pour Vercel)
+const { getPool } = require('./db');
+const crypto = require('crypto');
 
 module.exports = async function handler(req, res) {
   // Configuration CORS pour Vercel
@@ -11,19 +12,11 @@ module.exports = async function handler(req, res) {
     return res.status(200).end();
   }
 
-  let pool;
   try {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-    });
-
+    const pool = await getPool();
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
-    
+
     if (pathParts.length < 2) {
       return res.status(404).json({ error: 'Route non trouvée' });
     }
@@ -41,10 +34,6 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error('Erreur dans users-tasks handler:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
-  } finally {
-    if (pool) {
-      await pool.end();
-    }
   }
 }
 
@@ -78,7 +67,6 @@ async function handleUsers(req, res, pool, userId) {
     }
 
     // Hacher le mot de passe avant de l'enregistrer
-    const crypto = require('crypto');
     const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
 
     const result = await pool.query(

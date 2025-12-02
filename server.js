@@ -34,6 +34,7 @@ app.get('/api/status', (req, res) => {
 app.use('/api/user-manager', require('./api/user-manager'));
 app.use('/api/task-manager', require('./api/task-manager'));
 app.use('/api/pole-manager', require('./api/pole-manager'));
+app.use('/api/users-tasks', require('./api/users-tasks'));
 
 // Endpoint spécifique pour le login (ancienne URL pour compatibilité)
 app.post('/api/login', async (req, res) => {

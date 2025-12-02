@@ -195,21 +195,6 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         console.log('Utilisateur créé avec succès:', response.user);
 
-        // Envoyer un email de confirmation (simulé pour l'instant)
-        try {
-          const emailResponse = await fetch('/api/send-confirmation-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: userData.email, name: userData.name })
-          });
-          console.log('Réponse email confirmation:', emailResponse.status);
-        } catch (emailError) {
-          console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
-          // Ne pas échouer l'inscription même si l'email échoue
-        }
-
         return { success: true, message: 'تم إنشاء الحساب بنجاح', user: response.user };
       } else {
         return { success: false, message: response.error || 'خطأ أثناء التسcription' };

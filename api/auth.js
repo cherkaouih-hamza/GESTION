@@ -65,30 +65,43 @@ module.exports = async function handler(req, res) {
       });
     } else if (req.method === 'POST' && authAction === 'register') {
       // Gérer l'inscription
+      console.log('Requête d\'inscription reçue:', req.body);
       const { username, email, password, role, phone } = req.body;
 
       if (!username || !email || !password) {
+        console.log('Validation échouée - champs manquants:', {
+          hasUsername: !!username,
+          hasEmail: !!email,
+          hasPassword: !!password
+        });
         return res.status(400).json({ error: 'Nom d\'utilisateur, email et mot de passe sont requis' });
       }
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-      
-      if (existingUser.rows.length > 0) {
-        return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
+      try {
+        // Vérifier si l'utilisateur existe déjà
+        const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
+
+        if (existingUser.rows.length > 0) {
+          console.log('Utilisateur existe déjà:', email, username);
+          return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
+        }
+
+        // Hacher le mot de passe avant de l'enregistrer
+        const crypto = require('crypto');
+        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+
+        // Créer le nouvel utilisateur (inactif par défaut)
+        const result = await pool.query(
+          'INSERT INTO users (username, email, password, role, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, role, is_active',
+          [username, email, hashedPassword, role || 'utilisateur', false, phone || null]  // Nouvel utilisateur inactif par défaut
+        );
+
+        console.log('Utilisateur créé avec succès:', result.rows[0]);
+        res.status(201).json({ success: true, user: result.rows[0] });
+      } catch (dbError) {
+        console.error('Erreur lors de la création de l\'utilisateur:', dbError);
+        return res.status(500).json({ error: 'Erreur serveur interne lors de la création de l\'utilisateur' });
       }
-
-      // Hacher le mot de passe avant de l'enregistrer
-      const crypto = require('crypto');
-      const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-
-      // Créer le nouvel utilisateur (inactif par défaut)
-      const result = await pool.query(
-        'INSERT INTO users (username, email, password, role, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, role, is_active',
-        [username, email, hashedPassword, role || 'utilisateur', false, phone || null]  // Nouvel utilisateur inactif par défaut
-      );
-
-      res.status(201).json({ success: true, user: result.rows[0] });
     } else {
       return res.status(404).json({ error: 'Route non trouvée' });
     }

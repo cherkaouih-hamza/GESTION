@@ -93,9 +93,9 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
       }
 
+      updateValues.push(id); // Ajouter l'ID avant de construire la requête car elle est utilisée dans le WHERE
       const updateQuery = `UPDATE users SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
       console.log('Requête SQL:', updateQuery);
-      updateValues.push(id);
 
       const result = await pool.query(updateQuery, updateValues);
 

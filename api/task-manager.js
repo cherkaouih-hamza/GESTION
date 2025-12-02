@@ -2,15 +2,20 @@
 import { Pool } from 'pg';
 import { corsHeaders } from '../utils/cors';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
 export default async function handler(req, res) {
+  // Configuration du pool pour chaque requête (meilleur pour les fonctions serverless)
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 1, // Utiliser une connexion unique pour les fonctions serverless
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+  });
+
   // Handle CORS
   if (req.method === 'OPTIONS') {
     res.writeHead(200, corsHeaders);
+    await pool.end(); // Fermer le pool pour les requêtes OPTIONS
     return res.end();
   }
 
@@ -25,7 +30,7 @@ export default async function handler(req, res) {
     const pathParts = path.split('/').filter(Boolean);
     
     // Find task-related parameters
-    const taskId = pathParts.includes('tasks') ? pathParts[pathParts.indexOf('tasks') + 1] : null;
+    const taskId = pathParts.includes('task-manager') ? pathParts[pathParts.indexOf('task-manager') + 1] : null;
     const assigneeId = pathParts.includes('assignee') ? pathParts[pathParts.indexOf('assignee') + 1] : null;
     const creatorId = pathParts.includes('creator') ? pathParts[pathParts.indexOf('creator') + 1] : null;
 
@@ -225,6 +230,6 @@ export default async function handler(req, res) {
     console.error('Erreur lors de la gestion des tâches:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
   } finally {
-    // Ne pas fermer le pool ici dans un environnement serverless
+    await pool.end(); // Toujours fermer le pool dans le bloc finally
   }
 }

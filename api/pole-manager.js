@@ -2,15 +2,20 @@
 import { Pool } from 'pg';
 import { corsHeaders } from '../utils/cors';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
 export default async function handler(req, res) {
+  // Configuration du pool pour chaque requête (meilleur pour les fonctions serverless)
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 1, // Utiliser une connexion unique pour les fonctions serverless
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+  });
+
   // Handle CORS
   if (req.method === 'OPTIONS') {
     res.writeHead(200, corsHeaders);
+    await pool.end(); // Fermer le pool pour les requêtes OPTIONS
     return res.end();
   }
 
@@ -24,8 +29,8 @@ export default async function handler(req, res) {
     const path = url.pathname;
     const pathParts = path.split('/').filter(Boolean);
     
-    // Check if we have an ID in the path (e.g., /api/poles/123)
-    const id = pathParts.length > 2 ? pathParts[pathParts.length - 1] : null;
+    // Check if we have an ID in the path (e.g., /api/pole-manager/123)
+    const id = pathParts.includes('pole-manager') ? pathParts[pathParts.indexOf('pole-manager') + 1] : null;
 
     if (id) {
       // Handle individual pole operations
@@ -99,6 +104,6 @@ export default async function handler(req, res) {
     console.error('Erreur lors de la gestion des pôles:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
   } finally {
-    // Ne pas fermer le pool ici dans un environnement serverless
+    await pool.end(); // Toujours fermer le pool dans le bloc finally
   }
 }

@@ -2,15 +2,20 @@
 import { Pool } from 'pg';
 import { corsHeaders } from '../utils/cors';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-});
-
 export default async function handler(req, res) {
+  // Configuration du pool pour chaque requête (meilleur pour les fonctions serverless)
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 1, // Utiliser une connexion unique pour les fonctions serverless
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+  });
+
   // Handle CORS
   if (req.method === 'OPTIONS') {
     res.writeHead(200, corsHeaders);
+    await pool.end(); // Fermer le pool pour les requêtes OPTIONS
     return res.end();
   }
 
@@ -25,7 +30,7 @@ export default async function handler(req, res) {
     const pathParts = path.split('/').filter(Boolean);
     
     // Find user-related parameters
-    const userId = pathParts.includes('users') ? pathParts[pathParts.indexOf('users') + 1] : null;
+    const userId = pathParts.includes('user-manager') ? pathParts[pathParts.indexOf('user-manager') + 1] : null;
     const userEmail = pathParts.includes('email') ? pathParts[pathParts.indexOf('email') + 1] : null;
 
     // Handle different endpoints based on path
@@ -170,6 +175,6 @@ export default async function handler(req, res) {
     console.error('Erreur lors de la gestion des utilisateurs:', error);
     res.status(500).json({ error: 'Erreur serveur interne' });
   } finally {
-    // Ne pas fermer le pool ici dans un environnement serverless
+    await pool.end(); // Toujours fermer le pool dans le bloc finally
   }
 }

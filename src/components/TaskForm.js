@@ -85,6 +85,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
 
     if (validateForm()) {
       // Convertir les champs pour correspondre au format attendu par le backend
+      // Ne pas inclure created_by ici, car il est ajouté automatiquement dans le contexte Auth
       const taskData = {
         title: formData.name,  // Convertir name à title
         description: formData.description,
@@ -94,7 +95,6 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         assignee: formData.assignedTo || null,  // Renommer assignedTo à assignee
         due_date: formData.endDate,  // Convertir endDate à due_date
         start_date: formData.startDate,  // Inclure start_date
-        created_by: formData.created_by || formData.createdBy || null,  // S'assurer que created_by est inclus
         media_link: formData.mediaLink || null,  // Inclure media_link
         type: formData.type || null,  // Inclure type
         is_active: formData.isActive !== undefined ? formData.isActive : true  // Inclure is_active

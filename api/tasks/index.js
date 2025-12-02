@@ -38,7 +38,25 @@ export default async function handler(req, res) {
     try {
       const { title, description, status, priority, pole, assignee, due_date, created_by, start_date, media_link, type, is_active } = req.body;
 
+      console.log('Requête POST reçue pour création de tâche:', {
+        title,
+        status,
+        priority,
+        pole,
+        assignee,
+        created_by,
+        body: req.body
+      });
+
       if (!title || !status || !priority || !pole || !created_by) {
+        console.log('Validation échouée - champs manquants:', {
+          hasTitle: !!title,
+          hasStatus: !!status,
+          hasPriority: !!priority,
+          hasPole: !!pole,
+          hasCreatedBy: !!created_by,
+          created_by: created_by
+        });
         return res.status(400).json({ error: 'Les champs title, status, priority, pole et created_by sont obligatoires' });
       }
 

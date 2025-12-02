@@ -93,7 +93,7 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         isActive: true
       });
     }
-  }, [task]);
+  }, [task?.id, task]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -122,8 +122,15 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       newErrors.endDate = 'تاريخ النهاية مطلوب';
     }
 
-    if (formData.startDate && formData.endDate && new Date(formData.startDate) > new Date(formData.endDate)) {
-      newErrors.endDate = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
+    if (formData.startDate && formData.endDate) {
+      const startDate = new Date(formData.startDate);
+      const endDate = new Date(formData.endDate);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        newErrors.startDate = 'تاريخ البداية غير صحيح';
+        newErrors.endDate = 'تاريخ النهاية غير صحيح';
+      } else if (startDate > endDate) {
+        newErrors.endDate = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية';
+      }
     }
 
     if (!formData.pole) {
@@ -147,8 +154,8 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         priority: formData.priority,
         pole: formData.pole,
         assignee: formData.assignedTo ? parseInt(formData.assignedTo) : null,  // Renommer assignedTo à assignee et convertir en entier
-        due_date: formData.endDate ? new Date(formData.endDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
-        start_date: formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : null,  // Convertir en format ISO YYYY-MM-DD
+        due_date: formData.endDate ? (new Date(formData.endDate).toISOString().split('T')[0]) : null,  // Convertir en format ISO YYYY-MM-DD
+        start_date: formData.startDate ? (new Date(formData.startDate).toISOString().split('T')[0]) : null,  // Convertir en format ISO YYYY-MM-DD
         media_link: formData.mediaLink || null,  // Inclure media_link
         type: formData.type || null,  // Inclure type
         is_active: formData.isActive !== undefined ? formData.isActive : true  // Inclure is_active
@@ -163,6 +170,16 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
       }
     }
   };
+
+  // Ne pas afficher le formulaire tant que les données nécessaires ne sont pas chargées
+  if (loadingPoles || loadingUsers) {
+    return (
+      <div className="loading-state">
+        <div className="loading-spinner"></div>
+        <p className="text-gray-600">جاري تحميل البيانات...</p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="rtl text-right">

@@ -121,7 +121,7 @@ const DashboardPage = () => {
       // Si pas d'utilisateur connecté, arrêter le chargement
       setLoading(false);
     }
-  }, [currentUser, getAllTasks, getTasksByUser]);
+  }, [currentUser]); // Retirer getAllTasks et getTasksByUser du tableau de dépendances car ces fonctions sont stables dans le contexte
 
   // Calculer les statistiques
   const stats = {

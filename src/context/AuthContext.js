@@ -50,8 +50,10 @@ export const AuthProvider = ({ children }) => {
 
   const getAllTasks = async () => {
     try {
+      console.log('getAllTasks appelé');
       // Récupérer les tâches directement de l'API sans mise en cache
       const tasksFromApi = await taskApi.getAllTasks();
+      console.log('Tâches récupérées de l\'API:', tasksFromApi.length);
       setTasks(tasksFromApi);
       return tasksFromApi;
     } catch (error) {

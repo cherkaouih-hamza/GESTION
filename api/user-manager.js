@@ -18,15 +18,20 @@ module.exports = async function handler(req, res) {
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
     console.log('URL décomposée dans user-manager:', pathParts);
-    const hasId = pathParts.length > 1; // Vérifier s'il y a un ID dans l'URL
-    const userId = hasId ? pathParts[1] : null; // Le cas échéant, c'est le deuxième segment
+    const hasId = pathParts.length > 2; // Vérifier s'il y a un ID dans l'URL (après api/user-manager)
+    const userId = hasId ? pathParts[2] : null; // L'ID est le troisième segment dans /api/user-manager/ID
     console.log('User ID extrait:', userId, 'Avec ID:', hasId);
 
     if (req.method === 'GET') {
       if (hasId && userId) {
         // Récupérer un utilisateur spécifique
         console.log('Recherche de l\'utilisateur avec ID:', userId);
-        const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users WHERE id = $1', [userId]);
+        // S'assurer que userId est un nombre avant de le passer à la requête
+        const userIdNum = parseInt(userId);
+        if (isNaN(userIdNum)) {
+          return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
+        }
+        const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users WHERE id = $1', [userIdNum]);
 
         if (result.rows.length === 0) {
           return res.status(404).json({ error: 'Utilisateur non trouvé' });
@@ -67,6 +72,12 @@ module.exports = async function handler(req, res) {
     } else if (req.method === 'PUT') {
       if (!userId) {
         return res.status(400).json({ error: 'ID utilisateur requis' });
+      }
+
+      // S'assurer que userId est un nombre avant de le passer aux requêtes
+      const userIdNum = parseInt(userId);
+      if (isNaN(userIdNum)) {
+        return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
       }
 
       // Mettre à jour un utilisateur
@@ -117,7 +128,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
       }
 
-      updateValues.push(userId); // Ajouter l'ID
+      updateValues.push(userIdNum); // Ajouter l'ID converti en nombre
       const updateQuery = `UPDATE users SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
 
       const result = await pool.query(updateQuery, updateValues);
@@ -132,18 +143,24 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'ID utilisateur requis' });
       }
 
+      // S'assurer que userId est un nombre avant de le passer aux requêtes
+      const userIdNum = parseInt(userId);
+      if (isNaN(userIdNum)) {
+        return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
+      }
+
       // Supprimer un utilisateur (désactiver en fait)
       // Démarrer une transaction pour s'assurer que les suppressions sont atomiques
       await pool.query('BEGIN');
 
       // Supprimer d'abord les tâches créées par l'utilisateur
-      await pool.query('DELETE FROM tasks WHERE created_by = $1', [userId]);
+      await pool.query('DELETE FROM tasks WHERE created_by = $1', [userIdNum]);
 
       // Supprimer les tâches assignées à l'utilisateur
-      await pool.query('DELETE FROM tasks WHERE assignee = $1', [userId]);
+      await pool.query('DELETE FROM tasks WHERE assignee = $1', [userIdNum]);
 
       // Maintenant supprimer l'utilisateur
-      const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [userId]);
+      const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [userIdNum]);
 
       if (result.rows.length === 0) {
         await pool.query('ROLLBACK');

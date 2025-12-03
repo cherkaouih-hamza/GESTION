@@ -21,20 +21,25 @@ module.exports = async function handler(req, res) {
     const pathParts = url.pathname.split('/').filter(Boolean);
     console.log('URL décomposée:', pathParts);
 
-    const hasId = pathParts.length > 1; // Vérifier s'il y a un ID dans l'URL
-    const taskId = hasId ? pathParts[1] : null; // Le cas échéant, c'est le deuxième segment
+    const hasId = pathParts.length > 2; // Vérifier s'il y a un ID dans l'URL (après api/task-manager)
+    const taskId = hasId ? pathParts[2] : null; // L'ID est le troisième segment dans /api/task-manager/ID
     console.log('Task ID extrait:', taskId, 'Avec ID:', hasId);
 
     if (req.method === 'GET') {
       if (hasId && taskId) {
         // Récupérer une tâche spécifique
         console.log('Recherche de la tâche avec ID:', taskId);
+        // S'assurer que taskId est un nombre avant de le passer à la requête
+        const taskIdNum = parseInt(taskId);
+        if (isNaN(taskIdNum)) {
+          return res.status(400).json({ error: 'ID de tâche invalide' });
+        }
         const result = await pool.query(
           `SELECT t.*, u.username as assignee_name, u2.username as created_by_name
            FROM tasks t
            LEFT JOIN users u ON t.assignee = u.id
            LEFT JOIN users u2 ON t.created_by = u2.id
-           WHERE t.id = $1`, [taskId]
+           WHERE t.id = $1`, [taskIdNum]
         );
 
         if (result.rows.length === 0) {
@@ -153,7 +158,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
       }
 
-      updateValues.push(taskId); // Ajouter l'ID
+      updateValues.push(taskIdNum); // Ajouter l'ID converti en nombre
       const updateQuery = `UPDATE tasks SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
 
       const result = await pool.query(updateQuery, updateValues);
@@ -169,9 +174,14 @@ module.exports = async function handler(req, res) {
       }
 
       // Supprimer une tâche (désactiver en fait)
+      // S'assurer que taskId est un nombre avant de le passer à la requête
+      const taskIdNum = parseInt(taskId);
+      if (isNaN(taskIdNum)) {
+        return res.status(400).json({ error: 'ID de tâche invalide' });
+      }
       const result = await pool.query(
         'UPDATE tasks SET is_active = false WHERE id = $1 RETURNING *',
-        [taskId]
+        [taskIdNum]
       );
 
       if (result.rows.length === 0) {

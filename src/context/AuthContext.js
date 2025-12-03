@@ -62,13 +62,28 @@ export const AuthProvider = ({ children }) => {
 
   const getTasksByUser = async (userId) => {
     try {
+      if (!userId) {
+        console.warn('getTasksByUser appelé sans userId');
+        return [];
+      }
+
       // Récupérer toutes les tâches depuis l'API
       const allTasks = await taskApi.getAllTasks();
+      console.log('Toutes les tâches récupérées:', allTasks.length, 'pour userId:', userId);
+
+      // Vérifier que userId est un nombre avant la comparaison
+      const userIdNum = Number(userId);
+
       // Filtrer côté client pour les tâches assignées ou créées par l'utilisateur
-      return allTasks.filter(task =>
-        (task.created_by && task.created_by == userId) ||
-        (task.assignee && task.assignee == userId)
-      );
+      const userTasks = allTasks.filter(task => {
+        const createdBy = task.created_by ? Number(task.created_by) : null;
+        const assignedTo = task.assignee ? Number(task.assignee) : null;
+
+        return createdBy === userIdNum || assignedTo === userIdNum;
+      });
+
+      console.log('Tâches filtrées pour l\'utilisateur:', userTasks.length);
+      return userTasks;
     } catch (error) {
       console.error('Erreur lors de la récupération des tâches utilisateur:', error);
       return [];

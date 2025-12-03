@@ -77,33 +77,39 @@ const DashboardPage = () => {
     const fetchTasks = async () => {
       try {
         setLoading(true);
-        let tasks = await getAllTasks();
-        
-        if (currentUser?.role === 'utilisateur') {
-          // Pour un utilisateur normal, récupérer ses tâches assignées ou créées
-          const allTasksData = await getAllTasks();
-          tasks = allTasksData.filter(task => 
-            task.created_by === currentUser.id || task.assignee === currentUser.id
-          );
-        } else if (currentUser?.role === 'responsable') {
-          // Pour un responsable, récupérer les tâches pertinentes
-          const allTasksData = await getAllTasks();
-          tasks = allTasksData.filter(task => 
-            task.created_by === currentUser.id || task.assignee === currentUser.id
-          );
+        console.log('Début de la récupération des tâches pour dashboard');
+
+        // Récupérer toutes les tâches
+        const allTasksData = await getAllTasks();
+        console.log('Tâches récupérées:', allTasksData.length);
+
+        let filteredTasks = allTasksData;
+
+        // Filtrer les tâches selon le rôle de l'utilisateur
+        if (currentUser?.role === 'utilisateur' || currentUser?.role === 'responsable') {
+          // Pour un utilisateur ou responsable, ne montrer que les tâches assignées ou créées par lui
+          // Convertir les IDs en nombres pour la comparaison
+          const currentUserIdNum = Number(currentUser.id);
+          filteredTasks = allTasksData.filter(task => {
+            const createdBy = task.created_by ? Number(task.created_by) : null;
+            const assignedTo = task.assignee ? Number(task.assignee) : null;
+
+            return createdBy === currentUserIdNum || assignedTo === currentUserIdNum;
+          });
+          console.log(`Tâches filtrées pour ${currentUser?.role}:`, filteredTasks.length);
         }
-        
-        setAllTasks(tasks);
-        
+
+        setAllTasks(filteredTasks);
+
         // Récupérer spécifiquement les tâches de l'utilisateur
-        if (currentUser?.role === 'utilisateur') {
-          const userTasksData = await getTasksByUser(currentUser.id);
-          setUserTasks(userTasksData);
-        } else {
-          setUserTasks(tasks);
-        }
+        const userTasksData = await getTasksByUser(currentUser.id);
+        setUserTasks(userTasksData);
+        console.log('Tâches utilisateur récupérées:', userTasksData.length);
       } catch (error) {
         console.error('Erreur lors de la récupération des tâches:', error);
+        // Toujours appeler setLoading(false) même en cas d'erreur
+        setAllTasks([]);
+        setUserTasks([]);
       } finally {
         setLoading(false);
       }
@@ -111,6 +117,9 @@ const DashboardPage = () => {
 
     if (currentUser) {
       fetchTasks();
+    } else {
+      // Si pas d'utilisateur connecté, arrêter le chargement
+      setLoading(false);
     }
   }, [currentUser, getAllTasks, getTasksByUser]);
 

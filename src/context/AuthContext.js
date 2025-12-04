@@ -297,9 +297,15 @@ export const AuthProvider = ({ children }) => {
       } else if (status === 'rejected') {
         // Supprimer l'utilisateur car son inscription a été refusée
         console.log(`Rejecting user ID: ${requestId}`);
-        const deletedUser = await userApi.deleteUser(Number(requestId));
-        console.log(`Inscription rejetée avec succès, utilisateur supprimé:`, deletedUser);
-        return deletedUser;
+        // Utilisons une méthode PUT avec is_active: false plutôt que DELETE pour garder l'utilisateur inactif
+        const userData = {
+          is_active: false,
+          updated_at: new Date().toISOString()
+        };
+        console.log('Rejet de l\'utilisateur (inactivation):', userData);
+        const updatedUser = await userApi.updateUser(Number(requestId), userData);
+        console.log(`Inscription rejetée avec succès, utilisateur inactivé:`, updatedUser);
+        return updatedUser;
       }
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut de la demande d\'inscription:', error);

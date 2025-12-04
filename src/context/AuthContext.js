@@ -171,15 +171,8 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('updateTaskStatus appelé pour tâche ID:', taskId, 'nouveau statut:', status);
 
-      // Récupérer la tâche actuelle depuis l'API pour avoir les données complètes et à jour
-      const currentTask = await taskApi.getTaskById(taskId);
-      if (!currentTask) {
-        throw new Error('Tâche non trouvée');
-      }
-
-      // Créer les données mises à jour
+      // Créer uniquement les données nécessaires pour la mise à jour
       const updatedTaskData = {
-        ...currentTask,
         status: status
       };
 

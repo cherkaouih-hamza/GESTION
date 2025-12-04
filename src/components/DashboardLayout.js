@@ -87,7 +87,7 @@ const DashboardLayout = ({ children }) => {
                 <div className="bg-gray-200 border-2 border-dashed rounded-full w-10 h-10" />
               </div>
               <div className="mr-3 flex-1">
-                <p className="user-info">{currentUser?.name}</p>
+                <p className="user-info">{currentUser?.name || currentUser?.username}</p>
                 <p className="user-role capitalize">{currentUser?.role}</p>
               </div>
             </div>

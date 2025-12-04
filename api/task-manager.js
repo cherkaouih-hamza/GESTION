@@ -18,12 +18,9 @@ module.exports = async function handler(req, res) {
     console.log('Headers:', req.headers);
 
     const url = new URL(req.url, `https://${req.headers.host}`);
-    const pathParts = url.pathname.split('/').filter(Boolean);
-    console.log('URL décomposée:', pathParts);
-
-    const hasId = pathParts.length > 2; // Vérifier s'il y a un ID dans l'URL (après api/task-manager)
-    const taskId = hasId ? pathParts[2] : null; // L'ID est le troisième segment dans /api/task-manager/ID
-    console.log('Task ID extrait:', taskId, 'Avec ID:', hasId);
+    const taskId = url.searchParams.get('id');
+    const hasId = !!taskId;
+    console.log('Task ID from query params:', taskId, 'Has ID:', hasId);
 
     if (req.method === 'GET') {
       if (hasId && taskId) {

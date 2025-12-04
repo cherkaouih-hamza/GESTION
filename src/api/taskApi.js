@@ -44,7 +44,7 @@ export const taskApi = {
   // Récupérer une tâche par ID
   getTaskById: async (id) => {
     try {
-      const response = await api.get(`/task-manager/${id}`);
+      const response = await api.get(`/task-manager?id=${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération de la tâche:', error);
@@ -66,7 +66,7 @@ export const taskApi = {
   // Mettre à jour une tâche
   updateTask: async (id, taskData) => {
     try {
-      const response = await api.put(`/task-manager/${id}`, taskData);
+      const response = await api.put(`/task-manager?id=${id}`, taskData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la tâche:', error);
@@ -77,7 +77,7 @@ export const taskApi = {
   // Supprimer une tâche
   deleteTask: async (id) => {
     try {
-      const response = await api.delete(`/task-manager/${id}`);
+      const response = await api.delete(`/task-manager?id=${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la suppression de la tâche:', error);

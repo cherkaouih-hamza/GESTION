@@ -169,8 +169,10 @@ export const AuthProvider = ({ children }) => {
 
   const updateTaskStatus = async (taskId, status, validatedBy = null, comment = null) => {
     try {
-      // Récupérer la tâche actuelle pour avoir tous les détails
-      const currentTask = tasks.find(task => task.id === taskId);
+      console.log('updateTaskStatus appelé pour tâche ID:', taskId, 'nouveau statut:', status);
+
+      // Récupérer la tâche actuelle depuis l'API pour avoir les données complètes et à jour
+      const currentTask = await taskApi.getTaskById(taskId);
       if (!currentTask) {
         throw new Error('Tâche non trouvée');
       }
@@ -178,16 +180,23 @@ export const AuthProvider = ({ children }) => {
       // Créer les données mises à jour
       const updatedTaskData = {
         ...currentTask,
-        status
+        status: status
       };
 
-      if (validatedBy) updatedTaskData.validated_by = validatedBy;
-      if (comment) updatedTaskData.comment = comment;
+      if (validatedBy) {
+        updatedTaskData.validated_by = validatedBy;
+      }
+      if (comment) {
+        updatedTaskData.comment = comment;
+      }
+
+      console.log('Données envoyées pour update:', updatedTaskData);
 
       const updatedTask = await taskApi.updateTask(taskId, updatedTaskData);
 
       // Mettre à jour la liste locale des tâches
       setTasks(tasks.map(task => task.id === taskId ? updatedTask : task));
+      console.log('Tâche mise à jour avec succès:', updatedTask);
       return updatedTask;
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut de la tâche:', error);
@@ -282,13 +291,13 @@ export const AuthProvider = ({ children }) => {
           updated_at: new Date().toISOString()
         };
         console.log('Données envoyées pour la mise à jour:', userData);
-        const updatedUser = await userApi.updateUser(requestId, userData);
+        const updatedUser = await userApi.updateUser(Number(requestId), userData);
         console.log(`Inscription approuvée avec succès, utilisateur mis à jour:`, updatedUser);
         return updatedUser;
       } else if (status === 'rejected') {
         // Supprimer l'utilisateur car son inscription a été refusée
         console.log(`Rejecting user ID: ${requestId}`);
-        const deletedUser = await userApi.deleteUser(requestId);
+        const deletedUser = await userApi.deleteUser(Number(requestId));
         console.log(`Inscription rejetée avec succès, utilisateur supprimé:`, deletedUser);
         return deletedUser;
       }

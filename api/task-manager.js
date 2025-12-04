@@ -94,6 +94,10 @@ module.exports = async function handler(req, res) {
         RETURNING *
       `;
 
+      // Convertir les dates en format date seulement si elles sont fournies
+      const formattedDueDate = due_date ? new Date(due_date).toISOString().split('T')[0] : null;
+      const formattedStartDate = start_date ? new Date(start_date).toISOString().split('T')[0] : null;
+
       const values = [
         title,
         description,
@@ -101,8 +105,8 @@ module.exports = async function handler(req, res) {
         priority,
         pole || null,
         assignee || null,
-        due_date || null,
-        start_date || null,
+        formattedDueDate,
+        formattedStartDate,
         media_link || null,
         type || null,
         is_active,

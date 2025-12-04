@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/LoginPage.css';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('123456');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();

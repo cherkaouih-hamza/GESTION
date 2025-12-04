@@ -145,6 +145,11 @@ module.exports = async function handler(req, res) {
         updateValues.push(created_by);
         updatePlaceholders.push(`$${updateValues.length}`);
       }
+      if (validated_by !== undefined) {
+        updateFields.push('validated_by');
+        updateValues.push(validated_by);
+        updatePlaceholders.push(`$${updateValues.length}`);
+      }
 
       // Toujours mettre à jour updated_at
       updateFields.push('updated_at');

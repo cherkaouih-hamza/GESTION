@@ -188,8 +188,8 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
         priority: formData.priority,
         pole: formData.pole,
         assignee: formData.assignedTo ? parseInt(formData.assignedTo) : null,  // Renommer assignedTo à assignee et convertir en entier
-        due_date: formData.endDate ? (new Date(formData.endDate).toISOString().split('T')[0]) : null,  // Convertir en format ISO YYYY-MM-DD
-        start_date: formData.startDate ? (new Date(formData.startDate).toISOString().split('T')[0]) : null,  // Convertir en format ISO YYYY-MM-DD
+        due_date: formData.endDate ? (new Date(formData.endDate).toISOString()) : null,  // Convertir en format ISO complet
+        start_date: formData.startDate ? (new Date(formData.startDate).toISOString()) : null,  // Convertir en format ISO complet
         media_link: formData.mediaLink || null,  // Inclure media_link
         type: formData.type || null,  // Inclure type
         is_active: formData.isActive !== undefined ? formData.isActive : true  // Inclure is_active

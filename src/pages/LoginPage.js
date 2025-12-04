@@ -68,7 +68,7 @@ const LoginPage = () => {
               name="email"
               type="text"
               className="form-input"
-              placeholder="أدخل بريدك الإلكتروني أو هاتفك"
+              placeholder="admin@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -84,7 +84,7 @@ const LoginPage = () => {
               name="password"
               type="password"
               className="form-input"
-              placeholder="أدخل كلمة المرور"
+              placeholder="123456"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -109,7 +109,7 @@ const LoginPage = () => {
         </form>
 
         <div className="login-footer">
-          <p>للاختبار: يمكنك استخدام البريد admin@example.com وكلمة المرور admin123</p>
+          <p>للاختبار: يمكنك استخدام البريد admin@example.com وكلمة المرور 123456</p>
           <p className="mt-4">
             لا تملك حساب؟{' '}
             <Link to="/register" className="register-link">

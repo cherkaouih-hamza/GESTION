@@ -1,4 +1,4 @@
-// api/user-manager.js - User management API routes for Vercel
+// api/user-manager.js - Simplified user management API for Vercel
 const { getPool } = require('./db');
 
 module.exports = async function handler(req, res) {
@@ -13,123 +13,88 @@ module.exports = async function handler(req, res) {
 
   try {
     const pool = await getPool();
-
-    console.log('Requête reçue à user-manager:', req.method, req.url);
+    
+    // Extraire l'ID de l'URL
     const url = new URL(req.url, `https://${req.headers.host}`);
     const pathParts = url.pathname.split('/').filter(Boolean);
-    console.log('URL décomposée dans user-manager:', pathParts);
-    const hasId = pathParts.length > 2; // Vérifier s'il y a un ID dans l'URL (après api/user-manager)
-    const userId = hasId ? pathParts[2] : null; // L'ID est le troisième segment dans /api/user-manager/ID
-    console.log('User ID extrait:', userId, 'Avec ID:', hasId);
+    console.log('Path parts:', pathParts);
+
+    // L'URL devrait être /api/user-manager (liste) ou /api/user-manager/ID (spécifique)
+    const hasId = pathParts.length === 3; // ['api', 'user-manager', 'ID']
+    const userId = hasId ? pathParts[2] : null;
+    console.log('Has ID:', hasId, 'User ID:', userId);
 
     if (req.method === 'GET') {
       if (hasId && userId) {
         // Récupérer un utilisateur spécifique
-        console.log('Recherche de l\'utilisateur avec ID:', userId);
-        // S'assurer que userId est un nombre avant de le passer à la requête
+        console.log('GET request for user ID:', userId);
         const userIdNum = parseInt(userId);
         if (isNaN(userIdNum)) {
-          return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
+          return res.status(400).json({ error: 'ID utilisateur invalide' });
         }
         const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users WHERE id = $1', [userIdNum]);
-
         if (result.rows.length === 0) {
           return res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
-
         res.status(200).json(result.rows[0]);
       } else {
         // Récupérer tous les utilisateurs
-        console.log('Requête de tous les utilisateurs');
+        console.log('GET request for all users');
         const result = await pool.query('SELECT id, username, email, role, pole, is_active, created_at, updated_at FROM users ORDER BY username');
-        console.log('Nombre d\'utilisateurs récupérés:', result.rows.length);
         res.status(200).json(result.rows);
       }
-    } else if (req.method === 'POST') {
-      // Créer un nouvel utilisateur
-      const { username, email, password, role, pole, is_active = false, phone } = req.body;
-
-      if (!username || !email || !password) {
-        return res.status(400).json({ error: 'Le nom d\'utilisateur, l\'email et le mot de passe sont requis' });
-      }
-
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
-      if (existingUser.rows.length > 0) {
-        return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
-      }
-
-      // Hacher le mot de passe avant de l'enregistrer
-      const crypto = require('crypto');
-      const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-
-      const result = await pool.query(
-        'INSERT INTO users (username, email, password, role, pole, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, email, role, pole, is_active',
-        [username, email, hashedPassword, role, pole, is_active, phone || null]
-      );
-
-      res.status(201).json(result.rows[0]);
     } else if (req.method === 'PUT') {
-      if (!userId) {
-        return res.status(400).json({ error: 'ID utilisateur requis' });
+      console.log('PUT request received');
+      if (!hasId || !userId) {
+        return res.status(400).json({ error: 'ID utilisateur requis dans l\'URL' });
       }
 
-      // S'assurer que userId est un nombre avant de le passer aux requêtes
       const userIdNum = parseInt(userId);
       if (isNaN(userIdNum)) {
-        return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
+        return res.status(400).json({ error: 'ID utilisateur invalide' });
       }
 
-      // Mettre à jour un utilisateur
       const { username, email, role, pole, is_active, phone } = req.body;
+      console.log('PUT request for user ID:', userIdNum, 'Data:', { username, email, role, pole, is_active, phone });
 
-      // Déterminer les champs à mettre à jour
-      let updateFields = [];
-      let updateValues = [];
-      let updatePlaceholders = [];
+      // Construire la requête de mise à jour
+      const updateFields = [];
+      const updateValues = [];
 
       if (username !== undefined) {
-        updateFields.push('username');
+        updateFields.push(`username = $${updateValues.length + 1}`);
         updateValues.push(username);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
       if (email !== undefined) {
-        updateFields.push('email');
+        updateFields.push(`email = $${updateValues.length + 1}`);
         updateValues.push(email);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
       if (role !== undefined) {
-        updateFields.push('role');
+        updateFields.push(`role = $${updateValues.length + 1}`);
         updateValues.push(role);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
       if (pole !== undefined) {
-        updateFields.push('pole');
+        updateFields.push(`pole = $${updateValues.length + 1}`);
         updateValues.push(pole);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
       if (is_active !== undefined) {
-        updateFields.push('is_active');
+        updateFields.push(`is_active = $${updateValues.length + 1}`);
         updateValues.push(is_active);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
       if (phone !== undefined) {
-        updateFields.push('phone');
+        updateFields.push(`phone = $${updateValues.length + 1}`);
         updateValues.push(phone);
-        updatePlaceholders.push(`$${updateValues.length}`);
       }
 
-      // Toujours mettre à jour updated_at
-      updateFields.push('updated_at');
-      updateValues.push(new Date().toISOString());
-      updatePlaceholders.push(`$${updateValues.length}`);
-
-      if (updateFields.length <= 1) { // Seulement updated_at est inclus
+      if (updateFields.length === 0) {
         return res.status(400).json({ error: 'Aucun champ à mettre à jour fourni' });
       }
 
-      updateValues.push(userIdNum); // Ajouter l'ID converti en nombre
-      const updateQuery = `UPDATE users SET ${updateFields.map((field, index) => `${field} = ${updatePlaceholders[index]}`).join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
+      updateValues.push(userIdNum); // ID pour la clause WHERE
+      const updateQuery = `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${updateValues.length} RETURNING *`;
+      
+      console.log('Update query:', updateQuery);
+      console.log('Update values:', updateValues);
 
       const result = await pool.query(updateQuery, updateValues);
 
@@ -138,51 +103,54 @@ module.exports = async function handler(req, res) {
       }
 
       res.status(200).json(result.rows[0]);
-    } else if (req.method === 'DELETE') {
-      if (!userId) {
-        return res.status(400).json({ error: 'ID utilisateur requis' });
+    } else if (req.method === 'POST') {
+      // Création d'utilisateur
+      const { username, email, password, role, pole, is_active = false, phone } = req.body;
+
+      if (!username || !email || !password) {
+        return res.status(400).json({ error: 'Le nom d\'utilisateur, l\'email et le mot de passe sont requis' });
       }
 
-      // S'assurer que userId est un nombre avant de le passer aux requêtes
+      const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
+      if (existingUser.rows.length > 0) {
+        return res.status(409).json({ error: 'Un utilisateur avec cet email ou nom d\'utilisateur existe déjà' });
+      }
+
+      const crypto = require('crypto');
+      const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+
+      const result = await pool.query(
+        'INSERT INTO users (username, email, password, role, pole, is_active, phone) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+        [username, email, hashedPassword, role, pole, is_active, phone || null]
+      );
+
+      res.status(201).json(result.rows[0]);
+    } else if (req.method === 'DELETE') {
+      if (!hasId || !userId) {
+        return res.status(400).json({ error: 'ID utilisateur requis dans l\'URL' });
+      }
+
       const userIdNum = parseInt(userId);
       if (isNaN(userIdNum)) {
-        return res.status(400).json({ error: 'ID d\'utilisateur invalide' });
+        return res.status(400).json({ error: 'ID utilisateur invalide' });
       }
 
-      // Supprimer un utilisateur (désactiver en fait)
-      // Démarrer une transaction pour s'assurer que les suppressions sont atomiques
-      await pool.query('BEGIN');
-
-      // Supprimer d'abord les tâches créées par l'utilisateur
-      await pool.query('DELETE FROM tasks WHERE created_by = $1', [userIdNum]);
-
-      // Supprimer les tâches assignées à l'utilisateur
-      await pool.query('DELETE FROM tasks WHERE assignee = $1', [userIdNum]);
-
-      // Maintenant supprimer l'utilisateur
       const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [userIdNum]);
 
       if (result.rows.length === 0) {
-        await pool.query('ROLLBACK');
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
 
-      await pool.query('COMMIT');
-
       res.status(200).json(result.rows[0]);
     } else {
-      return res.status(405).json({ error: 'Méthode non autorisée' });
+      return res.status(405).json({ error: 'Méthode non autorisée: ' + req.method });
     }
   } catch (error) {
     console.error('Erreur dans user-manager handler:', error);
-    console.error('Détails de l\'erreur:', {
-      message: error.message,
-      stack: error.stack,
-      code: error.code
-    });
-    res.status(500).json({
-      error: 'Erreur serveur interne',
-      details: error.message
+    res.status(500).json({ 
+      error: 'Erreur serveur interne', 
+      details: error.message,
+      stack: error.stack 
     });
   }
 }

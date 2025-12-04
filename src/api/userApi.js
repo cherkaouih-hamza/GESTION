@@ -44,7 +44,7 @@ export const userApi = {
   // Récupérer un utilisateur par ID
   getUserById: async (id) => {
     try {
-      const response = await api.get(`/user-manager/${id}`);
+      const response = await api.get(`/user-manager?id=${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération de l\'utilisateur:', error);
@@ -77,7 +77,7 @@ export const userApi = {
   // Mettre à jour un utilisateur
   updateUser: async (id, userData) => {
     try {
-      const response = await api.put(`/user-manager/${id}`, userData);
+      const response = await api.put(`/user-manager?id=${id}`, userData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
@@ -88,7 +88,7 @@ export const userApi = {
   // Supprimer un utilisateur
   deleteUser: async (id) => {
     try {
-      const response = await api.delete(`/user-manager/${id}`);
+      const response = await api.delete(`/user-manager?id=${id}`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'utilisateur:', error);

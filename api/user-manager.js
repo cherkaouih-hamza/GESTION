@@ -14,15 +14,11 @@ module.exports = async function handler(req, res) {
   try {
     const pool = await getPool();
     
-    // Extraire l'ID de l'URL
+    // Extraire l'ID de l'URL via les paramètres de requête
     const url = new URL(req.url, `https://${req.headers.host}`);
-    const pathParts = url.pathname.split('/').filter(Boolean);
-    console.log('Path parts:', pathParts);
-
-    // L'URL devrait être /api/user-manager (liste) ou /api/user-manager/ID (spécifique)
-    const hasId = pathParts.length === 3; // ['api', 'user-manager', 'ID']
-    const userId = hasId ? pathParts[2] : null;
-    console.log('Has ID:', hasId, 'User ID:', userId);
+    const userId = url.searchParams.get('id');
+    const hasId = !!userId;
+    console.log('User ID from query params:', userId, 'Has ID:', hasId);
 
     if (req.method === 'GET') {
       if (hasId && userId) {
